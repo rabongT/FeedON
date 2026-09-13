@@ -20,8 +20,8 @@ const stages = [
   {
     name: "Planner",
     ko: "성취 확인",
-    desc: "학생이 향상한 점, 성취한 내용, 충족한 기준을 구체적으로 알려주는 단계",
-    role: "과거보다 나아진 점과 이미 충족한 평가기준을 증거에 근거해 확인합니다.",
+    desc: "학생이 향상한 점, 성취한 내용, 충족한 기준을 구체적으로 알려주고 수행에 필요한 정보를 제공하는 단계",
+    role: "지난 수행과 비교해 나아진 점과 이미 충족한 기준을 구체적인 증거로 확인해 줍니다.",
     talk: "변인을 한 가지로 정하고 관찰 결과까지 기록한 두 가지 기준을 모두 충족했어.",
     focus: "두 가지 기준을 모두 충족",
     center: "teacher",
@@ -32,20 +32,20 @@ const stages = [
   {
     name: "Guide",
     ko: "차이와 개선점 안내",
-    desc: "학습 목표와 현재 상태의 차이를 밝히고 개선할 측면과 기대하는 점을 제시하는 단계",
-    role: "현재 수행과 목표 사이의 차이를 근거로 구체적인 개선 방향을 안내합니다.",
+    desc: "학습 목표와 현재 상태의 차이를 밝히고 개선할 점과 필요한 설명·힌트를 제공하는 단계",
+    role: "현재 수행과 목표 사이의 차이를 짚고, 문제를 풀어 갈 설명이나 단서를 구체적으로 안내합니다.",
     talk: "예상과 결과는 잘 구분했어. 설명을 완성하려면 두 실험에서 달랐던 조건을 근거로 덧붙여 보자.",
     focus: "달랐던 조건을 근거로",
     center: "teacher",
     when: "학생에게 다음 수행의 방향과 기대 수준을 명확히 안내할 때",
-    caution: "학생이 생각할 여지를 없애는 완성 답안을 대신 주지 않습니다.",
+    caution: "힌트는 제공하되 학생의 수행 전체를 교사가 대신 완성하지 않습니다.",
     examples: ["중심 생각은 찾았어. 이를 뒷받침하는 문장을 근거로 덧붙여 보자.", "계산은 맞았지만 사용한 방법을 설명하는 과정이 더 필요해.", "지도에서 찾은 특징이 주민 생활과 어떤 관련이 있는지 보충해 보자."],
   },
   {
     name: "Coach",
     ko: "해결 방법 이끌어내기",
-    desc: "더 나은 수행에 도달하는 방법과 도전을 학생과 함께 찾는 단계",
-    role: "이전과 현재를 비교하고 질문을 통해 해결 방안을 학생에게서 이끌어냅니다.",
+    desc: "이전과 현재를 비교하며 더 나아갈 방법을 학생과 대화로 함께 찾는 단계",
+    role: "부족한 점보다 앞으로의 방법에 초점을 두고, 질문을 통해 해결 전략을 학생에게서 이끌어냅니다.",
     talk: "예상과 결과가 달랐던 까닭을 설명하려면 어떤 조건부터 비교해 보면 좋을까?",
     focus: "어떤 조건부터 비교",
     center: "together",
@@ -56,8 +56,8 @@ const stages = [
   {
     name: "Designer",
     ko: "평가기준 공동 설계",
-    desc: "학습 목표의 성취 여부를 함께 평가하고 학생이 평가기준 개발에 참여하는 단계",
-    role: "학생과 학습 목표 및 성공 기준을 공동으로 만들고 평가에 참여시킵니다.",
+    desc: "학생과 학습 목표·성공 기준을 함께 만들고, 그 기준으로 수행을 공동 평가하는 단계",
+    role: "최종 성취를 먼저 생각하는 백워드 설계로 성공 기준을 함께 만들고 자기·동료평가와 수정까지 연결합니다.",
     talk: "우리 실험 설명이 과학적으로 타당한지 확인하려면 어떤 평가기준이 필요할까?",
     focus: "어떤 평가기준이 필요할까",
     center: "together",
@@ -93,8 +93,9 @@ const feedbackChecks = [
 
 // 책의 공식 도구 분류가 아니라, 피드백 정보를 확인하고 전달하는 교실 활용 방법이다.
 const tools = [
-  ["one", "원마커", "빨강·초록 양면 원마커로 학생이 도움 필요 여부를 조용히 알리는 도구", "개별 활동 중 도움이 필요한 학생을 방해 없이 확인할 때", "비공개 도움 요청과 즉각적 피드백"],
-  ["hand", "다섯손가락", "닫힌 주먹부터 다섯 손가락까지 손 모양으로 자신의 이해 정도를 표현하는 자기점검 도구", "설명이나 활동 직후 학급 전체의 이해 정도를 빠르게 점검할 때", "이해도 확인과 자기 점검"],
+  ["one", "양면 원마커", "빨강·초록 양면 원마커로 학생이 자신의 이해 정도와 도움 필요 여부를 실시간으로 조용히 알리는 도구", "다른 학생의 시선을 끌지 않고 개별 도움이 필요한 학생을 확인할 때", "비공개 도움 요청과 즉각적 피드백"],
+  ["hand", "다섯 손가락", "학생이 손가락 수로 자신의 이해 정도를 나타내는 자기점검 도구로, 학습의 어느 단계에서나 사용할 수 있습니다.", "설명이나 활동 전후에 학급 전체의 이해 정도를 빠르게 살피고 교사가 과정을 관찰할 때", "이해도 확인과 메타인지적 자기점검"],
+  ["traffic", "학습신호등", "빨강·노랑·초록 세 가지 색으로 학생이 자신의 이해 정도를 표현하는 도구", "중요한 내용을 설명한 뒤 학생별 이해 정도를 한눈에 확인할 때", "이해도 확인과 도움 대상 파악"],
   ["ticket", "입장티켓", "수업 시작 단계에서 학생들이 알고 있는 것 또는 알고 싶은 것을 확인하는 활동", "수업을 시작하며 선개념과 궁금한 점을 확인할 때", "수업 전 진단과 학습 방향 설정"],
   ["ticket", "퇴장티켓", "수업을 마칠 때 학생이 배운 점이나 어려웠던 점에 대한 간단한 피드백을 작성하여 교사에게 제출하는 활동", "수업을 마치며 이해 정도와 다음 지원이 필요한 부분을 확인할 때", "배움 회고와 후속 수업 계획"],
   ["check", "체크리스트", "수행 요소의 충족 여부를 빠르게 확인하는 도구", "여러 수행 기준을 빠짐없이 확인할 때", "과정 점검"],
@@ -124,6 +125,7 @@ function Icon({ type }) {
     ),
     hand: <path d="M7 12V7a1.5 1.5 0 0 1 3 0v3-5a1.5 1.5 0 0 1 3 0v5-4a1.5 1.5 0 0 1 3 0v5-2a1.5 1.5 0 0 1 3 0v5c0 5-3 7-7 7-3 0-5-2-7-5l-2-3a1.5 1.5 0 0 1 2-2l2 1Z" />,
     ticket: <path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4V7Zm8 0v10" />,
+    traffic: <><circle cx="12" cy="6" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="18" r="2"/><rect x="7" y="2" width="10" height="20" rx="3"/></>,
     check: (
       <>
         <rect x="4" y="4" width="16" height="16" rx="2" />
@@ -254,6 +256,24 @@ function FeedbackToolsGuide() {
   );
 }
 
+function FeedbackStagesGuide() {
+  const [selected, setSelected] = useState(0);
+  const stage = stages[selected];
+  const participation = selected < 3 ? "교사가 정보를 제공해요" : selected === 3 ? "교사와 학생이 해결 방법을 함께 찾아요" : "교사와 학생이 기준을 함께 만들고 평가해요";
+  return <>
+    <p className="modal-intro">단계가 올라갈수록 좋은 피드백이라는 뜻이 아닙니다. 지금 학생에게 필요한 <b>지원 방식</b>을 골라 사용하세요.</p>
+    <div className="stage-help-picker" role="tablist" aria-label="피드백 5단계 선택">{stages.map((s,i)=><button key={s.name} role="tab" aria-selected={selected===i} className={selected===i?"active":""} onClick={()=>setSelected(i)}><span>{i+1}</span><b>{s.name}</b><small>{s.ko}</small></button>)}</div>
+    <article className={`stage-help-detail stage-${selected+1}`} role="tabpanel">
+      <div className="stage-help-head"><span>{selected+1}단계</span><h3>{stage.name} <small>{stage.ko}</small></h3></div>
+      <div className="stage-help-point"><b>한마디로</b><p>{stage.desc}</p></div>
+      <dl><div><dt>누가 중심인가요?</dt><dd>{participation}<CenterBadge center={stage.center}/></dd></div><div><dt>교사는 무엇을 하나요?</dt><dd>{stage.role}</dd></div><div><dt>언제 사용하나요?</dt><dd>{stage.when}</dd></div></dl>
+      <div className="stage-help-talk"><span>교실에서 이렇게 말해요</span><blockquote>“<HighlightTalk stage={stage}/>”</blockquote></div>
+      {selected===4&&<p className="backward-note"><b>디자이너의 핵심</b> 최종적으로 무엇을 성취해야 하는지 먼저 정한 뒤, 학생과 성공 기준을 만들고 그 기준으로 자기·동료평가와 수정을 이어 갑니다.</p>}
+    </article>
+    <div className="notice"><b>학생을 다섯 수준으로 나누는 체계가 아닙니다.</b><p>같은 학생에게도 상황에 따라 다른 단계를 사용할 수 있습니다.</p></div>
+  </>;
+}
+
 function Modal({ type, close }) {
   useEffect(() => {
     const f = (e) => e.key === "Escape" && close();
@@ -272,38 +292,7 @@ function Modal({ type, close }) {
             ×
           </button>
         </div>
-        {type === "tools" ? (
-          <FeedbackToolsGuide />
-        ) : (
-          <>
-            <p className="modal-intro">학생의 현재 수행을 확인하는 것에서 시작해 스스로 점검하고 새로운 상황으로 확장하도록 피드백의 깊이를 조절합니다.</p>
-            <div className="stage-guide">
-              {stages.map((s, i) => (
-                <article key={s.name}>
-                  <span className="stage-no">0{i + 1}</span>
-                  <div>
-                    <div className="stage-title">
-                      <h3>{s.name}</h3>
-                      <span>{s.ko}</span>
-                      <InfoTip text={s.desc} />
-                    </div>
-                    <CenterBadge center={s.center} />
-                    <p>
-                      <b>교사의 역할</b> {s.role}
-                    </p>
-                    <blockquote>
-                      “<HighlightTalk stage={s} />”
-                    </blockquote>
-                  </div>
-                </article>
-              ))}
-            </div>
-            <div className="notice">
-              <b>단계는 학생의 수준표가 아닙니다.</b>
-              <p>같은 학생에게도 상황에 따라 다른 단계의 피드백을 사용할 수 있습니다. 단계가 높을수록 항상 더 좋은 것이 아니라, 학생에게 필요한 지원 정도에 따라 적절한 단계를 선택합니다.</p>
-            </div>
-          </>
-        )}
+        {type === "tools" ? <FeedbackToolsGuide /> : <FeedbackStagesGuide />}
       </section>
     </div>
   );
