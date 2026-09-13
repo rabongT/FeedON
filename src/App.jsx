@@ -1078,14 +1078,17 @@ function buildPersonalizedStages(data) {
 }
 
 function FeedbackResult({ data, edit }) {
-  const [open, setOpen] = useState([]);
   const [view, setView] = useState("proposal");
+  const [selectedStage, setSelectedStage] = useState(null);
+  const [showFullTalk, setShowFullTalk] = useState(false);
   const personalizedStages = buildPersonalizedStages(data);
   const coachReady = /스스로|고쳤|수정|비교|확인|질문/.test(data.observation);
   const recommended = coachReady ? stages[3] : stages[2];
+  const recommendedIndex = coachReady ? 3 : 2;
+  const activeStageIndex = selectedStage ?? recommendedIndex;
+  const activeStage = personalizedStages[activeStageIndex];
   const recommendedTools = coachReady ? [tools[4], tools[5], tools[6]] : [tools[3], tools[5], tools[8]];
   const context = [data.grade, data.subject, data.unit, data.session].filter(Boolean).join(" · ") || "수업 맥락 미입력";
-  const toggle = (i) => setOpen(open.includes(i) ? open.filter((x) => x !== i) : [...open, i]);
   return (
     <main className="page result-page">
       <button className="back" onClick={edit}>
@@ -1144,53 +1147,17 @@ function FeedbackResult({ data, edit }) {
           </div>
         </Section>}
         {(view === "talk" || view === "all") && <Section no="03" title="5단계 Teacher Talk">
-          <p className="section-desc">단계 카드를 누르면 실제 교실에서 이어 갈 수 있는 대화 예시가 열립니다. 4·5단계는 학생의 응답에 따라 질문을 바꾸며 주고받는 과정이 핵심입니다.</p>
-          <div className="talk-list">
-            {personalizedStages.map((s, i) => {
-              const isOpen = open.includes(i);
-              return (
-                <article key={s.name} className={isOpen ? "open" : ""}>
-                  <button className="stage-card-button" onClick={() => toggle(i)} aria-expanded={isOpen}>
-                    <div className="talk-top">
-                      <span>0{i + 1}</span>
-                      <div>
-                        <h3>
-                          {s.name} <small>{s.ko}</small>
-                        </h3>
-                        <CenterBadge center={s.center} />
-                        <blockquote>
-                          “<HighlightTalk stage={s} />”
-                        </blockquote>
-                      </div>
-                    </div>
-                    <span className="stage-open-label">{isOpen ? "예시 접기 −" : "자세한 예시 보기 +"}</span>
-                  </button>
-                  {isOpen && (
-                    <div className="talk-detail">
-                      <div className="detail-note">
-                        학생 문장은 정답이 아닌 <b>예상 응답</b>입니다. 실제 대답을 듣고 다음 질문을 이어 가세요.
-                      </div>
-                      <Dialogue lines={s.dialogue} />
-                      <dl>
-                        <div>
-                          <dt>단계의 목적</dt>
-                          <dd>{s.desc}</dd>
-                        </div>
-                        <div>
-                          <dt>사용 시점</dt>
-                          <dd>{s.when}</dd>
-                        </div>
-                        <div>
-                          <dt>교사가 주의할 점</dt>
-                          <dd>{s.caution}</dd>
-                        </div>
-                      </dl>
-                    </div>
-                  )}
-                </article>
-              );
-            })}
+          <p className="section-desc">단계 하나를 선택해 핵심 문장을 먼저 확인하세요. 4·5단계는 전체 대화에서 학생과 주고받는 흐름을 볼 수 있습니다.</p>
+          <div className="stage-picker" role="tablist" aria-label="Teacher Talk 단계 선택">
+            {personalizedStages.map((s,i)=><button key={s.name} role="tab" aria-selected={activeStageIndex===i} className={activeStageIndex===i?"active":""} onClick={()=>{setSelectedStage(i);setShowFullTalk(false)}}><span>0{i+1}</span><b>{s.name}</b><small>{s.ko}</small>{i===recommendedIndex&&<em>추천</em>}</button>)}
           </div>
+          <article className={`selected-talk stage-${activeStageIndex+1}`} role="tabpanel">
+            <div className="selected-talk-head"><div><span>STEP 0{activeStageIndex+1}</span><h3>{activeStage.name} <small>{activeStage.ko}</small></h3></div><CenterBadge center={activeStage.center}/></div>
+            <div className="talk-summary"><span>핵심 Teacher Talk</span><blockquote>“<HighlightTalk stage={activeStage}/>”</blockquote></div>
+            <div className="stage-quick-info"><div><b>언제 쓰나요?</b><p>{activeStage.when}</p></div><div><b>무엇이 다른가요?</b><p>{activeStage.desc}</p></div></div>
+            <button className="full-talk-toggle" onClick={()=>setShowFullTalk(!showFullTalk)} aria-expanded={showFullTalk}>{showFullTalk?"핵심만 보기":"전체 대화 보기"}<span>{showFullTalk?"−":"+"}</span></button>
+            {showFullTalk&&<div className="selected-talk-detail"><div className="detail-note">학생 문장은 정답이 아닌 <b>예상 응답</b>입니다. 실제 대답을 듣고 다음 질문을 이어 가세요.</div><Dialogue lines={activeStage.dialogue}/><div className="talk-caution"><b>교사가 주의할 점</b><p>{activeStage.caution}</p></div></div>}
+          </article>
         </Section>}
         {view === "all" && <Section no="04" title="교사 확인">
           <div className="teacher-check">
