@@ -821,6 +821,12 @@ const blankFeedback = {
   goal: "",
   observation: "",
 };
+const feedbackExamples = {
+  국어: { grade: "4학년", subject: "국어", unit: "중심 생각을 찾아요", session: "3차시", goal: "글의 중심 생각을 찾고 뒷받침하는 내용을 근거로 설명하기", observation: "글의 중심 생각은 정확히 찾았지만, 뒷받침하는 문장을 고를 때 자신의 느낌을 근거로 제시했다. 교사가 ‘글에서 확인할 수 있는 문장을 찾아보자’고 하자 해당 문장에 밑줄을 그었다." },
+  수학: { grade: "5학년", subject: "수학", unit: "분수의 덧셈과 뺄셈", session: "4차시", goal: "분모가 다른 분수의 덧셈 과정을 설명하고 답이 타당한지 확인하기", observation: "통분하여 계산한 답은 맞았으나 왜 통분해야 하는지 설명하지 못했다. 두 분수 모형을 비교한 뒤에는 ‘조각의 크기를 같게 해야 더할 수 있다’고 말했지만 풀이에는 그 내용을 쓰지 않았다." },
+  사회: { grade: "4학년", subject: "사회", unit: "우리 지역의 모습", session: "2차시", goal: "지도와 사진 자료를 근거로 우리 지역의 특징과 생활 모습을 연결하여 설명하기", observation: "지도에서 하천과 도로의 위치를 찾아 표시했고 사람이 많이 모이는 장소도 찾았다. 그러나 지역의 자연환경과 사람들의 생활 모습이 어떻게 연결되는지는 자료를 근거로 설명하지 못했다." },
+  과학: { grade: "5학년", subject: "과학", unit: "식물의 구조와 기능", session: "3차시", goal: "관찰 결과를 근거로 식물의 구조와 기능 설명하기", observation: "잎과 줄기의 특징은 정확히 관찰해 기록했지만, 각 구조가 하는 일을 설명할 때 관찰 결과를 근거로 연결하지 못했다. 친구의 설명을 듣고 자신의 기록에서 근거가 될 부분에 밑줄을 그었다." },
+};
 function FeedbackForm({ initial, onSubmit, back }) {
   const [f, setF] = useState({ ...blankFeedback, ...initial });
   const [errors, setErrors] = useState({});
@@ -834,15 +840,8 @@ function FeedbackForm({ initial, onSubmit, back }) {
       return next;
     });
   };
-  const fillExample = () => {
-    setF({
-      grade: "5학년",
-      subject: "과학",
-      unit: "식물의 구조와 기능",
-      session: "3차시",
-      goal: "관찰 결과를 근거로 식물의 구조와 기능 설명하기",
-      observation: "잎과 줄기의 특징은 정확히 관찰해 기록했지만, 각 구조가 하는 일을 설명할 때 관찰 결과를 근거로 연결하지 못했다. 친구의 설명을 듣고 자신의 기록에서 근거가 될 부분에 밑줄을 그었다.",
-    });
+  const fillExample = (subject) => {
+    setF(feedbackExamples[subject]);
     setErrors({});
     setExampleFields(new Set(["grade", "subject", "unit", "session", "goal", "observation"]));
   };
@@ -867,9 +866,9 @@ function FeedbackForm({ initial, onSubmit, back }) {
           <span>처음 사용하시나요?</span>
           <b>예시를 먼저 살펴보면 기록 방법을 쉽게 알 수 있어요.</b>
         </div>
-        <button type="button" onClick={fillExample}>
-          과학 수업 예시 채우기
-        </button>
+        <div className="example-buttons" aria-label="교과별 입력 예시">
+          {Object.keys(feedbackExamples).map((subject) => <button key={subject} type="button" onClick={() => fillExample(subject)}>{subject} 예시</button>)}
+        </div>
       </aside>
       <form className="form-sheet" onSubmit={submit} noValidate>
         {exampleFields.size > 0 && (
@@ -1064,13 +1063,41 @@ function buildPersonalizedStages(data) {
       ],
     },
   ];
-  return stages.map((stage, index) => ({ ...stage, ...talks[index] }));
+  const talkOptions = [
+    [
+      { label: "관찰 그대로", talk: `선생님이 확인한 모습은 이거야. ${evidence}` },
+      { label: "수행 짚기", talk: `지금 한 것부터 함께 확인해 보자. ${evidence}` },
+      { label: "짧게 확인", talk: low ? `여기까지 했구나. ${evidence}` : `현재 수행에서 확인된 내용을 먼저 말해 줄게. ${evidence}` },
+    ],
+    [
+      { label: "목표 연결", talk: `${evidence} 이 부분은 ‘${goal}’이라는 목표와 연결되는 성취야.` },
+      { label: "충족한 점", talk: `오늘 목표 가운데 네가 해낸 부분부터 볼게. ${evidence}` },
+      { label: "기준 확인", talk: `‘${goal}’의 기준으로 보면, 현재 수행에서 확인되는 점은 이거야. ${evidence}` },
+    ],
+    [
+      { label: "한 가지 보완", talk: `여기까지는 확인했어. 이제 ‘${goal}’에 더 가까워지도록 한 가지만 보완해 보자.` },
+      { label: "근거 더하기", talk: `${evidence} 이 내용을 바탕으로, 목표에 필요한 근거나 설명을 하나 더 찾아 넣어 보자.` },
+      { label: "차이 찾기", talk: `현재 수행과 ‘${goal}’을 나란히 놓고 보면 무엇이 빠져 있을까? 선생님과 한 가지씩 찾아보자.` },
+    ],
+    [
+      { label: "전략 돌아보기", talk: `네가 사용한 방법 가운데 도움이 된 것은 무엇이었어? 그렇게 생각한 까닭도 말해 줄래?` },
+      { label: "다음 시도", talk: `‘${goal}’에 더 가까워지려면 다음에는 어떤 방법으로 다시 해 보고 싶어?` },
+      { label: "스스로 수정", talk: `${evidence} 이 모습을 돌아보면, 어디부터 바꾸고 싶어? 바꾼 뒤에는 어떻게 확인할 수 있을까?` },
+    ],
+    [
+      { label: "성공 기준", talk: `‘${goal}’을 잘 해냈다고 판단하려면 어떤 기준이 필요할까? 함께 정해 보자.` },
+      { label: "자기 점검", talk: `우리가 만든 기준으로 네 수행을 살펴보면 무엇을 유지하고 무엇을 수정하고 싶어?` },
+      { label: "동료와 평가", talk: `친구의 수행을 살펴볼 때 꼭 확인할 기준은 무엇일까? 그 기준을 네 수행에도 적용해 보자.` },
+    ],
+  ];
+  return stages.map((stage, index) => ({ ...stage, ...talks[index], talkOptions: talkOptions[index] }));
 }
 
 function FeedbackResult({ data, edit }) {
   const [view, setView] = useState("proposal");
   const [selectedStage, setSelectedStage] = useState(null);
   const [showFullTalk, setShowFullTalk] = useState(false);
+  const [selectedTalk, setSelectedTalk] = useState(0);
   const personalizedStages = buildPersonalizedStages(data);
   const coachReady = /스스로|고쳤|수정|비교|확인|질문/.test(data.observation);
   const recommended = coachReady ? stages[3] : stages[2];
@@ -1140,11 +1167,18 @@ function FeedbackResult({ data, edit }) {
         {(view === "talk" || view === "all") && <Section no="03" title="5단계 Teacher Talk">
           <p className="section-desc">단계 하나를 선택해 핵심 문장을 먼저 확인하세요. 4·5단계는 전체 대화에서 학생과 주고받는 흐름을 볼 수 있습니다.</p>
           <div className="stage-picker" role="tablist" aria-label="Teacher Talk 단계 선택">
-            {personalizedStages.map((s,i)=><button key={s.name} role="tab" aria-selected={activeStageIndex===i} className={activeStageIndex===i?"active":""} onClick={()=>{setSelectedStage(i);setShowFullTalk(false)}}><span>0{i+1}</span><b>{s.name}</b><small>{s.ko}</small>{i===recommendedIndex&&<em>추천</em>}</button>)}
+            {personalizedStages.map((s,i)=><button key={s.name} role="tab" aria-selected={activeStageIndex===i} className={activeStageIndex===i?"active":""} onClick={()=>{setSelectedStage(i);setShowFullTalk(false);setSelectedTalk(0)}}><span>0{i+1}</span><b>{s.name}</b><small>{s.ko}</small>{i===recommendedIndex&&<em>추천</em>}</button>)}
           </div>
           <article className={`selected-talk stage-${activeStageIndex+1}`} role="tabpanel">
             <div className="selected-talk-head"><div><span>STEP 0{activeStageIndex+1}</span><h3>{activeStage.name} <small>{activeStage.ko}</small></h3></div><CenterBadge center={activeStage.center}/></div>
-            <div className="talk-summary"><span>핵심 Teacher Talk</span><blockquote>“<HighlightTalk stage={activeStage}/>”</blockquote></div>
+            <div className="talk-summary">
+              <span>입력 내용에 맞춘 Teacher Talk · 3가지 표현</span>
+              <div className="talk-option-tabs" role="tablist" aria-label={`${activeStage.name} Teacher Talk 표현 선택`}>
+                {activeStage.talkOptions.map((option, i) => <button key={option.label} role="tab" aria-selected={selectedTalk === i} className={selectedTalk === i ? "active" : ""} onClick={() => setSelectedTalk(i)}>{option.label}</button>)}
+              </div>
+              <blockquote>“{activeStage.talkOptions[selectedTalk].talk}”</blockquote>
+              <small>교사가 입력한 학습 목표·평가 요소와 실제 수행 모습을 반영한 문장입니다.</small>
+            </div>
             <div className="stage-quick-info"><div><b>언제 쓰나요?</b><p>{activeStage.when}</p></div><div><b>무엇이 다른가요?</b><p>{activeStage.desc}</p></div></div>
             <button className="full-talk-toggle" onClick={()=>setShowFullTalk(!showFullTalk)} aria-expanded={showFullTalk}>{showFullTalk?"핵심만 보기":"전체 대화 보기"}<span>{showFullTalk?"−":"+"}</span></button>
             {showFullTalk&&<div className="selected-talk-detail"><div className="detail-note">학생 문장은 정답이 아닌 <b>예상 응답</b>입니다. 실제 대답을 듣고 다음 질문을 이어 가세요.</div><Dialogue lines={activeStage.dialogue}/><div className="talk-caution"><b>교사가 주의할 점</b><p>{activeStage.caution}</p></div></div>}
