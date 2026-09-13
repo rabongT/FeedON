@@ -827,6 +827,16 @@ const feedbackExamples = {
   사회: { grade: "4학년", subject: "사회", unit: "우리 지역의 모습", session: "2차시", goal: "지도와 사진 자료를 근거로 우리 지역의 특징과 생활 모습을 연결하여 설명하기", observation: "지도에서 하천과 도로의 위치를 찾아 표시했고 사람이 많이 모이는 장소도 찾았다. 그러나 지역의 자연환경과 사람들의 생활 모습이 어떻게 연결되는지는 자료를 근거로 설명하지 못했다." },
   과학: { grade: "5학년", subject: "과학", unit: "식물의 구조와 기능", session: "3차시", goal: "관찰 결과를 근거로 식물의 구조와 기능 설명하기", observation: "잎과 줄기의 특징은 정확히 관찰해 기록했지만, 각 구조가 하는 일을 설명할 때 관찰 결과를 근거로 연결하지 못했다. 친구의 설명을 듣고 자신의 기록에서 근거가 될 부분에 밑줄을 그었다." },
 };
+const observationExamples = [
+  { label: "생각을 말로 설명함", category: "학생이 한 말", text: "답은 정확히 제시했지만 풀이한 까닭을 묻자 ‘그냥 이렇게 하면 돼요’라고 답했다. 교사가 사용한 방법을 순서대로 말해 보게 하자 첫 단계까지는 설명했다." },
+  { label: "근거를 들어 말함", category: "학생이 한 말", text: "자신의 생각을 먼저 말한 뒤 자료에서 근거가 되는 부분을 찾아 가리켰다. 다만 그 근거가 자신의 생각을 어떻게 뒷받침하는지는 설명하지 못했다." },
+  { label: "여러 방법을 시도함", category: "시도한 방법", text: "처음 사용한 방법으로 해결되지 않자 그림과 표로 다시 나타내 보았다. 두 방법의 결과를 비교했지만 어느 방법이 더 알맞은지는 선택하지 못했다." },
+  { label: "도움을 받아 이어감", category: "시도한 방법", text: "과제를 시작하지 못하고 있었으나 교사가 첫 순서를 질문으로 안내하자 필요한 자료를 스스로 찾아 다음 단계까지 수행했다." },
+  { label: "오류를 스스로 고침", category: "오류와 수정", text: "결과를 다시 확인하는 과정에서 앞의 답과 맞지 않는 부분을 발견했다. 계산 과정을 한 줄씩 비교해 오류가 난 곳에 표시하고 답을 스스로 수정했다." },
+  { label: "같은 오류가 반복됨", category: "오류와 수정", text: "교사의 안내를 듣고 한 문항의 오류는 고쳤지만 비슷한 다음 문항에서는 같은 오류가 다시 나타났다. 무엇을 확인해야 하는지 묻자 기준을 말로 설명하지 못했다." },
+  { label: "친구 설명 후 수정함", category: "친구와의 상호작용", text: "친구의 설명을 들으며 자신의 결과와 다른 부분에 표시했다. 질문을 한 뒤 빠진 내용을 찾아 자신의 기록을 고치고 수정한 까닭을 친구에게 설명했다." },
+  { label: "의견을 조율함", category: "친구와의 상호작용", text: "모둠에서 서로 다른 의견이 나오자 두 의견의 공통점과 차이점을 정리했다. 자료를 근거로 한 의견을 선택하자고 제안했지만 최종 기준을 합의하지는 못했다." },
+];
 function FeedbackForm({ initial, onSubmit, back }) {
   const [f, setF] = useState({ ...blankFeedback, ...initial });
   const [errors, setErrors] = useState({});
@@ -844,6 +854,11 @@ function FeedbackForm({ initial, onSubmit, back }) {
     setF(feedbackExamples[subject]);
     setErrors({});
     setExampleFields(new Set(["grade", "subject", "unit", "session", "goal", "observation"]));
+  };
+  const fillObservationExample = (text) => {
+    setF((current) => ({ ...current, observation: text }));
+    setErrors((current) => ({ ...current, observation: "" }));
+    setExampleFields((current) => new Set([...current, "observation"]));
   };
   const submit = (e) => {
     e.preventDefault();
@@ -939,11 +954,10 @@ function FeedbackForm({ initial, onSubmit, back }) {
           </Field>
         </div>
         <div className="observation-guide">
-          <b>이런 내용을 적으면 좋아요</b>
-          <span>학생이 한 말</span>
-          <span>시도한 방법</span>
-          <span>오류와 수정</span>
-          <span>친구와의 상호작용</span>
+          <div className="observation-guide-head"><b>교·수·평 설계용 사례 불러오기</b><span>실제 기록이 아직 없다면 비슷한 사례를 골라 Teacher Talk를 미리 설계해 보세요.</span></div>
+          <div className="observation-example-buttons">
+            {observationExamples.map((example) => <button key={example.label} type="button" onClick={() => fillObservationExample(example.text)} title={`${example.category}: ${example.text}`}>{example.label}<small>{example.category}</small></button>)}
+          </div>
         </div>
         <div className="form-actions">
           <button type="button" className="secondary" onClick={back}>
