@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import oneMarkerPhoto from "./assets/feedback-tools/one-marker-classroom.png";
 import fiveFingersPhoto from "./assets/feedback-tools/five-fingers-classroom.png";
+import heroIllustration from "./assets/hero-illustration.jpg";
 import "./App.css";
 
 const stages = [
@@ -169,21 +170,35 @@ function Icon({ type }) {
 }
 
 function Header({ goHome, openHelp }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <header className="header">
-      <button className="brand" onClick={goHome}>
-        Feed<span>ON</span>
-      </button>
-      <div className="quick-help" aria-label="빠른 도움">
-        <button onClick={() => openHelp("tools")} aria-label="피드백 도구 도움말">
-          <Icon type="check" />
-          <span>피드백 도구</span>
+      <div className="header-inner">
+        <button className="brand" onClick={() => { goHome(); setMenuOpen(false); }}>
+          Feed<span>ON</span>
+          <small className="brand-tagline">학생 주도성을 켜는 퍼스널 평가·피드백 도우미</small>
         </button>
-        <button onClick={() => openHelp("stages")} aria-label="피드백 5단계 도움말">
-          <span className="steps-icon">5</span>
-          <span>피드백 5단계</span>
+        <nav className="site-nav" aria-label="주요 메뉴">
+          <button className="nav-link" onClick={() => openHelp("tools")}>서비스 소개</button>
+          <button className="nav-link" onClick={() => openHelp("stages")}>피드백 5단계</button>
+          <button className="nav-link" onClick={() => openHelp("tools")}>활용 예시</button>
+        </nav>
+        <button
+          className="hamburger"
+          aria-label={menuOpen ? "메뉴 닫기" : "메뉴 열기"}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span /><span /><span />
         </button>
       </div>
+      {menuOpen && (
+        <nav className="mobile-nav" aria-label="모바일 메뉴">
+          <button className="mobile-nav-link" onClick={() => { openHelp("tools"); setMenuOpen(false); }}>서비스 소개</button>
+          <button className="mobile-nav-link" onClick={() => { openHelp("stages"); setMenuOpen(false); }}>피드백 5단계</button>
+          <button className="mobile-nav-link" onClick={() => { openHelp("tools"); setMenuOpen(false); }}>활용 예시</button>
+        </nav>
+      )}
     </header>
   );
 }
@@ -486,34 +501,81 @@ function HomeOriginal({ navigate, openHelp }) {
 
 function Home({ navigate, openHelp }) {
   return (
-    <main className="home compact-home">
-      <section className="hero-section">
-        <div className="hero-brand" aria-label="FeedON">
-          <span>Feed</span>
-          <strong>ON</strong>
-          <small>학생 주도성을 켜는 퍼스널 피드백 도우미</small>
+    <main className="home-v2">
+      {/* Background decorative blobs */}
+      <div className="bg-blob bg-blob-1" aria-hidden="true" />
+      <div className="bg-blob bg-blob-2" aria-hidden="true" />
+      <div className="bg-blob bg-blob-3" aria-hidden="true" />
+
+      {/* Hero */}
+      <section className="hero-v2" aria-labelledby="hero-heading">
+        <div className="hero-text">
+          <p className="hero-label">더 깊은 관찰, 더 성장하는 아이들</p>
+          <h1 className="hero-brand-name" id="hero-heading">FeedON</h1>
+          <p className="hero-title">
+            학생 주도성을 켜는<br />
+            퍼스널 평가·피드백 도우미
+          </p>
+          <p className="hero-desc">
+            학생의 실제 수행을 바탕으로,<br />
+            다음 성장을 돕는 피드백을 설계하세요.
+          </p>
+          <div className="hero-actions">
+            <button className="btn-primary" onClick={() => navigate("feedback")}>
+              <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              <span className="btn-content">
+                <span className="btn-title">피드백 만들기</span>
+                <span className="btn-sub">학년 · 과목 · 학습 목표 · 학생의 실제 수행 모습을 입력하세요.</span>
+              </span>
+              <svg className="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+            <button className="btn-secondary" onClick={() => openHelp("stages")}>
+              <span className="steps-icon" aria-hidden="true">5</span>
+              피드백 5단계 알아보기
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{width:15,height:15}}>
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
         </div>
-        <p className="eyebrow">FOR ELEMENTARY TEACHERS</p>
-        <h1>
-          관찰한 모습을 입력하고,
-          <br />
-          <em>바로 쓸 피드백</em>을 만나보세요.
-        </h1>
-        <p className="lead">학생의 말과 행동을 바탕으로 눈높이에 맞는 Teacher Talk을 제안합니다.</p>
-        <div className="track-grid single">
-          <button className="track feedback" onClick={() => navigate("feedback")}>
-            <span className="track-num">START</span>
-            <span>
-              <b>학생 피드백 만들기</b>
-              <small>학년 · 학습 목표 · 실제 수행 모습을 입력해 주세요</small>
-            </span>
-            <i>→</i>
-          </button>
+        <div className="hero-illust">
+          <img
+            src={heroIllustration}
+            alt="교사와 초등학생 3명이 노트북을 함께 보며 대화하는 교실 장면"
+            className="hero-illust-img"
+          />
         </div>
-        <button className="text-button" onClick={() => openHelp("stages")}>
-          <span className="steps-icon">5</span> 피드백 5단계 알아보기 <span>→</span>
-        </button>
       </section>
+
+      {/* Value props */}
+      <section className="values-section" aria-label="FeedON 핵심 가치">
+        <ul className="values-grid">
+          {[
+            { icon: "document", title: "학생 맞춤 피드백", desc: "학생의 실제 수행에 기반한 개별화된 피드백 제안" },
+            { icon: "people", title: "학생 주도성 지원", desc: "스스로 생각하고 성장하는 학습 경험 설계" },
+            { icon: "check", title: "교사의 부담은 줄이고", desc: "빠르고 쉽게, 바로 활용할 수 있는 피드백 문구와 전략" },
+            { icon: "speech", title: "더 나은 수업으로", desc: "관찰에서 평가, 피드백까지 연결되는 수업 디자인" },
+          ].map((v) => (
+            <li key={v.title} className="value-card">
+              <span className="value-icon"><Icon type={v.icon} /></span>
+              <strong className="value-title">{v.title}</strong>
+              <p className="value-desc">{v.desc}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Closing line */}
+      <p className="home-closing">FeedON과 함께, 오늘도 한 걸음 더</p>
     </main>
   );
 }
