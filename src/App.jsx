@@ -179,9 +179,8 @@ function Header({ goHome, openHelp }) {
           <small className="brand-tagline">학생 주도성을 켜는 퍼스널 평가·피드백 도우미</small>
         </button>
         <nav className="site-nav" aria-label="주요 메뉴">
-          <button className="nav-link" onClick={() => openHelp("tools")}>서비스 소개</button>
           <button className="nav-link" onClick={() => openHelp("stages")}>피드백 5단계</button>
-          <button className="nav-link" onClick={() => openHelp("tools")}>활용 예시</button>
+          <button className="nav-link" onClick={() => openHelp("tools")}>피드백 도구</button>
         </nav>
         <button
           className="hamburger"
@@ -194,9 +193,8 @@ function Header({ goHome, openHelp }) {
       </div>
       {menuOpen && (
         <nav className="mobile-nav" aria-label="모바일 메뉴">
-          <button className="mobile-nav-link" onClick={() => { openHelp("tools"); setMenuOpen(false); }}>서비스 소개</button>
           <button className="mobile-nav-link" onClick={() => { openHelp("stages"); setMenuOpen(false); }}>피드백 5단계</button>
-          <button className="mobile-nav-link" onClick={() => { openHelp("tools"); setMenuOpen(false); }}>활용 예시</button>
+          <button className="mobile-nav-link" onClick={() => { openHelp("tools"); setMenuOpen(false); }}>피드백 도구</button>
         </nav>
       )}
     </header>
@@ -511,7 +509,7 @@ function Home({ navigate, openHelp }) {
       <section className="hero-v2" aria-labelledby="hero-heading">
         <div className="hero-text">
           <p className="hero-label">더 깊은 관찰, 더 성장하는 아이들</p>
-          <h1 className="hero-brand-name" id="hero-heading">FeedON</h1>
+          <h1 className="hero-brand-name" id="hero-heading">Feed<span>ON</span></h1>
           <p className="hero-title">
             학생 주도성을 켜는<br />
             퍼스널 평가·피드백 도우미
