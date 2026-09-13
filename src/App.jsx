@@ -94,8 +94,9 @@ const feedbackChecks = [
 // 책의 공식 도구 분류가 아니라, 피드백 정보를 확인하고 전달하는 교실 활용 방법이다.
 const tools = [
   ["one", "원마커", "빨강·초록 양면 원마커로 학생이 도움 필요 여부를 조용히 알리는 도구", "개별 활동 중 도움이 필요한 학생을 방해 없이 확인할 때", "비공개 도움 요청과 즉각적 피드백"],
-  ["hand", "다섯손가락", "주먹부터 다섯 손가락까지 손 모양으로 자신의 이해 정도를 표현하는 자기점검 도구", "설명이나 활동 직후 학급 전체의 이해 정도를 빠르게 점검할 때", "이해도 확인과 자기 점검"],
-  ["ticket", "입·퇴장 티켓", "수업 전후에 짧게 이해 정도나 배움을 확인하는 기록 도구", "수업 시작 전 선개념이나 마무리 배움을 확인할 때", "진단과 회고"],
+  ["hand", "다섯손가락", "닫힌 주먹부터 다섯 손가락까지 손 모양으로 자신의 이해 정도를 표현하는 자기점검 도구", "설명이나 활동 직후 학급 전체의 이해 정도를 빠르게 점검할 때", "이해도 확인과 자기 점검"],
+  ["ticket", "입장티켓", "수업 시작 단계에서 학생들이 알고 있는 것 또는 알고 싶은 것을 확인하는 활동", "수업을 시작하며 선개념과 궁금한 점을 확인할 때", "수업 전 진단과 학습 방향 설정"],
+  ["ticket", "퇴장티켓", "수업을 마칠 때 학생이 배운 점이나 어려웠던 점에 대한 간단한 피드백을 작성하여 교사에게 제출하는 활동", "수업을 마치며 이해 정도와 다음 지원이 필요한 부분을 확인할 때", "배움 회고와 후속 수업 계획"],
   ["check", "체크리스트", "수행 요소의 충족 여부를 빠르게 확인하는 도구", "여러 수행 기준을 빠짐없이 확인할 때", "과정 점검"],
   ["document", "자기점검표", "학생이 자신의 수행을 스스로 돌아보게 하는 도구", "과제 제출 전 기준에 따라 스스로 검토할 때", "자기 조절"],
   ["compare", "예시 비교", "좋은 예와 수정이 필요한 예를 비교하며 기준을 이해하도록 돕는 도구", "평가 기준을 구체적인 사례로 이해시킬 때", "기준 이해"],
@@ -103,6 +104,7 @@ const tools = [
   ["people", "동료 설명", "친구에게 설명하며 이해를 정리하고 확인하는 도구", "말로 설명하며 개념을 정교화할 때", "상호 피드백"],
   ["oral", "즉시 구두 피드백", "활동 중 바로 짧게 말로 제공하는 피드백", "즉시 수정할 수 있는 수행 장면에서", "즉각적 교정"],
   ["comment", "디지털 코멘트", "디지털 플랫폼에서 개별 의견이나 조언을 남기는 피드백 방식", "결과물에 개별 기록을 남기고 다시 확인할 때", "기록형 피드백"],
+  ["postit", "포스트잇 동료평가", "포스트잇에 친구의 강점과 도움이 될 조언을 짧게 적어 주고받는 동료평가 방법", "작품이나 수행 결과를 함께 살펴보고 구체적인 의견을 나눌 때", "동료 피드백과 수행 개선"],
 ];
 
 function Icon({ type }) {
@@ -161,6 +163,7 @@ function Icon({ type }) {
         <path d="m8 21 4-3h5M8 9h8m-8 4h5" />
       </>
     ),
+    postit: <><path d="M5 4h14v11l-5 5H5V4Z"/><path d="M14 20v-5h5M8 9h8m-8 4h5"/></>,
   };
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...common}>
@@ -202,7 +205,8 @@ function Header({ goHome, openHelp }) {
 }
 
 function FeedbackToolsGuide() {
-  return (
+  const [selectedTool, setSelectedTool] = useState(null);
+ return (
     <>
       <p className="modal-intro">
         먼저 학생에게 필요한 <b>피드백의 초점</b>을 정하고, 그다음 수업 맥락에 맞는 확인·전달 방법을 고르세요.
@@ -224,10 +228,11 @@ function FeedbackToolsGuide() {
         <h3>교실에서 활용하는 확인·전달 방법</h3>
         <p>아래 방법은 피드백 그 자체가 아니라, 학생의 수행 정보를 확인하고 피드백을 주고받는 방법입니다.</p>
       </div>
-      <div className="tool-grid">
-        {tools.map((t) => (
-          <ToolCard key={t[1]} tool={t} detailed />
-        ))}
+      <div className="tool-accordion">
+        {tools.map((t, i) => {
+          const isOpen = selectedTool === i;
+          return <section key={t[1]} className={isOpen ? "open" : ""}><button onClick={() => setSelectedTool(isOpen ? null : i)} aria-expanded={isOpen}><span className="tool-icon"><Icon type={t[0]} /></span><b>{t[1]}</b><i>{isOpen ? "−" : "+"}</i></button>{isOpen && <div className="tool-accordion-detail"><ToolCard tool={t} detailed /></div>}</section>;
+        })}
       </div>
       <section className="quality-check">
         <div>
@@ -390,24 +395,20 @@ function ToolCard({ tool: t, detailed = false }) {
               <h4>손가락 신호</h4>
               <ol className="finger-scale">
                 <li>
-                  <b>주먹</b>
-                  <span>도움이 필요해요</span>
+                  <b>0 · 닫힌 주먹</b>
+                  <span>잘 모르겠어요</span>
                 </li>
                 <li>
-                  <b>1</b>
-                  <span>약간 이해했어요</span>
+                  <b>1 · 한 손가락</b>
+                  <span>조금 더 설명이 필요해요</span>
                 </li>
                 <li>
-                  <b>2</b>
+                  <b>4 · 네 손가락</b>
                   <span>이해했어요</span>
                 </li>
                 <li>
-                  <b>3</b>
-                  <span>잘 알겠어요</span>
-                </li>
-                <li>
-                  <b>5</b>
-                  <span>친구에게 설명도 할 수 있어요</span>
+                  <b>5 · 다섯 손가락</b>
+                  <span>다른 친구를 가르칠 수 있어요</span>
                 </li>
               </ol>
             </div>
@@ -1087,7 +1088,8 @@ function FeedbackResult({ data, edit }) {
   const recommendedIndex = coachReady ? 3 : 2;
   const activeStageIndex = selectedStage ?? recommendedIndex;
   const activeStage = personalizedStages[activeStageIndex];
-  const recommendedTools = coachReady ? [tools[4], tools[5], tools[6]] : [tools[3], tools[5], tools[8]];
+  const byName = (name) => tools.find((tool) => tool[1] === name);
+  const recommendedTools = coachReady ? [byName("자기점검표"), byName("예시 비교"), byName("다시 말하기")] : [byName("체크리스트"), byName("예시 비교"), byName("즉시 구두 피드백")];
   const context = [data.grade, data.subject, data.unit, data.session].filter(Boolean).join(" · ") || "수업 맥락 미입력";
   return (
     <main className="page result-page">
