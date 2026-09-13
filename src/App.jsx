@@ -11,6 +11,21 @@ const stages = [
   { name: 'Designer', ko: '평가기준 공동 설계', desc: '학습 목표의 성취 여부를 함께 평가하고 학생이 평가기준 개발에 참여하는 단계', role: '학생과 학습 목표 및 성공 기준을 공동으로 만들고 평가에 참여시킵니다.', talk: '우리 실험 설명이 과학적으로 타당한지 확인하려면 어떤 평가기준이 필요할까?', focus: '어떤 평가기준이 필요할까', center: 'together', when: '학생이 목표와 성공 기준을 이해하고 평가 과정에 참여할 수 있을 때', caution: '교사가 미리 정한 기준을 형식적으로 확인받는 활동이 되지 않게 합니다.', examples: ['설득하는 글을 잘 썼다고 판단할 기준을 함께 정해 볼까?', '좋은 풀이 설명이 갖추어야 할 조건으로 무엇을 넣으면 좋을까?', '지역 조사 결과를 평가할 체크리스트를 함께 만들어 보자.'] },
 ]
 
+const feedbackFocus = [
+  { name: '과정에 대한 피드백', tag: '어떻게 배우고 있는가', desc: '학생이 사용한 전략과 수행 과정, 막힌 지점을 살펴 목표와 현재 수행의 차이를 스스로 좁히도록 돕습니다.', use: '오류의 원인을 찾거나 다음 전략을 계획해야 할 때' },
+  { name: '결과에 대한 피드백', tag: '무엇을 해냈는가', desc: '과제의 구체적인 내용과 성취 결과를 기준에 비추어 빠르고 분명하게 확인해 줍니다.', use: '정답·완성 여부나 현재 성취를 즉시 확인해야 할 때' },
+]
+
+const feedbackChecks = [
+  ['기준', '학습 목표와 분명한 평가 기준에 근거했나요?'],
+  ['시기', '학생이 다시 시도할 수 있을 때 제공하나요?'],
+  ['초점', '핵심 내용에 집중하고 분량은 알맞나요?'],
+  ['구체성', '다음 행동은 보이되 답을 대신해 주지는 않나요?'],
+  ['주도성', '학생이 선택하고 수정할 여지를 남겼나요?'],
+  ['근거', '실제 수행과 학생의 생각을 반영했나요?'],
+]
+
+// 책의 공식 도구 분류가 아니라, 피드백 정보를 확인하고 전달하는 교실 활용 방법이다.
 const tools = [
   ['one', '원마커', '빨강·초록 양면 원마커로 학생이 도움 필요 여부를 조용히 알리는 도구', '개별 활동 중 도움이 필요한 학생을 방해 없이 확인할 때', '비공개 도움 요청과 즉각적 피드백'],
   ['hand', '다섯손가락', '주먹부터 다섯 손가락까지 손 모양으로 자신의 이해 정도를 표현하는 자기점검 도구', '설명이나 활동 직후 학급 전체의 이해 정도를 빠르게 점검할 때', '이해도 확인과 자기 점검'],
@@ -45,9 +60,20 @@ function Header({ goHome, openHelp }) {
   return <header className="header"><button className="brand" onClick={goHome}>Feed<span>ON</span></button><div className="quick-help" aria-label="빠른 도움"><button onClick={() => openHelp('tools')} aria-label="피드백 도구 도움말"><Icon type="check"/><span>피드백 도구</span></button><button onClick={() => openHelp('stages')} aria-label="피드백 5단계 도움말"><span className="steps-icon">5</span><span>피드백 5단계</span></button></div></header>
 }
 
+function FeedbackToolsGuide() {
+  return <>
+    <p className="modal-intro">먼저 학생에게 필요한 <b>피드백의 초점</b>을 정하고, 그다음 수업 맥락에 맞는 확인·전달 방법을 고르세요.</p>
+    <div className="focus-grid">{feedbackFocus.map((item, i) => <article key={item.name} className={`focus-card focus-${i + 1}`}><span>{item.tag}</span><h3>{item.name}</h3><p>{item.desc}</p><small><b>활용 시점</b> {item.use}</small></article>)}</div>
+    <div className="guide-heading"><span>CLASSROOM METHODS</span><h3>교실에서 활용하는 확인·전달 방법</h3><p>아래 방법은 피드백 그 자체가 아니라, 학생의 수행 정보를 확인하고 피드백을 주고받는 방법입니다.</p></div>
+    <div className="tool-grid">{tools.map(t => <ToolCard key={t[1]} tool={t} detailed />)}</div>
+    <section className="quality-check"><div><span>EFFECTIVE FEEDBACK</span><h3>말하기 전, 효과적인 피드백 점검</h3></div><ul>{feedbackChecks.map(([key, value]) => <li key={key}><b>{key}</b><span>{value}</span></li>)}</ul><p>강점은 구체적으로 확인하고, 개선점은 학생이 실행할 수 있는 한 가지 다음 행동으로 좁혀 보세요.</p></section>
+    <p className="source-note">구성 근거: 김선·반재천, 『학생의 배움과 성장을 지원하는 과정 중심 피드백』의 과정·결과 피드백 구분 및 효과적인 피드백 원칙. 교실 활용 방법은 FeedON에서 수업 적용을 위해 별도로 정리했습니다.</p>
+  </>
+}
+
 function Modal({ type, close }) {
   useEffect(() => { const f = e => e.key === 'Escape' && close(); document.addEventListener('keydown', f); return () => document.removeEventListener('keydown', f) }, [close])
-  return <div className="overlay" onMouseDown={e => e.target === e.currentTarget && close()}><section className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div className="modal-head"><div><p className="eyebrow">QUICK REFERENCE</p><h2 id="modal-title">FeedON 피드백 {type === 'tools' ? '도구' : '5단계'}</h2></div><button className="close" onClick={close} aria-label="닫기">×</button></div>{type === 'tools' ? <div className="tool-grid">{tools.map(t => <ToolCard key={t[1]} tool={t} detailed />)}</div> : <><p className="modal-intro">학생의 현재 수행을 확인하는 것에서 시작해 스스로 점검하고 새로운 상황으로 확장하도록 피드백의 깊이를 조절합니다.</p><div className="stage-guide">{stages.map((s, i) => <article key={s.name}><span className="stage-no">0{i + 1}</span><div><div className="stage-title"><h3>{s.name}</h3><span>{s.ko}</span><InfoTip text={s.desc}/></div><CenterBadge center={s.center}/><p><b>교사의 역할</b> {s.role}</p><blockquote>“<HighlightTalk stage={s}/>”</blockquote></div></article>)}</div><div className="notice"><b>단계는 학생의 수준표가 아닙니다.</b><p>같은 학생에게도 상황에 따라 다른 단계의 피드백을 사용할 수 있습니다. 단계가 높을수록 항상 더 좋은 것이 아니라, 학생에게 필요한 지원 정도에 따라 적절한 단계를 선택합니다.</p></div></>}</section></div>
+  return <div className="overlay" onMouseDown={e => e.target === e.currentTarget && close()}><section className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div className="modal-head"><div><p className="eyebrow">QUICK REFERENCE</p><h2 id="modal-title">FeedON 피드백 {type === 'tools' ? '도구' : '5단계'}</h2></div><button className="close" onClick={close} aria-label="닫기">×</button></div>{type === 'tools' ? <FeedbackToolsGuide /> : <><p className="modal-intro">학생의 현재 수행을 확인하는 것에서 시작해 스스로 점검하고 새로운 상황으로 확장하도록 피드백의 깊이를 조절합니다.</p><div className="stage-guide">{stages.map((s, i) => <article key={s.name}><span className="stage-no">0{i + 1}</span><div><div className="stage-title"><h3>{s.name}</h3><span>{s.ko}</span><InfoTip text={s.desc}/></div><CenterBadge center={s.center}/><p><b>교사의 역할</b> {s.role}</p><blockquote>“<HighlightTalk stage={s}/>”</blockquote></div></article>)}</div><div className="notice"><b>단계는 학생의 수준표가 아닙니다.</b><p>같은 학생에게도 상황에 따라 다른 단계의 피드백을 사용할 수 있습니다. 단계가 높을수록 항상 더 좋은 것이 아니라, 학생에게 필요한 지원 정도에 따라 적절한 단계를 선택합니다.</p></div></>}</section></div>
 }
 
 function InfoTip({ text }) { const [on, setOn] = useState(false); return <span className="info-wrap"><button className="info" onClick={() => setOn(!on)} aria-label={text} aria-expanded={on}>i</button><span className={`tooltip ${on ? 'show' : ''}`} role="tooltip">{text}</span></span> }
