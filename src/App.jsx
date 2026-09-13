@@ -1,189 +1,1166 @@
-import { useEffect, useState } from 'react'
-import oneMarkerPhoto from './assets/feedback-tools/one-marker-classroom.png'
-import fiveFingersPhoto from './assets/feedback-tools/five-fingers-classroom.png'
-import './App.css'
+import { useEffect, useState } from "react";
+import oneMarkerPhoto from "./assets/feedback-tools/one-marker-classroom.png";
+import fiveFingersPhoto from "./assets/feedback-tools/five-fingers-classroom.png";
+import "./App.css";
 
 const stages = [
-  { name: 'Starter', ko: '평가적 피드백', desc: '학생의 성취나 산출물에 대해 인정·불인정 또는 옳고 그름을 알려주는 단계', role: '현재 수행에 대한 판단을 짧고 분명하게 전달합니다.', talk: '관찰 결과를 예상과 실제로 나누어 기록한 점이 정확해.', focus: '예상과 실제로 나누어 기록', center: 'teacher', when: '수행의 옳고 그름이나 완료 여부를 즉시 알려야 할 때', caution: '막연한 칭찬이나 학생의 특성을 평가하는 말로 끝나지 않게 합니다.', examples: ['두 자료의 공통점을 정확히 표시했어.', '풀이의 마지막 계산에서 오류가 있어.', '문단의 중심 내용을 빠짐없이 찾았구나.'] },
-  { name: 'Planner', ko: '성취 확인', desc: '학생이 향상한 점, 성취한 내용, 충족한 기준을 구체적으로 알려주는 단계', role: '과거보다 나아진 점과 이미 충족한 평가기준을 증거에 근거해 확인합니다.', talk: '변인을 한 가지로 정하고 관찰 결과까지 기록한 두 가지 기준을 모두 충족했어.', focus: '두 가지 기준을 모두 충족', center: 'teacher', when: '학생이 자신의 진전과 현재 성취를 분명히 인식해야 할 때', caution: '다음 행동을 일방적으로 지시하기보다 성취 근거를 구체적으로 말합니다.', examples: ['주장에 알맞은 근거를 지난번보다 한 가지 더 찾았어.', '풀이 과정과 답을 모두 확인하는 기준을 충족했어.', '지역의 특징과 생활 모습을 연결해 설명했구나.'] },
-  { name: 'Guide', ko: '차이와 개선점 안내', desc: '학습 목표와 현재 상태의 차이를 밝히고 개선할 측면과 기대하는 점을 제시하는 단계', role: '현재 수행과 목표 사이의 차이를 근거로 구체적인 개선 방향을 안내합니다.', talk: '예상과 결과는 잘 구분했어. 설명을 완성하려면 두 실험에서 달랐던 조건을 근거로 덧붙여 보자.', focus: '달랐던 조건을 근거로', center: 'teacher', when: '학생에게 다음 수행의 방향과 기대 수준을 명확히 안내할 때', caution: '학생이 생각할 여지를 없애는 완성 답안을 대신 주지 않습니다.', examples: ['중심 생각은 찾았어. 이를 뒷받침하는 문장을 근거로 덧붙여 보자.', '계산은 맞았지만 사용한 방법을 설명하는 과정이 더 필요해.', '지도에서 찾은 특징이 주민 생활과 어떤 관련이 있는지 보충해 보자.'] },
-  { name: 'Coach', ko: '해결 방법 이끌어내기', desc: '더 나은 수행에 도달하는 방법과 도전을 학생과 함께 찾는 단계', role: '이전과 현재를 비교하고 질문을 통해 해결 방안을 학생에게서 이끌어냅니다.', talk: '예상과 결과가 달랐던 까닭을 설명하려면 어떤 조건부터 비교해 보면 좋을까?', focus: '어떤 조건부터 비교', center: 'together', when: '학생이 대화를 통해 개선 방법을 스스로 찾을 수 있을 때', caution: '정답으로 유도하는 질문보다 학생의 전략과 근거를 묻습니다.', examples: ['네 주장을 더 설득력 있게 만들 방법에는 무엇이 있을까?', '두 풀이를 비교하면 오류를 확인할 기준을 어떻게 세울 수 있을까?', '친구 의견을 반영한다면 어느 부분부터 바꾸고 싶니?'] },
-  { name: 'Designer', ko: '평가기준 공동 설계', desc: '학습 목표의 성취 여부를 함께 평가하고 학생이 평가기준 개발에 참여하는 단계', role: '학생과 학습 목표 및 성공 기준을 공동으로 만들고 평가에 참여시킵니다.', talk: '우리 실험 설명이 과학적으로 타당한지 확인하려면 어떤 평가기준이 필요할까?', focus: '어떤 평가기준이 필요할까', center: 'together', when: '학생이 목표와 성공 기준을 이해하고 평가 과정에 참여할 수 있을 때', caution: '교사가 미리 정한 기준을 형식적으로 확인받는 활동이 되지 않게 합니다.', examples: ['설득하는 글을 잘 썼다고 판단할 기준을 함께 정해 볼까?', '좋은 풀이 설명이 갖추어야 할 조건으로 무엇을 넣으면 좋을까?', '지역 조사 결과를 평가할 체크리스트를 함께 만들어 보자.'] },
-]
+  {
+    name: "Starter",
+    ko: "평가적 피드백",
+    desc: "학생의 성취나 산출물에 대해 인정·불인정 또는 옳고 그름을 알려주는 단계",
+    role: "현재 수행에 대한 판단을 짧고 분명하게 전달합니다.",
+    talk: "관찰 결과를 예상과 실제로 나누어 기록한 점이 정확해.",
+    focus: "예상과 실제로 나누어 기록",
+    center: "teacher",
+    when: "수행의 옳고 그름이나 완료 여부를 즉시 알려야 할 때",
+    caution: "막연한 칭찬이나 학생의 특성을 평가하는 말로 끝나지 않게 합니다.",
+    examples: ["두 자료의 공통점을 정확히 표시했어.", "풀이의 마지막 계산에서 오류가 있어.", "문단의 중심 내용을 빠짐없이 찾았구나."],
+  },
+  {
+    name: "Planner",
+    ko: "성취 확인",
+    desc: "학생이 향상한 점, 성취한 내용, 충족한 기준을 구체적으로 알려주는 단계",
+    role: "과거보다 나아진 점과 이미 충족한 평가기준을 증거에 근거해 확인합니다.",
+    talk: "변인을 한 가지로 정하고 관찰 결과까지 기록한 두 가지 기준을 모두 충족했어.",
+    focus: "두 가지 기준을 모두 충족",
+    center: "teacher",
+    when: "학생이 자신의 진전과 현재 성취를 분명히 인식해야 할 때",
+    caution: "다음 행동을 일방적으로 지시하기보다 성취 근거를 구체적으로 말합니다.",
+    examples: ["주장에 알맞은 근거를 지난번보다 한 가지 더 찾았어.", "풀이 과정과 답을 모두 확인하는 기준을 충족했어.", "지역의 특징과 생활 모습을 연결해 설명했구나."],
+  },
+  {
+    name: "Guide",
+    ko: "차이와 개선점 안내",
+    desc: "학습 목표와 현재 상태의 차이를 밝히고 개선할 측면과 기대하는 점을 제시하는 단계",
+    role: "현재 수행과 목표 사이의 차이를 근거로 구체적인 개선 방향을 안내합니다.",
+    talk: "예상과 결과는 잘 구분했어. 설명을 완성하려면 두 실험에서 달랐던 조건을 근거로 덧붙여 보자.",
+    focus: "달랐던 조건을 근거로",
+    center: "teacher",
+    when: "학생에게 다음 수행의 방향과 기대 수준을 명확히 안내할 때",
+    caution: "학생이 생각할 여지를 없애는 완성 답안을 대신 주지 않습니다.",
+    examples: ["중심 생각은 찾았어. 이를 뒷받침하는 문장을 근거로 덧붙여 보자.", "계산은 맞았지만 사용한 방법을 설명하는 과정이 더 필요해.", "지도에서 찾은 특징이 주민 생활과 어떤 관련이 있는지 보충해 보자."],
+  },
+  {
+    name: "Coach",
+    ko: "해결 방법 이끌어내기",
+    desc: "더 나은 수행에 도달하는 방법과 도전을 학생과 함께 찾는 단계",
+    role: "이전과 현재를 비교하고 질문을 통해 해결 방안을 학생에게서 이끌어냅니다.",
+    talk: "예상과 결과가 달랐던 까닭을 설명하려면 어떤 조건부터 비교해 보면 좋을까?",
+    focus: "어떤 조건부터 비교",
+    center: "together",
+    when: "학생이 대화를 통해 개선 방법을 스스로 찾을 수 있을 때",
+    caution: "정답으로 유도하는 질문보다 학생의 전략과 근거를 묻습니다.",
+    examples: ["네 주장을 더 설득력 있게 만들 방법에는 무엇이 있을까?", "두 풀이를 비교하면 오류를 확인할 기준을 어떻게 세울 수 있을까?", "친구 의견을 반영한다면 어느 부분부터 바꾸고 싶니?"],
+  },
+  {
+    name: "Designer",
+    ko: "평가기준 공동 설계",
+    desc: "학습 목표의 성취 여부를 함께 평가하고 학생이 평가기준 개발에 참여하는 단계",
+    role: "학생과 학습 목표 및 성공 기준을 공동으로 만들고 평가에 참여시킵니다.",
+    talk: "우리 실험 설명이 과학적으로 타당한지 확인하려면 어떤 평가기준이 필요할까?",
+    focus: "어떤 평가기준이 필요할까",
+    center: "together",
+    when: "학생이 목표와 성공 기준을 이해하고 평가 과정에 참여할 수 있을 때",
+    caution: "교사가 미리 정한 기준을 형식적으로 확인받는 활동이 되지 않게 합니다.",
+    examples: ["설득하는 글을 잘 썼다고 판단할 기준을 함께 정해 볼까?", "좋은 풀이 설명이 갖추어야 할 조건으로 무엇을 넣으면 좋을까?", "지역 조사 결과를 평가할 체크리스트를 함께 만들어 보자."],
+  },
+];
 
 const feedbackFocus = [
-  { name: '과정에 대한 피드백', tag: '어떻게 배우고 있는가', desc: '학생이 사용한 전략과 수행 과정, 막힌 지점을 살펴 목표와 현재 수행의 차이를 스스로 좁히도록 돕습니다.', use: '오류의 원인을 찾거나 다음 전략을 계획해야 할 때' },
-  { name: '결과에 대한 피드백', tag: '무엇을 해냈는가', desc: '과제의 구체적인 내용과 성취 결과를 기준에 비추어 빠르고 분명하게 확인해 줍니다.', use: '정답·완성 여부나 현재 성취를 즉시 확인해야 할 때' },
-]
+  {
+    name: "과정에 대한 피드백",
+    tag: "어떻게 배우고 있는가",
+    desc: "학생이 사용한 전략과 수행 과정, 막힌 지점을 살펴 목표와 현재 수행의 차이를 스스로 좁히도록 돕습니다.",
+    use: "오류의 원인을 찾거나 다음 전략을 계획해야 할 때",
+  },
+  {
+    name: "결과에 대한 피드백",
+    tag: "무엇을 해냈는가",
+    desc: "과제의 구체적인 내용과 성취 결과를 기준에 비추어 빠르고 분명하게 확인해 줍니다.",
+    use: "정답·완성 여부나 현재 성취를 즉시 확인해야 할 때",
+  },
+];
 
 const feedbackChecks = [
-  ['기준', '학습 목표와 분명한 평가 기준에 근거했나요?'],
-  ['시기', '학생이 다시 시도할 수 있을 때 제공하나요?'],
-  ['초점', '핵심 내용에 집중하고 분량은 알맞나요?'],
-  ['구체성', '다음 행동은 보이되 답을 대신해 주지는 않나요?'],
-  ['주도성', '학생이 선택하고 수정할 여지를 남겼나요?'],
-  ['근거', '실제 수행과 학생의 생각을 반영했나요?'],
-]
+  ["기준", "학습 목표와 분명한 평가 기준에 근거했나요?"],
+  ["시기", "학생이 다시 시도할 수 있을 때 제공하나요?"],
+  ["초점", "핵심 내용에 집중하고 분량은 알맞나요?"],
+  ["구체성", "다음 행동은 보이되 답을 대신해 주지는 않나요?"],
+  ["주도성", "학생이 선택하고 수정할 여지를 남겼나요?"],
+  ["근거", "실제 수행과 학생의 생각을 반영했나요?"],
+];
 
 // 책의 공식 도구 분류가 아니라, 피드백 정보를 확인하고 전달하는 교실 활용 방법이다.
 const tools = [
-  ['one', '원마커', '빨강·초록 양면 원마커로 학생이 도움 필요 여부를 조용히 알리는 도구', '개별 활동 중 도움이 필요한 학생을 방해 없이 확인할 때', '비공개 도움 요청과 즉각적 피드백'],
-  ['hand', '다섯손가락', '주먹부터 다섯 손가락까지 손 모양으로 자신의 이해 정도를 표현하는 자기점검 도구', '설명이나 활동 직후 학급 전체의 이해 정도를 빠르게 점검할 때', '이해도 확인과 자기 점검'],
-  ['ticket', '입·퇴장 티켓', '수업 전후에 짧게 이해 정도나 배움을 확인하는 기록 도구', '수업 시작 전 선개념이나 마무리 배움을 확인할 때', '진단과 회고'],
-  ['check', '체크리스트', '수행 요소의 충족 여부를 빠르게 확인하는 도구', '여러 수행 기준을 빠짐없이 확인할 때', '과정 점검'],
-  ['document', '자기점검표', '학생이 자신의 수행을 스스로 돌아보게 하는 도구', '과제 제출 전 기준에 따라 스스로 검토할 때', '자기 조절'],
-  ['compare', '예시 비교', '좋은 예와 수정이 필요한 예를 비교하며 기준을 이해하도록 돕는 도구', '평가 기준을 구체적인 사례로 이해시킬 때', '기준 이해'],
-  ['speech', '다시 말하기', '학생이 자신의 생각이나 답을 다시 표현하며 점검하게 하는 도구', '생각은 있으나 표현이 불명확할 때', '재수행'],
-  ['people', '동료 설명', '친구에게 설명하며 이해를 정리하고 확인하는 도구', '말로 설명하며 개념을 정교화할 때', '상호 피드백'],
-  ['oral', '즉시 구두 피드백', '활동 중 바로 짧게 말로 제공하는 피드백', '즉시 수정할 수 있는 수행 장면에서', '즉각적 교정'],
-  ['comment', '디지털 코멘트', '디지털 플랫폼에서 개별 의견이나 조언을 남기는 피드백 방식', '결과물에 개별 기록을 남기고 다시 확인할 때', '기록형 피드백'],
-]
+  ["one", "원마커", "빨강·초록 양면 원마커로 학생이 도움 필요 여부를 조용히 알리는 도구", "개별 활동 중 도움이 필요한 학생을 방해 없이 확인할 때", "비공개 도움 요청과 즉각적 피드백"],
+  ["hand", "다섯손가락", "주먹부터 다섯 손가락까지 손 모양으로 자신의 이해 정도를 표현하는 자기점검 도구", "설명이나 활동 직후 학급 전체의 이해 정도를 빠르게 점검할 때", "이해도 확인과 자기 점검"],
+  ["ticket", "입·퇴장 티켓", "수업 전후에 짧게 이해 정도나 배움을 확인하는 기록 도구", "수업 시작 전 선개념이나 마무리 배움을 확인할 때", "진단과 회고"],
+  ["check", "체크리스트", "수행 요소의 충족 여부를 빠르게 확인하는 도구", "여러 수행 기준을 빠짐없이 확인할 때", "과정 점검"],
+  ["document", "자기점검표", "학생이 자신의 수행을 스스로 돌아보게 하는 도구", "과제 제출 전 기준에 따라 스스로 검토할 때", "자기 조절"],
+  ["compare", "예시 비교", "좋은 예와 수정이 필요한 예를 비교하며 기준을 이해하도록 돕는 도구", "평가 기준을 구체적인 사례로 이해시킬 때", "기준 이해"],
+  ["speech", "다시 말하기", "학생이 자신의 생각이나 답을 다시 표현하며 점검하게 하는 도구", "생각은 있으나 표현이 불명확할 때", "재수행"],
+  ["people", "동료 설명", "친구에게 설명하며 이해를 정리하고 확인하는 도구", "말로 설명하며 개념을 정교화할 때", "상호 피드백"],
+  ["oral", "즉시 구두 피드백", "활동 중 바로 짧게 말로 제공하는 피드백", "즉시 수정할 수 있는 수행 장면에서", "즉각적 교정"],
+  ["comment", "디지털 코멘트", "디지털 플랫폼에서 개별 의견이나 조언을 남기는 피드백 방식", "결과물에 개별 기록을 남기고 다시 확인할 때", "기록형 피드백"],
+];
 
 function Icon({ type }) {
-  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' }
+  const common = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+  };
   const shapes = {
-    one: <><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/></>,
-    hand: <path d="M7 12V7a1.5 1.5 0 0 1 3 0v3-5a1.5 1.5 0 0 1 3 0v5-4a1.5 1.5 0 0 1 3 0v5-2a1.5 1.5 0 0 1 3 0v5c0 5-3 7-7 7-3 0-5-2-7-5l-2-3a1.5 1.5 0 0 1 2-2l2 1Z"/>,
-    ticket: <path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4V7Zm8 0v10"/>,
-    check: <><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m8 12 3 3 6-7"/></>,
-    document: <><path d="M6 3h9l3 3v15H6V3Z"/><path d="M14 3v4h4m-8 7 2 2 4-5"/></>,
-    compare: <><rect x="3" y="6" width="8" height="12" rx="1"/><rect x="13" y="6" width="8" height="12" rx="1"/><path d="M6 10h2m8 0h2"/></>,
-    speech: <path d="M4 5h16v11H9l-4 3v-3H4V5Zm4 5h8"/>,
-    people: <><circle cx="8" cy="8" r="2"/><circle cx="16" cy="8" r="2"/><path d="M3 18c0-3 2-5 5-5s5 2 5 5m-1-3c1-2 5-3 8 0"/></>,
-    oral: <><circle cx="8" cy="10" r="3"/><path d="M3 20c0-4 2-6 5-6s5 2 5 6m1-14h7v8h-3l-2 2v-2h-2V6Z"/></>,
-    comment: <><rect x="4" y="4" width="16" height="14" rx="2"/><path d="m8 21 4-3h5M8 9h8m-8 4h5"/></>,
-  }
-  return <svg viewBox="0 0 24 24" aria-hidden="true" {...common}>{shapes[type]}</svg>
+    one: (
+      <>
+        <circle cx="12" cy="12" r="7" />
+        <circle cx="12" cy="12" r="2" />
+      </>
+    ),
+    hand: <path d="M7 12V7a1.5 1.5 0 0 1 3 0v3-5a1.5 1.5 0 0 1 3 0v5-4a1.5 1.5 0 0 1 3 0v5-2a1.5 1.5 0 0 1 3 0v5c0 5-3 7-7 7-3 0-5-2-7-5l-2-3a1.5 1.5 0 0 1 2-2l2 1Z" />,
+    ticket: <path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4V7Zm8 0v10" />,
+    check: (
+      <>
+        <rect x="4" y="4" width="16" height="16" rx="2" />
+        <path d="m8 12 3 3 6-7" />
+      </>
+    ),
+    document: (
+      <>
+        <path d="M6 3h9l3 3v15H6V3Z" />
+        <path d="M14 3v4h4m-8 7 2 2 4-5" />
+      </>
+    ),
+    compare: (
+      <>
+        <rect x="3" y="6" width="8" height="12" rx="1" />
+        <rect x="13" y="6" width="8" height="12" rx="1" />
+        <path d="M6 10h2m8 0h2" />
+      </>
+    ),
+    speech: <path d="M4 5h16v11H9l-4 3v-3H4V5Zm4 5h8" />,
+    people: (
+      <>
+        <circle cx="8" cy="8" r="2" />
+        <circle cx="16" cy="8" r="2" />
+        <path d="M3 18c0-3 2-5 5-5s5 2 5 5m-1-3c1-2 5-3 8 0" />
+      </>
+    ),
+    oral: (
+      <>
+        <circle cx="8" cy="10" r="3" />
+        <path d="M3 20c0-4 2-6 5-6s5 2 5 6m1-14h7v8h-3l-2 2v-2h-2V6Z" />
+      </>
+    ),
+    comment: (
+      <>
+        <rect x="4" y="4" width="16" height="14" rx="2" />
+        <path d="m8 21 4-3h5M8 9h8m-8 4h5" />
+      </>
+    ),
+  };
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...common}>
+      {shapes[type]}
+    </svg>
+  );
 }
 
 function Header({ goHome, openHelp }) {
-  return <header className="header"><button className="brand" onClick={goHome}>Feed<span>ON</span></button><div className="quick-help" aria-label="빠른 도움"><button onClick={() => openHelp('tools')} aria-label="피드백 도구 도움말"><Icon type="check"/><span>피드백 도구</span></button><button onClick={() => openHelp('stages')} aria-label="피드백 5단계 도움말"><span className="steps-icon">5</span><span>피드백 5단계</span></button></div></header>
+  return (
+    <header className="header">
+      <button className="brand" onClick={goHome}>
+        Feed<span>ON</span>
+      </button>
+      <div className="quick-help" aria-label="빠른 도움">
+        <button onClick={() => openHelp("tools")} aria-label="피드백 도구 도움말">
+          <Icon type="check" />
+          <span>피드백 도구</span>
+        </button>
+        <button onClick={() => openHelp("stages")} aria-label="피드백 5단계 도움말">
+          <span className="steps-icon">5</span>
+          <span>피드백 5단계</span>
+        </button>
+      </div>
+    </header>
+  );
 }
 
 function FeedbackToolsGuide() {
-  return <>
-    <p className="modal-intro">먼저 학생에게 필요한 <b>피드백의 초점</b>을 정하고, 그다음 수업 맥락에 맞는 확인·전달 방법을 고르세요.</p>
-    <div className="focus-grid">{feedbackFocus.map((item, i) => <article key={item.name} className={`focus-card focus-${i + 1}`}><span>{item.tag}</span><h3>{item.name}</h3><p>{item.desc}</p><small><b>활용 시점</b> {item.use}</small></article>)}</div>
-    <div className="guide-heading"><span>CLASSROOM METHODS</span><h3>교실에서 활용하는 확인·전달 방법</h3><p>아래 방법은 피드백 그 자체가 아니라, 학생의 수행 정보를 확인하고 피드백을 주고받는 방법입니다.</p></div>
-    <div className="tool-grid">{tools.map(t => <ToolCard key={t[1]} tool={t} detailed />)}</div>
-    <section className="quality-check"><div><span>EFFECTIVE FEEDBACK</span><h3>말하기 전, 효과적인 피드백 점검</h3></div><ul>{feedbackChecks.map(([key, value]) => <li key={key}><b>{key}</b><span>{value}</span></li>)}</ul><p>강점은 구체적으로 확인하고, 개선점은 학생이 실행할 수 있는 한 가지 다음 행동으로 좁혀 보세요.</p></section>
-    <p className="source-note">구성 근거: 김선·반재천, 『학생의 배움과 성장을 지원하는 과정 중심 피드백』의 과정·결과 피드백 구분 및 효과적인 피드백 원칙. 교실 활용 방법은 FeedON에서 수업 적용을 위해 별도로 정리했습니다.</p>
-  </>
+  return (
+    <>
+      <p className="modal-intro">
+        먼저 학생에게 필요한 <b>피드백의 초점</b>을 정하고, 그다음 수업 맥락에 맞는 확인·전달 방법을 고르세요.
+      </p>
+      <div className="focus-grid">
+        {feedbackFocus.map((item, i) => (
+          <article key={item.name} className={`focus-card focus-${i + 1}`}>
+            <span>{item.tag}</span>
+            <h3>{item.name}</h3>
+            <p>{item.desc}</p>
+            <small>
+              <b>활용 시점</b> {item.use}
+            </small>
+          </article>
+        ))}
+      </div>
+      <div className="guide-heading">
+        <span>CLASSROOM METHODS</span>
+        <h3>교실에서 활용하는 확인·전달 방법</h3>
+        <p>아래 방법은 피드백 그 자체가 아니라, 학생의 수행 정보를 확인하고 피드백을 주고받는 방법입니다.</p>
+      </div>
+      <div className="tool-grid">
+        {tools.map((t) => (
+          <ToolCard key={t[1]} tool={t} detailed />
+        ))}
+      </div>
+      <section className="quality-check">
+        <div>
+          <span>EFFECTIVE FEEDBACK</span>
+          <h3>말하기 전, 효과적인 피드백 점검</h3>
+        </div>
+        <ul>
+          {feedbackChecks.map(([key, value]) => (
+            <li key={key}>
+              <b>{key}</b>
+              <span>{value}</span>
+            </li>
+          ))}
+        </ul>
+        <p>강점은 구체적으로 확인하고, 개선점은 학생이 실행할 수 있는 한 가지 다음 행동으로 좁혀 보세요.</p>
+      </section>
+      <p className="source-note">구성 근거: 김선·반재천, 『학생의 배움과 성장을 지원하는 과정 중심 피드백』의 과정·결과 피드백 구분 및 효과적인 피드백 원칙. 교실 활용 방법은 FeedON에서 수업 적용을 위해 별도로 정리했습니다.</p>
+    </>
+  );
 }
 
 function Modal({ type, close }) {
-  useEffect(() => { const f = e => e.key === 'Escape' && close(); document.addEventListener('keydown', f); return () => document.removeEventListener('keydown', f) }, [close])
-  return <div className="overlay" onMouseDown={e => e.target === e.currentTarget && close()}><section className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div className="modal-head"><div><p className="eyebrow">QUICK REFERENCE</p><h2 id="modal-title">FeedON 피드백 {type === 'tools' ? '도구' : '5단계'}</h2></div><button className="close" onClick={close} aria-label="닫기">×</button></div>{type === 'tools' ? <FeedbackToolsGuide /> : <><p className="modal-intro">학생의 현재 수행을 확인하는 것에서 시작해 스스로 점검하고 새로운 상황으로 확장하도록 피드백의 깊이를 조절합니다.</p><div className="stage-guide">{stages.map((s, i) => <article key={s.name}><span className="stage-no">0{i + 1}</span><div><div className="stage-title"><h3>{s.name}</h3><span>{s.ko}</span><InfoTip text={s.desc}/></div><CenterBadge center={s.center}/><p><b>교사의 역할</b> {s.role}</p><blockquote>“<HighlightTalk stage={s}/>”</blockquote></div></article>)}</div><div className="notice"><b>단계는 학생의 수준표가 아닙니다.</b><p>같은 학생에게도 상황에 따라 다른 단계의 피드백을 사용할 수 있습니다. 단계가 높을수록 항상 더 좋은 것이 아니라, 학생에게 필요한 지원 정도에 따라 적절한 단계를 선택합니다.</p></div></>}</section></div>
+  useEffect(() => {
+    const f = (e) => e.key === "Escape" && close();
+    document.addEventListener("keydown", f);
+    return () => document.removeEventListener("keydown", f);
+  }, [close]);
+  return (
+    <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && close()}>
+      <section className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div className="modal-head">
+          <div>
+            <p className="eyebrow">QUICK REFERENCE</p>
+            <h2 id="modal-title">FeedON 피드백 {type === "tools" ? "도구" : "5단계"}</h2>
+          </div>
+          <button className="close" onClick={close} aria-label="닫기">
+            ×
+          </button>
+        </div>
+        {type === "tools" ? (
+          <FeedbackToolsGuide />
+        ) : (
+          <>
+            <p className="modal-intro">학생의 현재 수행을 확인하는 것에서 시작해 스스로 점검하고 새로운 상황으로 확장하도록 피드백의 깊이를 조절합니다.</p>
+            <div className="stage-guide">
+              {stages.map((s, i) => (
+                <article key={s.name}>
+                  <span className="stage-no">0{i + 1}</span>
+                  <div>
+                    <div className="stage-title">
+                      <h3>{s.name}</h3>
+                      <span>{s.ko}</span>
+                      <InfoTip text={s.desc} />
+                    </div>
+                    <CenterBadge center={s.center} />
+                    <p>
+                      <b>교사의 역할</b> {s.role}
+                    </p>
+                    <blockquote>
+                      “<HighlightTalk stage={s} />”
+                    </blockquote>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="notice">
+              <b>단계는 학생의 수준표가 아닙니다.</b>
+              <p>같은 학생에게도 상황에 따라 다른 단계의 피드백을 사용할 수 있습니다. 단계가 높을수록 항상 더 좋은 것이 아니라, 학생에게 필요한 지원 정도에 따라 적절한 단계를 선택합니다.</p>
+            </div>
+          </>
+        )}
+      </section>
+    </div>
+  );
 }
 
-function InfoTip({ text }) { const [on, setOn] = useState(false); return <span className="info-wrap"><button className="info" onClick={() => setOn(!on)} aria-label={text} aria-expanded={on}>i</button><span className={`tooltip ${on ? 'show' : ''}`} role="tooltip">{text}</span></span> }
-function CenterBadge({ center }) { return <div className={`center-badge ${center}`} aria-label={center==='teacher'?'교사 중심':center==='student'?'학생 중심':'교사와 학생 공동 중심'}><span>교사</span><i>→</i><span>학생</span></div> }
-function HighlightTalk({ stage }) { const parts=stage.talk.split(stage.focus); return <>{parts[0]}<strong>{stage.focus}</strong>{parts[1]}</> }
-function Dialogue({ lines }) { return <div className="dialogue" aria-label="교사와 학생의 대화 예시">{lines.map((line,i)=><div className={`dialogue-line ${line.who==='교사'?'teacher':'student'}`} key={`${line.who}-${i}`}><b>{line.who}{line.who==='학생'&&<small> 예상 응답</small>}</b><p>{line.text}</p></div>)}</div> }
-function ToolCard({ tool: t, detailed = false }) { const special=t[0]==='one'||t[0]==='hand'; return <article className={`tool-card ${special&&detailed?'featured-tool':''}`}>{special&&detailed&&<img className="tool-photo" src={t[0]==='one'?oneMarkerPhoto:fiveFingersPhoto} alt={t[0]==='one'?'책상 위에 빨간 면이 보이도록 놓은 양면 원마커를 보고 교사가 학생에게 다가가는 모습':'학생들이 주먹, 한두 손가락, 다섯 손가락으로 이해 정도를 표시하는 교실 모습'}/>}<div className="tool-line"><span className="tool-icon"><Icon type={t[0]}/></span><div><h3>{t[1]}</h3>{!detailed && <p>{t[4]}</p>}</div><InfoTip text={t[2]}/></div>{detailed && <><p>{t[2]}</p>{t[0]==='one'&&<div className="tool-how"><h4>사용 방법</h4><ul><li><b>초록 면</b> — 지금은 스스로 학습할 수 있어요.</li><li><b>빨간 면</b> — 도움이 필요해요. 교사가 학생에게 가서 피드백을 제공합니다.</li></ul><p><b>장점</b> 도움 요청에 다른 친구들의 관심이 집중되지 않으며, 교사는 도움이 필요한 학생을 빠르게 찾아 즉각적으로 지원할 수 있습니다.</p></div>}{t[0]==='hand'&&<div className="tool-how"><h4>손가락 신호</h4><ol className="finger-scale"><li><b>주먹</b><span>도움이 필요해요</span></li><li><b>1</b><span>약간 이해했어요</span></li><li><b>2</b><span>이해했어요</span></li><li><b>3</b><span>잘 알겠어요</span></li><li><b>5</b><span>친구에게 설명도 할 수 있어요</span></li></ol></div>}<dl><div><dt>활용 시점</dt><dd>{t[3]}</dd></div><div><dt>피드백 목적</dt><dd>{t[4]}</dd></div></dl></>}</article> }
+function InfoTip({ text }) {
+  const [on, setOn] = useState(false);
+  return (
+    <span className="info-wrap">
+      <button className="info" onClick={() => setOn(!on)} aria-label={text} aria-expanded={on}>
+        i
+      </button>
+      <span className={`tooltip ${on ? "show" : ""}`} role="tooltip">
+        {text}
+      </span>
+    </span>
+  );
+}
+function CenterBadge({ center }) {
+  return (
+    <div className={`center-badge ${center}`} aria-label={center === "teacher" ? "교사 중심" : center === "student" ? "학생 중심" : "교사와 학생 공동 중심"}>
+      <span>교사</span>
+      <i>→</i>
+      <span>학생</span>
+    </div>
+  );
+}
+function HighlightTalk({ stage }) {
+  const parts = stage.talk.split(stage.focus);
+  return (
+    <>
+      {parts[0]}
+      <strong>{stage.focus}</strong>
+      {parts[1]}
+    </>
+  );
+}
+function Dialogue({ lines }) {
+  return (
+    <div className="dialogue" aria-label="교사와 학생의 대화 예시">
+      {lines.map((line, i) => (
+        <div className={`dialogue-line ${line.who === "교사" ? "teacher" : "student"}`} key={`${line.who}-${i}`}>
+          <b>
+            {line.who}
+            {line.who === "학생" && <small> 예상 응답</small>}
+          </b>
+          <p>{line.text}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+function ToolCard({ tool: t, detailed = false }) {
+  const special = t[0] === "one" || t[0] === "hand";
+  return (
+    <article className={`tool-card ${special && detailed ? "featured-tool" : ""}`}>
+      {special && detailed && <img className="tool-photo" src={t[0] === "one" ? oneMarkerPhoto : fiveFingersPhoto} alt={t[0] === "one" ? "책상 위에 빨간 면이 보이도록 놓은 양면 원마커를 보고 교사가 학생에게 다가가는 모습" : "학생들이 주먹, 한두 손가락, 다섯 손가락으로 이해 정도를 표시하는 교실 모습"} />}
+      <div className="tool-line">
+        <span className="tool-icon">
+          <Icon type={t[0]} />
+        </span>
+        <div>
+          <h3>{t[1]}</h3>
+          {!detailed && <p>{t[4]}</p>}
+        </div>
+        <InfoTip text={t[2]} />
+      </div>
+      {detailed && (
+        <>
+          <p>{t[2]}</p>
+          {t[0] === "one" && (
+            <div className="tool-how">
+              <h4>사용 방법</h4>
+              <ul>
+                <li>
+                  <b>초록 면</b> — 지금은 스스로 학습할 수 있어요.
+                </li>
+                <li>
+                  <b>빨간 면</b> — 도움이 필요해요. 교사가 학생에게 가서 피드백을 제공합니다.
+                </li>
+              </ul>
+              <p>
+                <b>장점</b> 도움 요청에 다른 친구들의 관심이 집중되지 않으며, 교사는 도움이 필요한 학생을 빠르게 찾아 즉각적으로 지원할 수 있습니다.
+              </p>
+            </div>
+          )}
+          {t[0] === "hand" && (
+            <div className="tool-how">
+              <h4>손가락 신호</h4>
+              <ol className="finger-scale">
+                <li>
+                  <b>주먹</b>
+                  <span>도움이 필요해요</span>
+                </li>
+                <li>
+                  <b>1</b>
+                  <span>약간 이해했어요</span>
+                </li>
+                <li>
+                  <b>2</b>
+                  <span>이해했어요</span>
+                </li>
+                <li>
+                  <b>3</b>
+                  <span>잘 알겠어요</span>
+                </li>
+                <li>
+                  <b>5</b>
+                  <span>친구에게 설명도 할 수 있어요</span>
+                </li>
+              </ol>
+            </div>
+          )}
+          <dl>
+            <div>
+              <dt>활용 시점</dt>
+              <dd>{t[3]}</dd>
+            </div>
+            <div>
+              <dt>피드백 목적</dt>
+              <dd>{t[4]}</dd>
+            </div>
+          </dl>
+        </>
+      )}
+    </article>
+  );
+}
 
 /* oxlint-disable-next-line no-unused-vars */
 function HomeOriginal({ navigate, openHelp }) {
-  return <main className="home"><section className="hero-section"><div className="hero-brand" aria-label="FeedON"><span>Feed</span><strong>ON</strong><small>학생 주도성을 켜는 퍼스널 피드백 도우미</small></div><p className="eyebrow">PERSONAL FEEDBACK FOR TEACHERS</p><h1>학생의 오늘을 읽고,<br/><em>다음 배움</em>을 함께 엽니다.</h1><p className="lead">수업에서 관찰한 말과 행동을 바탕으로 학생에게 필요한 피드백 방식과 자연스러운 Teacher Talk을 설계하세요.</p><div className="benefit-grid"><article><span>01</span><b>관찰 근거에서 시작</b><p>막연한 판단 대신 학생이 실제로 보인 말과 행동을 중심에 둡니다.</p></article><article><span>02</span><b>5단계로 관점 확장</b><p>같은 수행도 학생에게 필요한 지원 정도에 따라 다르게 바라봅니다.</p></article><article><span>03</span><b>바로 말할 수 있게</b><p>교실에서 자연스럽게 사용할 Teacher Talk으로 바꾸어 드립니다.</p></article></div><div className="how-it-works"><span><b>1</b> 수행 모습 입력</span><i>→</i><span><b>2</b> 피드백 전략 확인</span><i>→</i><span><b>3</b> Teacher Talk 선택</span></div><div className="track-grid single"><button className="track feedback" onClick={() => navigate('feedback')}><span className="track-num">START</span><span><b>학생 수행 기록하고 피드백 만들기</b><small>필수 입력은 학습 목표와 실제 수행 모습 두 가지예요</small></span><i>→</i></button></div><button className="text-button" onClick={() => openHelp('stages')}><span className="steps-icon">5</span> 피드백 5단계 먼저 알아보기 <span>→</span></button></section><section className="home-note"><span>FeedON의 약속</span><p>학생을 수준으로 나누지 않습니다. 실제 수행의 증거에서 출발해, 학생이 다음 행동을 스스로 선택하도록 돕습니다.</p></section></main>
+  return (
+    <main className="home">
+      <section className="hero-section">
+        <div className="hero-brand" aria-label="FeedON">
+          <span>Feed</span>
+          <strong>ON</strong>
+          <small>학생 주도성을 켜는 퍼스널 피드백 도우미</small>
+        </div>
+        <p className="eyebrow">PERSONAL FEEDBACK FOR TEACHERS</p>
+        <h1>
+          학생의 오늘을 읽고,
+          <br />
+          <em>다음 배움</em>을 함께 엽니다.
+        </h1>
+        <p className="lead">수업에서 관찰한 말과 행동을 바탕으로 학생에게 필요한 피드백 방식과 자연스러운 Teacher Talk을 설계하세요.</p>
+        <div className="benefit-grid">
+          <article>
+            <span>01</span>
+            <b>관찰 근거에서 시작</b>
+            <p>막연한 판단 대신 학생이 실제로 보인 말과 행동을 중심에 둡니다.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <b>5단계로 관점 확장</b>
+            <p>같은 수행도 학생에게 필요한 지원 정도에 따라 다르게 바라봅니다.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <b>바로 말할 수 있게</b>
+            <p>교실에서 자연스럽게 사용할 Teacher Talk으로 바꾸어 드립니다.</p>
+          </article>
+        </div>
+        <div className="how-it-works">
+          <span>
+            <b>1</b> 수행 모습 입력
+          </span>
+          <i>→</i>
+          <span>
+            <b>2</b> 피드백 전략 확인
+          </span>
+          <i>→</i>
+          <span>
+            <b>3</b> Teacher Talk 선택
+          </span>
+        </div>
+        <div className="track-grid single">
+          <button className="track feedback" onClick={() => navigate("feedback")}>
+            <span className="track-num">START</span>
+            <span>
+              <b>학생 수행 기록하고 피드백 만들기</b>
+              <small>필수 입력은 학습 목표와 실제 수행 모습 두 가지예요</small>
+            </span>
+            <i>→</i>
+          </button>
+        </div>
+        <button className="text-button" onClick={() => openHelp("stages")}>
+          <span className="steps-icon">5</span> 피드백 5단계 먼저 알아보기 <span>→</span>
+        </button>
+      </section>
+      <section className="home-note">
+        <span>FeedON의 약속</span>
+        <p>학생을 수준으로 나누지 않습니다. 실제 수행의 증거에서 출발해, 학생이 다음 행동을 스스로 선택하도록 돕습니다.</p>
+      </section>
+    </main>
+  );
 }
 
 function Home({ navigate, openHelp }) {
-  return <main className="home compact-home"><section className="hero-section"><div className="hero-brand" aria-label="FeedON"><span>Feed</span><strong>ON</strong><small>학생 주도성을 켜는 퍼스널 피드백 도우미</small></div><p className="eyebrow">FOR ELEMENTARY TEACHERS</p><h1>관찰한 모습을 입력하고,<br/><em>바로 쓸 피드백</em>을 만나보세요.</h1><p className="lead">학생의 말과 행동을 바탕으로 눈높이에 맞는 Teacher Talk을 제안합니다.</p><div className="track-grid single"><button className="track feedback" onClick={() => navigate('feedback')}><span className="track-num">START</span><span><b>학생 피드백 만들기</b><small>학년 · 학습 목표 · 실제 수행 모습을 입력해 주세요</small></span><i>→</i></button></div><button className="text-button" onClick={() => openHelp('stages')}><span className="steps-icon">5</span> 피드백 5단계 알아보기 <span>→</span></button></section></main>
+  return (
+    <main className="home compact-home">
+      <section className="hero-section">
+        <div className="hero-brand" aria-label="FeedON">
+          <span>Feed</span>
+          <strong>ON</strong>
+          <small>학생 주도성을 켜는 퍼스널 피드백 도우미</small>
+        </div>
+        <p className="eyebrow">FOR ELEMENTARY TEACHERS</p>
+        <h1>
+          관찰한 모습을 입력하고,
+          <br />
+          <em>바로 쓸 피드백</em>을 만나보세요.
+        </h1>
+        <p className="lead">학생의 말과 행동을 바탕으로 눈높이에 맞는 Teacher Talk을 제안합니다.</p>
+        <div className="track-grid single">
+          <button className="track feedback" onClick={() => navigate("feedback")}>
+            <span className="track-num">START</span>
+            <span>
+              <b>학생 피드백 만들기</b>
+              <small>학년 · 학습 목표 · 실제 수행 모습을 입력해 주세요</small>
+            </span>
+            <i>→</i>
+          </button>
+        </div>
+        <button className="text-button" onClick={() => openHelp("stages")}>
+          <span className="steps-icon">5</span> 피드백 5단계 알아보기 <span>→</span>
+        </button>
+      </section>
+    </main>
+  );
 }
 
-const initialAssessment = { grade: '', subject: '', unit: '', sessions: '4', focus: [] }
-function Field({ label, required, children, hint }) { return <label className="field"><span>{label}{required && <i>필수</i>}</span>{children}{hint && <small>{hint}</small>}</label> }
-function PageIntro({ step, title, desc }) { return <div className="page-intro"><span className="step">{step}</span><div><h1>{title}</h1><p>{desc}</p></div></div> }
+const initialAssessment = {
+  grade: "",
+  subject: "",
+  unit: "",
+  sessions: "4",
+  focus: [],
+};
+function Field({ label, required, children, hint }) {
+  return (
+    <label className="field">
+      <span>
+        {label}
+        {required && <i>필수</i>}
+      </span>
+      {children}
+      {hint && <small>{hint}</small>}
+    </label>
+  );
+}
+function PageIntro({ step, title, desc }) {
+  return (
+    <div className="page-intro">
+      <span className="step">{step}</span>
+      <div>
+        <h1>{title}</h1>
+        <p>{desc}</p>
+      </div>
+    </div>
+  );
+}
 
 function AssessmentForm({ initial, onSubmit, back }) {
-  const [form, setForm] = useState(initial || initialAssessment); const focuses = ['개념 이해','탐구','의사소통','문제 해결','실생활 적용','협력','기타']
-  const set = (k,v) => setForm({...form,[k]:v}); const submit=e=>{e.preventDefault();onSubmit(form)}
-  return <main className="page"><button className="back" onClick={back}>← 처음으로</button><PageIntro step="평가 ON · 1/2" title="수업의 맥락을 알려주세요" desc="입력한 내용으로 탐구의 흐름과 관찰 가능한 평가를 설계합니다."/><form className="form-sheet" onSubmit={submit}><div className="form-grid"><Field label="학년" required><select value={form.grade} onChange={e=>set('grade',e.target.value)} required><option value="">선택하세요</option>{[1,2,3,4,5,6].map(n=><option key={n}>{n}학년</option>)}</select></Field><Field label="과목" required><select value={form.subject} onChange={e=>set('subject',e.target.value)} required><option value="">선택하세요</option>{['국어','수학','사회','과학','도덕','체육','음악','미술','실과','영어'].map(x=><option key={x}>{x}</option>)}</select></Field></div><Field label="단원" required hint="예: 우리 지역의 모습과 생활"><input value={form.unit} onChange={e=>set('unit',e.target.value)} required placeholder="단원명 또는 핵심 내용을 입력하세요"/></Field><Field label="예상 차시 수"><input type="number" min="1" max="12" value={form.sessions} onChange={e=>set('sessions',e.target.value)}/></Field><fieldset><legend>강조하고 싶은 학습 <span>선택</span></legend><div className="chips">{focuses.map(x=><label key={x} className={form.focus.includes(x)?'selected':''}><input type="checkbox" checked={form.focus.includes(x)} onChange={()=>set('focus', form.focus.includes(x)?form.focus.filter(y=>y!==x):[...form.focus,x])}/>{x}</label>)}</div></fieldset><div className="form-actions"><button type="button" className="secondary" onClick={back}>취소</button><button className="primary">평가 설계안 만들기 <span>→</span></button></div></form></main>
+  const [form, setForm] = useState(initial || initialAssessment);
+  const focuses = ["개념 이해", "탐구", "의사소통", "문제 해결", "실생활 적용", "협력", "기타"];
+  const set = (k, v) => setForm({ ...form, [k]: v });
+  const submit = (e) => {
+    e.preventDefault();
+    onSubmit(form);
+  };
+  return (
+    <main className="page">
+      <button className="back" onClick={back}>
+        ← 처음으로
+      </button>
+      <PageIntro step="평가 ON · 1/2" title="수업의 맥락을 알려주세요" desc="입력한 내용으로 탐구의 흐름과 관찰 가능한 평가를 설계합니다." />
+      <form className="form-sheet" onSubmit={submit}>
+        <div className="form-grid">
+          <Field label="학년" required>
+            <select value={form.grade} onChange={(e) => set("grade", e.target.value)} required>
+              <option value="">선택하세요</option>
+              {[1, 2, 3, 4, 5, 6].map((n) => (
+                <option key={n}>{n}학년</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="과목" required>
+            <select value={form.subject} onChange={(e) => set("subject", e.target.value)} required>
+              <option value="">선택하세요</option>
+              {["국어", "수학", "사회", "과학", "도덕", "체육", "음악", "미술", "실과", "영어"].map((x) => (
+                <option key={x}>{x}</option>
+              ))}
+            </select>
+          </Field>
+        </div>
+        <Field label="단원" required hint="예: 우리 지역의 모습과 생활">
+          <input value={form.unit} onChange={(e) => set("unit", e.target.value)} required placeholder="단원명 또는 핵심 내용을 입력하세요" />
+        </Field>
+        <Field label="예상 차시 수">
+          <input type="number" min="1" max="12" value={form.sessions} onChange={(e) => set("sessions", e.target.value)} />
+        </Field>
+        <fieldset>
+          <legend>
+            강조하고 싶은 학습 <span>선택</span>
+          </legend>
+          <div className="chips">
+            {focuses.map((x) => (
+              <label key={x} className={form.focus.includes(x) ? "selected" : ""}>
+                <input type="checkbox" checked={form.focus.includes(x)} onChange={() => set("focus", form.focus.includes(x) ? form.focus.filter((y) => y !== x) : [...form.focus, x])} />
+                {x}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <div className="form-actions">
+          <button type="button" className="secondary" onClick={back}>
+            취소
+          </button>
+          <button className="primary">
+            평가 설계안 만들기 <span>→</span>
+          </button>
+        </div>
+      </form>
+    </main>
+  );
 }
 
-function makeAssessment(form) { const n=Math.min(Number(form.sessions)||4,6); return { standard:'확인 필요', area:`${form.subject}과 관련 영역`, note:'2022 개정 교육과정 원문에서 학년군과 단원에 해당하는 성취기준을 확인한 뒤 교사가 최종 선택해 주세요.', unitQuestions:['우리 지역의 자연환경은 사람들의 생활 모습에 어떤 영향을 줄까?','더 살기 좋은 지역을 만들기 위해 우리는 무엇을 살펴보아야 할까?'], sessions:Array.from({length:n},(_,i)=>({focus:['경험 떠올리기','자료에서 특징 찾기','관계 설명하기','관점 비교하기','생각 정리하기','삶에 적용하기'][i]||'배움 확장하기',q:`${i+1}차시의 배움을 우리 생활과 어떻게 연결해 설명할 수 있을까?`})), elements:['글의 중심 생각을 뒷받침하는 내용을 찾아 근거와 함께 설명한다.','읽는 사람과 목적을 고려해 알맞은 표현을 선택한다.','친구의 의견을 듣고 자신의 표현을 구체적으로 수정한다.'], task:{name:'우리 반을 위한 문제 해결 설명서',situation:'생활 속 문제를 수학적 방법으로 해결하고 풀이 과정을 친구에게 소개합니다.',perform:'해결 전략을 두 가지 이상 시도하고, 선택한 방법과 결과가 타당한 까닭을 설명합니다.',link:'문제 해결 과정, 수학적 의사소통, 결과의 타당성을 함께 관찰합니다.'}, method:'교사 관찰평가 + 수행평가',methodWhy:'실제 수행 과정에서 전략을 선택하고 설명을 수정하는 모습을 관찰하며, 완성된 결과물과 해결 과정의 근거를 함께 확인하기에 적절합니다.',tool:'관찰 체크리스트 + 수행 기록지'} }
+function makeAssessment(form) {
+  const n = Math.min(Number(form.sessions) || 4, 6);
+  return {
+    standard: "확인 필요",
+    area: `${form.subject}과 관련 영역`,
+    note: "2022 개정 교육과정 원문에서 학년군과 단원에 해당하는 성취기준을 확인한 뒤 교사가 최종 선택해 주세요.",
+    unitQuestions: ["우리 지역의 자연환경은 사람들의 생활 모습에 어떤 영향을 줄까?", "더 살기 좋은 지역을 만들기 위해 우리는 무엇을 살펴보아야 할까?"],
+    sessions: Array.from({ length: n }, (_, i) => ({
+      focus: ["경험 떠올리기", "자료에서 특징 찾기", "관계 설명하기", "관점 비교하기", "생각 정리하기", "삶에 적용하기"][i] || "배움 확장하기",
+      q: `${i + 1}차시의 배움을 우리 생활과 어떻게 연결해 설명할 수 있을까?`,
+    })),
+    elements: ["글의 중심 생각을 뒷받침하는 내용을 찾아 근거와 함께 설명한다.", "읽는 사람과 목적을 고려해 알맞은 표현을 선택한다.", "친구의 의견을 듣고 자신의 표현을 구체적으로 수정한다."],
+    task: {
+      name: "우리 반을 위한 문제 해결 설명서",
+      situation: "생활 속 문제를 수학적 방법으로 해결하고 풀이 과정을 친구에게 소개합니다.",
+      perform: "해결 전략을 두 가지 이상 시도하고, 선택한 방법과 결과가 타당한 까닭을 설명합니다.",
+      link: "문제 해결 과정, 수학적 의사소통, 결과의 타당성을 함께 관찰합니다.",
+    },
+    method: "교사 관찰평가 + 수행평가",
+    methodWhy: "실제 수행 과정에서 전략을 선택하고 설명을 수정하는 모습을 관찰하며, 완성된 결과물과 해결 과정의 근거를 함께 확인하기에 적절합니다.",
+    tool: "관찰 체크리스트 + 수행 기록지",
+  };
+}
 
-function Section({ no, title, children }) { return <section className="result-section"><div className="section-heading"><span>{no}</span><h2>{title}</h2></div>{children}</section> }
-function AssessmentResult({ form, result, toFeedback, edit }) { return <main className="page result-page"><button className="back" onClick={edit}>← 입력 내용 수정</button><PageIntro step="평가 ON · 2/2" title={`${form.grade} ${form.subject} 평가 설계안`} desc={`${form.unit} · ${form.sessions}차시${form.focus.length?' · '+form.focus.join(', '):''}`}/><div className="result-doc"><Section no="01" title="교육과정 연결"><div className="standard"><span className="status">확인 필요</span><div><h3>관련 성취기준 코드와 문구</h3><p>신뢰할 수 있는 교육과정 원문 확인이 필요합니다.</p></div></div><dl className="info-rows"><div><dt>관련 영역 후보</dt><dd>{result.area}</dd></div><div><dt>적용 시 고려사항</dt><dd>{result.note}</dd></div></dl></Section><Section no="02" title="탐구 설계"><h3 className="subhead">단원 탐구질문 제안 <small>사회 예시</small></h3><ol className="big-questions">{result.unitQuestions.map(q=><li key={q}>{q}</li>)}</ol><h3 className="subhead">차시별 탐구질문</h3><div className="session-table">{result.sessions.map((s,i)=><div key={i}><b>{i+1}차시</b><span>{s.focus}</span><p>{s.q}</p></div>)}</div></Section><Section no="03" title="평가 설계"><h3 className="subhead">평가 요소 <small>국어 예시</small></h3><ul className="check-list">{result.elements.map(x=><li key={x}>{x}</li>)}</ul><h3 className="subhead">평가 과제 <small>수학 예시</small></h3><div className="task-block"><h3>{result.task.name}</h3><dl className="info-rows"><div><dt>평가 상황</dt><dd>{result.task.situation}</dd></div><div><dt>학생 수행</dt><dd>{result.task.perform}</dd></div><div><dt>평가 요소와 연결</dt><dd>{result.task.link}</dd></div></dl></div><div className="recommend-pair"><div><span>추천 평가 방법</span><h3>{result.method}</h3><p>{result.methodWhy}</p></div><div><span>추천 평가 도구</span><h3>{result.tool}</h3><p>관찰 기준과 학생의 설명을 구분해 기록하면 수행의 변화가 선명해집니다.</p></div></div></Section><Section no="04" title="FeedON 성장 단계"><p className="section-desc">국가교육과정의 공식 성취수준 명칭이 아닌, 피드백 설계를 위한 FeedON의 관찰 언어입니다.</p><div className="growth"><div><b>확장</b><p>새로운 상황에 적용하거나 배움을 확장할 수 있어요.</p></div><div><b>성장</b><p>핵심을 대체로 달성했고 일부 보완으로 안정될 수 있어요.</p></div><div><b>도움</b><p>예시, 단서, 질문, 모델링 등의 지원이 필요해요.</p></div></div></Section></div><button className="primary bridge" onClick={toFeedback}>이 평가로 학생 피드백 만들기 <span>→</span></button></main> }
+function Section({ no, title, children }) {
+  return (
+    <section className="result-section">
+      <div className="section-heading">
+        <span>{no}</span>
+        <h2>{title}</h2>
+      </div>
+      {children}
+    </section>
+  );
+}
+function AssessmentResult({ form, result, toFeedback, edit }) {
+  return (
+    <main className="page result-page">
+      <button className="back" onClick={edit}>
+        ← 입력 내용 수정
+      </button>
+      <PageIntro step="평가 ON · 2/2" title={`${form.grade} ${form.subject} 평가 설계안`} desc={`${form.unit} · ${form.sessions}차시${form.focus.length ? " · " + form.focus.join(", ") : ""}`} />
+      <div className="result-doc">
+        <Section no="01" title="교육과정 연결">
+          <div className="standard">
+            <span className="status">확인 필요</span>
+            <div>
+              <h3>관련 성취기준 코드와 문구</h3>
+              <p>신뢰할 수 있는 교육과정 원문 확인이 필요합니다.</p>
+            </div>
+          </div>
+          <dl className="info-rows">
+            <div>
+              <dt>관련 영역 후보</dt>
+              <dd>{result.area}</dd>
+            </div>
+            <div>
+              <dt>적용 시 고려사항</dt>
+              <dd>{result.note}</dd>
+            </div>
+          </dl>
+        </Section>
+        <Section no="02" title="탐구 설계">
+          <h3 className="subhead">
+            단원 탐구질문 제안 <small>사회 예시</small>
+          </h3>
+          <ol className="big-questions">
+            {result.unitQuestions.map((q) => (
+              <li key={q}>{q}</li>
+            ))}
+          </ol>
+          <h3 className="subhead">차시별 탐구질문</h3>
+          <div className="session-table">
+            {result.sessions.map((s, i) => (
+              <div key={i}>
+                <b>{i + 1}차시</b>
+                <span>{s.focus}</span>
+                <p>{s.q}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+        <Section no="03" title="평가 설계">
+          <h3 className="subhead">
+            평가 요소 <small>국어 예시</small>
+          </h3>
+          <ul className="check-list">
+            {result.elements.map((x) => (
+              <li key={x}>{x}</li>
+            ))}
+          </ul>
+          <h3 className="subhead">
+            평가 과제 <small>수학 예시</small>
+          </h3>
+          <div className="task-block">
+            <h3>{result.task.name}</h3>
+            <dl className="info-rows">
+              <div>
+                <dt>평가 상황</dt>
+                <dd>{result.task.situation}</dd>
+              </div>
+              <div>
+                <dt>학생 수행</dt>
+                <dd>{result.task.perform}</dd>
+              </div>
+              <div>
+                <dt>평가 요소와 연결</dt>
+                <dd>{result.task.link}</dd>
+              </div>
+            </dl>
+          </div>
+          <div className="recommend-pair">
+            <div>
+              <span>추천 평가 방법</span>
+              <h3>{result.method}</h3>
+              <p>{result.methodWhy}</p>
+            </div>
+            <div>
+              <span>추천 평가 도구</span>
+              <h3>{result.tool}</h3>
+              <p>관찰 기준과 학생의 설명을 구분해 기록하면 수행의 변화가 선명해집니다.</p>
+            </div>
+          </div>
+        </Section>
+        <Section no="04" title="FeedON 성장 단계">
+          <p className="section-desc">국가교육과정의 공식 성취수준 명칭이 아닌, 피드백 설계를 위한 FeedON의 관찰 언어입니다.</p>
+          <div className="growth">
+            <div>
+              <b>확장</b>
+              <p>새로운 상황에 적용하거나 배움을 확장할 수 있어요.</p>
+            </div>
+            <div>
+              <b>성장</b>
+              <p>핵심을 대체로 달성했고 일부 보완으로 안정될 수 있어요.</p>
+            </div>
+            <div>
+              <b>도움</b>
+              <p>예시, 단서, 질문, 모델링 등의 지원이 필요해요.</p>
+            </div>
+          </div>
+        </Section>
+      </div>
+      <button className="primary bridge" onClick={toFeedback}>
+        이 평가로 학생 피드백 만들기 <span>→</span>
+      </button>
+    </main>
+  );
+}
 
-const blankFeedback={grade:'',subject:'',unit:'',session:'',goal:'',observation:''}
+const blankFeedback = {
+  grade: "",
+  subject: "",
+  unit: "",
+  session: "",
+  goal: "",
+  observation: "",
+};
 function FeedbackForm({ initial, onSubmit, back }) {
-  const [f,setF]=useState({...blankFeedback,...initial})
-  const [errors,setErrors]=useState({})
-  const set=(key,value)=>{setF({...f,[key]:value});setErrors({...errors,[key]:''})}
-  const fillExample=()=>{setF({grade:'5학년',subject:'과학',unit:'식물의 구조와 기능',session:'3차시',goal:'관찰 결과를 근거로 식물의 구조와 기능 설명하기',observation:'잎과 줄기의 특징은 정확히 관찰해 기록했지만, 각 구조가 하는 일을 설명할 때 관찰 결과를 근거로 연결하지 못했다. 친구의 설명을 듣고 자신의 기록에서 근거가 될 부분에 밑줄을 그었다.'});setErrors({})}
-  const submit=e=>{
-    e.preventDefault()
-    const next={}
-    if(!f.grade) next.grade='학생 눈높이에 맞는 말로 제안하려면 학년이 필요해요.'
-    if(!f.goal.trim()) next.goal='관찰하려던 학습 목표나 평가 요소를 적어 주세요.'
-    if(!f.observation.trim()) next.observation='학생이 실제로 말하거나 행동한 모습을 적어 주세요.'
-    else if(f.observation.trim().length<20) next.observation='판단만 적기보다 구체적인 말·행동·오류·해결 과정 중 한 가지를 더 적어 주세요.'
-    setErrors(next)
-    if(!Object.keys(next).length) onSubmit(f)
-  }
-  return <main className="page"><button className="back" onClick={back}>← 처음으로</button><PageIntro step="피드백 만들기 · 1/2" title="학생의 수행을 들려주세요" desc="학년, 학습 목표, 실제 수행 모습을 알려주시면 학생의 눈높이에 맞는 대화를 제안합니다."/><aside className="form-welcome"><div><span>처음 사용하시나요?</span><b>예시를 먼저 살펴보면 기록 방법을 쉽게 알 수 있어요.</b></div><button type="button" onClick={fillExample}>과학 수업 예시 채우기</button></aside><form className="form-sheet" onSubmit={submit} noValidate><div className="form-section-label"><span>수업 정보</span><p>학년은 필수이며, 나머지는 알고 있는 만큼만 입력해도 괜찮아요.</p></div><div className="form-grid"><div className={errors.grade?'field-error':''}><Field label="학년" required><select value={f.grade} onChange={e=>set('grade',e.target.value)} aria-invalid={!!errors.grade}><option value="">학년을 선택하세요</option>{[1,2,3,4,5,6].map(n=><option key={n}>{n}학년</option>)}</select>{errors.grade&&<span className="error-message" role="alert">{errors.grade}</span>}</Field></div><Field label="과목"><select value={f.subject} onChange={e=>set('subject',e.target.value)}><option value="">선택하지 않아도 돼요</option>{['국어','수학','사회','과학','도덕','체육','음악','미술','실과','영어'].map(x=><option key={x}>{x}</option>)}</select></Field></div><div className="form-grid"><Field label="단원"><input value={f.unit} onChange={e=>set('unit',e.target.value)} placeholder="선택 · 예: 식물의 구조와 기능"/></Field><Field label="차시"><input value={f.session} onChange={e=>set('session',e.target.value)} placeholder="선택 · 예: 3차시"/></Field></div><div className="form-section-label essential"><span>핵심 기록</span><p>판단보다 관찰한 사실을 구체적으로 적어 주세요.</p></div><div className={errors.goal?'field-error':''}><Field label="학습 목표 또는 평가 요소" required><input value={f.goal} onChange={e=>set('goal',e.target.value)} aria-invalid={!!errors.goal} placeholder="예: 관찰 결과를 근거로 예상과 다른 까닭 설명하기"/>{errors.goal&&<span className="error-message" role="alert">{errors.goal}</span>}</Field></div><div className={errors.observation?'field-error':''}><Field label="학생이 보인 실제 수행 모습" required hint="좋은 기록: 예상은 정확히 말했지만 결과를 기록할 때 측정 단위를 두 번 빠뜨렸다. 친구의 기록을 보고 스스로 한 곳을 고쳤다."><textarea rows="7" value={f.observation} onChange={e=>set('observation',e.target.value)} aria-invalid={!!errors.observation} placeholder="‘잘함·부족함’ 같은 판단보다 학생이 실제로 말하거나 행동한 장면을 적어 주세요."/>{errors.observation&&<span className="error-message" role="alert">{errors.observation}</span>}</Field></div><div className="observation-guide"><b>이런 내용을 적으면 좋아요</b><span>학생이 한 말</span><span>시도한 방법</span><span>오류와 수정</span><span>친구와의 상호작용</span></div><div className="form-actions"><button type="button" className="secondary" onClick={back}>취소</button><button className="primary">피드백 제안 확인하기 <span>→</span></button></div></form></main>
+  const [f, setF] = useState({ ...blankFeedback, ...initial });
+  const [errors, setErrors] = useState({});
+  const [exampleFields, setExampleFields] = useState(new Set());
+  const set = (key, value) => {
+    setF({ ...f, [key]: value });
+    setErrors({ ...errors, [key]: "" });
+    setExampleFields((current) => {
+      const next = new Set(current);
+      next.delete(key);
+      return next;
+    });
+  };
+  const fillExample = () => {
+    setF({
+      grade: "5학년",
+      subject: "과학",
+      unit: "식물의 구조와 기능",
+      session: "3차시",
+      goal: "관찰 결과를 근거로 식물의 구조와 기능 설명하기",
+      observation: "잎과 줄기의 특징은 정확히 관찰해 기록했지만, 각 구조가 하는 일을 설명할 때 관찰 결과를 근거로 연결하지 못했다. 친구의 설명을 듣고 자신의 기록에서 근거가 될 부분에 밑줄을 그었다.",
+    });
+    setErrors({});
+    setExampleFields(new Set(["grade", "subject", "unit", "session", "goal", "observation"]));
+  };
+  const submit = (e) => {
+    e.preventDefault();
+    const next = {};
+    if (!f.grade) next.grade = "학생 눈높이에 맞는 말로 제안하려면 학년이 필요해요.";
+    if (!f.goal.trim()) next.goal = "관찰하려던 학습 목표나 평가 요소를 적어 주세요.";
+    if (!f.observation.trim()) next.observation = "학생이 실제로 말하거나 행동한 모습을 적어 주세요.";
+    else if (f.observation.trim().length < 20) next.observation = "판단만 적기보다 구체적인 말·행동·오류·해결 과정 중 한 가지를 더 적어 주세요.";
+    setErrors(next);
+    if (!Object.keys(next).length) onSubmit(f);
+  };
+  return (
+    <main className="page">
+      <button className="back" onClick={back}>
+        ← 처음으로
+      </button>
+      <PageIntro step="피드백 만들기 · 1/2" title="학생의 수행을 들려주세요" desc="학년, 학습 목표, 실제 수행 모습을 알려주시면 학생의 눈높이에 맞는 대화를 제안합니다." />
+      <aside className="form-welcome">
+        <div>
+          <span>처음 사용하시나요?</span>
+          <b>예시를 먼저 살펴보면 기록 방법을 쉽게 알 수 있어요.</b>
+        </div>
+        <button type="button" onClick={fillExample}>
+          과학 수업 예시 채우기
+        </button>
+      </aside>
+      <form className="form-sheet" onSubmit={submit} noValidate>
+        {exampleFields.size > 0 && (
+          <div className="example-edit-notice" role="status">
+            <b>예시)</b> 흐린 글씨로 채워진 내용은 입력 예시입니다.
+            <span>각 칸을 눌러 수업 내용에 맞게 수정해 주세요.</span>
+          </div>
+        )}
+        <div className="form-section-label">
+          <span>수업 정보</span>
+          <p>학년은 필수이며, 나머지는 알고 있는 만큼만 입력해도 괜찮아요.</p>
+        </div>
+        <div className="form-grid">
+          <div className={errors.grade ? "field-error" : ""}>
+            <Field label="학년" required>
+              <select className={exampleFields.has("grade") ? "example-value" : ""} value={f.grade} onChange={(e) => set("grade", e.target.value)} aria-invalid={!!errors.grade}>
+                <option value="">학년을 선택하세요</option>
+                {[1, 2, 3, 4, 5, 6].map((n) => (
+                  <option key={n}>{n}학년</option>
+                ))}
+              </select>
+              {errors.grade && (
+                <span className="error-message" role="alert">
+                  {errors.grade}
+                </span>
+              )}
+            </Field>
+          </div>
+          <Field label="과목">
+            <select className={exampleFields.has("subject") ? "example-value" : ""} value={f.subject} onChange={(e) => set("subject", e.target.value)}>
+              <option value="">선택하지 않아도 돼요</option>
+              {["국어", "수학", "사회", "과학", "도덕", "체육", "음악", "미술", "실과", "영어"].map((x) => (
+                <option key={x}>{x}</option>
+              ))}
+            </select>
+          </Field>
+        </div>
+        <div className="form-grid">
+          <Field label="단원">
+            <input className={exampleFields.has("unit") ? "example-value" : ""} value={f.unit} onChange={(e) => set("unit", e.target.value)} placeholder="선택 · 예: 식물의 구조와 기능" />
+          </Field>
+          <Field label="차시">
+            <input className={exampleFields.has("session") ? "example-value" : ""} value={f.session} onChange={(e) => set("session", e.target.value)} placeholder="선택 · 예: 3차시" />
+          </Field>
+        </div>
+        <div className="form-section-label essential">
+          <span>핵심 기록</span>
+          <p>판단보다 관찰한 사실을 구체적으로 적어 주세요.</p>
+        </div>
+        <div className={errors.goal ? "field-error" : ""}>
+          <Field label="학습 목표 또는 평가 요소" required>
+            <input className={exampleFields.has("goal") ? "example-value" : ""} value={f.goal} onChange={(e) => set("goal", e.target.value)} aria-invalid={!!errors.goal} placeholder="예: 관찰 결과를 근거로 예상과 다른 까닭 설명하기" />
+            {errors.goal && (
+              <span className="error-message" role="alert">
+                {errors.goal}
+              </span>
+            )}
+          </Field>
+        </div>
+        <div className={errors.observation ? "field-error" : ""}>
+          <Field label="학생이 보인 실제 수행 모습" required hint="좋은 기록: 예상은 정확히 말했지만 결과를 기록할 때 측정 단위를 두 번 빠뜨렸다. 친구의 기록을 보고 스스로 한 곳을 고쳤다.">
+            <textarea className={exampleFields.has("observation") ? "example-value" : ""} rows="7" value={f.observation} onChange={(e) => set("observation", e.target.value)} aria-invalid={!!errors.observation} placeholder="‘잘함·부족함’ 같은 판단보다 학생이 실제로 말하거나 행동한 장면을 적어 주세요." />
+            {errors.observation && (
+              <span className="error-message" role="alert">
+                {errors.observation}
+              </span>
+            )}
+          </Field>
+        </div>
+        <div className="observation-guide">
+          <b>이런 내용을 적으면 좋아요</b>
+          <span>학생이 한 말</span>
+          <span>시도한 방법</span>
+          <span>오류와 수정</span>
+          <span>친구와의 상호작용</span>
+        </div>
+        <div className="form-actions">
+          <button type="button" className="secondary" onClick={back}>
+            취소
+          </button>
+          <button className="primary">
+            피드백 제안 확인하기 <span>→</span>
+          </button>
+        </div>
+      </form>
+    </main>
+  );
 }
 
 function buildPersonalizedStages(data) {
-  const evidence=data.observation.trim().replace(/\s+/g,' ').slice(0,72)+(data.observation.trim().length>72?'…':'')
-  const goal=data.goal.trim()
-  const grade=Number.parseInt(data.grade)||4
-  const low=grade<=2
-  const talks=[
-    {talk:low?`여기까지 했구나. 선생님이 본 모습은 이거야. ${evidence}`:`여기까지 한 내용은 확인했어. ${evidence}`,focus:'확인했어',dialogue:[{who:'교사',text:low?'여기까지 했구나. 선생님이 본 모습을 같이 확인해 보자.':'지금까지 한 내용을 먼저 확인해 보자.'}]},
-    {talk:low?`아까 ${evidence} 그 부분은 잘 해냈어.`:`${evidence} 이 부분은 ‘${goal}’에 맞게 해냈어.`,focus:'해냈어',dialogue:[{who:'교사',text:`${evidence} 이 부분은 오늘 목표에 맞게 해냈어.`}]},
-    {talk:low?`여기까지 좋아. 이제 한 가지만 더 해 보자. ${goal}을 생각하며 빠진 곳을 찾아볼까?`:`여기까지는 좋아. 이제 ‘${goal}’에 비추어 빠진 근거 한 가지를 보완해 보자.`,focus:'한 가지만 더',dialogue:[{who:'교사',text:`${evidence} 여기까지는 좋아. 이제 ‘${goal}’에 비추어 무엇을 보완해야 하는지 한 가지 짚어 보자.`}]},
-    {talk:low?'어떻게 하면 더 잘할 수 있을까? 네가 먼저 해 보고 싶은 방법을 말해 줄래?':`네가 한 방법을 돌아보면, ‘${goal}’에 더 가까워지기 위해 다음에는 어떤 전략을 써 보고 싶어?`,focus:low?'네가 먼저':'어떤 전략',dialogue:[
-      {who:'교사',text:`네가 한 것을 같이 볼까? ${evidence}`},
-      {who:'교사',text:low?'이 가운데 네 마음에 드는 부분은 어디야?':`이 가운데 스스로 잘됐다고 생각하는 부분은 어디야? 그렇게 생각한 까닭도 말해 줄래?`},
-      {who:'학생',text:low?'이 부분이요. 제가 혼자 해 봤어요.':'이 부분은 제가 생각한 방법대로 해 봤고, 앞보다 더 나아진 것 같아요.'},
-      {who:'교사',text:`그렇구나. 그럼 ‘${goal}’을 생각했을 때 아직 더 살펴볼 곳은 어디일까?`},
-      {who:'학생',text:low?'여기요. 한 번 더 해 볼래요.':'근거가 충분한지 다시 확인해 봐야 할 것 같아요.'},
-      {who:'교사',text:low?'좋아. 어떤 방법으로 다시 해 볼래?':`좋아. 확인하기 위해 네가 먼저 써 보고 싶은 방법은 뭐야?`},
-      {who:'학생',text:low?'그림이랑 다시 비교해 볼래요.':'기준과 제 결과를 하나씩 비교하고, 빠진 부분을 표시해 볼게요.'},
-      {who:'교사',text:'좋은 방법이야. 먼저 그렇게 해 보고, 바뀐 점을 다시 이야기해 보자.'},
-    ]},
-    {talk:low?'우리가 잘했다고 말하려면 무엇을 보면 좋을까? 같이 약속을 정해 보자.':`‘${goal}’을 잘 해냈다고 판단할 기준을 우리가 함께 정해 볼까?`,focus:low?'같이 약속':'함께 정해',dialogue:[
-      {who:'교사',text:`오늘 목표는 ‘${goal}’이야. 이 목표를 잘 해냈다고 말하려면 무엇을 확인해야 할까?`},
-      {who:'학생',text:low?'해야 할 일을 끝까지 했는지 보면 좋겠어요.':'결과만 맞는지 보지 말고, 어떤 방법을 썼는지도 보면 좋겠어요.'},
-      {who:'학생',text:low?'친구에게 말로 알려 줄 수 있는지도 봐요.':'제 생각을 근거와 함께 설명할 수 있는지도 기준에 넣고 싶어요.'},
-      {who:'교사',text:'좋아. 지금 나온 의견을 짧은 확인표로 만들어 보자. 빠진 기준은 없을까?'},
-      {who:'학생',text:'친구의 설명을 듣고 내 생각을 고치거나 보탠 것도 확인하면 좋겠어요.'},
-      {who:'교사',text:'그 기준도 넣자. 활동이 끝나면 이 확인표로 먼저 스스로 살펴보고, 친구와도 의견을 나눠 보자.'},
-      {who:'학생',text:'확인표를 보고 부족한 부분을 고친 뒤 다시 보여 드릴게요.'},
-      {who:'교사',text:'좋아. 우리가 만든 기준으로 무엇이 달라졌는지 마지막에 함께 확인하자.'},
-    ]},
-  ]
-  return stages.map((stage,index)=>({...stage,...talks[index]}))
+  const evidence = data.observation.trim().replace(/\s+/g, " ").slice(0, 72) + (data.observation.trim().length > 72 ? "…" : "");
+  const goal = data.goal.trim();
+  const grade = Number.parseInt(data.grade) || 4;
+  const low = grade <= 2;
+  const talks = [
+    {
+      talk: low ? `여기까지 했구나. 선생님이 본 모습은 이거야. ${evidence}` : `여기까지 한 내용은 확인했어. ${evidence}`,
+      focus: "확인했어",
+      dialogue: [
+        {
+          who: "교사",
+          text: low ? "여기까지 했구나. 선생님이 본 모습을 같이 확인해 보자." : "지금까지 한 내용을 먼저 확인해 보자.",
+        },
+      ],
+    },
+    {
+      talk: low ? `아까 ${evidence} 그 부분은 잘 해냈어.` : `${evidence} 이 부분은 ‘${goal}’에 맞게 해냈어.`,
+      focus: "해냈어",
+      dialogue: [{ who: "교사", text: `${evidence} 이 부분은 오늘 목표에 맞게 해냈어.` }],
+    },
+    {
+      talk: low ? `여기까지 좋아. 이제 한 가지만 더 해 보자. ${goal}을 생각하며 빠진 곳을 찾아볼까?` : `여기까지는 좋아. 이제 ‘${goal}’에 비추어 빠진 근거 한 가지를 보완해 보자.`,
+      focus: "한 가지만 더",
+      dialogue: [
+        {
+          who: "교사",
+          text: `${evidence} 여기까지는 좋아. 이제 ‘${goal}’에 비추어 무엇을 보완해야 하는지 한 가지 짚어 보자.`,
+        },
+      ],
+    },
+    {
+      talk: low ? "어떻게 하면 더 잘할 수 있을까? 네가 먼저 해 보고 싶은 방법을 말해 줄래?" : `네가 한 방법을 돌아보면, ‘${goal}’에 더 가까워지기 위해 다음에는 어떤 전략을 써 보고 싶어?`,
+      focus: low ? "네가 먼저" : "어떤 전략",
+      dialogue: [
+        { who: "교사", text: `네가 한 것을 같이 볼까? ${evidence}` },
+        {
+          who: "교사",
+          text: low ? "이 가운데 네 마음에 드는 부분은 어디야?" : `이 가운데 스스로 잘됐다고 생각하는 부분은 어디야? 그렇게 생각한 까닭도 말해 줄래?`,
+        },
+        {
+          who: "학생",
+          text: low ? "이 부분이요. 제가 혼자 해 봤어요." : "이 부분은 제가 생각한 방법대로 해 봤고, 앞보다 더 나아진 것 같아요.",
+        },
+        {
+          who: "교사",
+          text: `그렇구나. 그럼 ‘${goal}’을 생각했을 때 아직 더 살펴볼 곳은 어디일까?`,
+        },
+        {
+          who: "학생",
+          text: low ? "여기요. 한 번 더 해 볼래요." : "근거가 충분한지 다시 확인해 봐야 할 것 같아요.",
+        },
+        {
+          who: "교사",
+          text: low ? "좋아. 어떤 방법으로 다시 해 볼래?" : `좋아. 확인하기 위해 네가 먼저 써 보고 싶은 방법은 뭐야?`,
+        },
+        {
+          who: "학생",
+          text: low ? "그림이랑 다시 비교해 볼래요." : "기준과 제 결과를 하나씩 비교하고, 빠진 부분을 표시해 볼게요.",
+        },
+        {
+          who: "교사",
+          text: "좋은 방법이야. 먼저 그렇게 해 보고, 바뀐 점을 다시 이야기해 보자.",
+        },
+      ],
+    },
+    {
+      talk: low ? "우리가 잘했다고 말하려면 무엇을 보면 좋을까? 같이 약속을 정해 보자." : `‘${goal}’을 잘 해냈다고 판단할 기준을 우리가 함께 정해 볼까?`,
+      focus: low ? "같이 약속" : "함께 정해",
+      dialogue: [
+        {
+          who: "교사",
+          text: `오늘 목표는 ‘${goal}’이야. 이 목표를 잘 해냈다고 말하려면 무엇을 확인해야 할까?`,
+        },
+        {
+          who: "학생",
+          text: low ? "해야 할 일을 끝까지 했는지 보면 좋겠어요." : "결과만 맞는지 보지 말고, 어떤 방법을 썼는지도 보면 좋겠어요.",
+        },
+        {
+          who: "학생",
+          text: low ? "친구에게 말로 알려 줄 수 있는지도 봐요." : "제 생각을 근거와 함께 설명할 수 있는지도 기준에 넣고 싶어요.",
+        },
+        {
+          who: "교사",
+          text: "좋아. 지금 나온 의견을 짧은 확인표로 만들어 보자. 빠진 기준은 없을까?",
+        },
+        {
+          who: "학생",
+          text: "친구의 설명을 듣고 내 생각을 고치거나 보탠 것도 확인하면 좋겠어요.",
+        },
+        {
+          who: "교사",
+          text: "그 기준도 넣자. 활동이 끝나면 이 확인표로 먼저 스스로 살펴보고, 친구와도 의견을 나눠 보자.",
+        },
+        {
+          who: "학생",
+          text: "확인표를 보고 부족한 부분을 고친 뒤 다시 보여 드릴게요.",
+        },
+        {
+          who: "교사",
+          text: "좋아. 우리가 만든 기준으로 무엇이 달라졌는지 마지막에 함께 확인하자.",
+        },
+      ],
+    },
+  ];
+  return stages.map((stage, index) => ({ ...stage, ...talks[index] }));
 }
 
 function FeedbackResult({ data, edit }) {
-  const [open,setOpen]=useState([])
-  const personalizedStages=buildPersonalizedStages(data)
-  const coachReady=/스스로|고쳤|수정|비교|확인|질문/.test(data.observation)
-  const recommended=coachReady?stages[3]:stages[2]
-  const recommendedTools=coachReady?[tools[4],tools[5],tools[6]]:[tools[3],tools[5],tools[8]]
-  const context=[data.grade,data.subject,data.unit,data.session].filter(Boolean).join(' · ')||'수업 맥락 미입력'
-  const toggle=i=>setOpen(open.includes(i)?open.filter(x=>x!==i):[...open,i])
-  return <main className="page result-page">
-    <button className="back" onClick={edit}>← 수행 기록 수정</button>
-    <PageIntro step="피드백 만들기 · 2/2" title="학생의 다음 행동을 위한 피드백" desc={context}/>
-    <div className="record-warning"><b>공식 성적·평가 기록이 아닌 피드백 설계 제안입니다.</b><p>교사가 실제 수행 증거와 학습 목표를 다시 확인하고, 학생에게 맞게 수정한 뒤 사용해 주세요.</p></div>
-    <div className="result-doc">
-      <Section no="01" title="관찰 사실"><div className="evidence"><span className="result-label fact">교사가 입력한 원문</span><p>“{data.observation}”</p><dl><div><dt>학습 목표</dt><dd>{data.goal}</dd></div></dl></div></Section>
-      <Section no="02" title="FeedON 제안"><div className="strategy"><div><span>추천 단계</span><h3>{recommended.name} · {recommended.ko}</h3></div><p>{recommended.desc} {coachReady?'학생이 스스로 확인하거나 수정한 흔적이 있어, 질문을 통해 다음 해결 방법을 이끌어내는 접근을 우선 제안합니다.':'현재 기록만으로 학생의 해결 전략이 충분히 드러나지 않아, 목표와 현재 수행의 차이를 구체적으로 안내하는 접근을 우선 제안합니다.'}</p></div><p className="proposal-note">이 추천은 입력 문장의 표현을 바탕으로 한 로컬 규칙 기반 제안이며, 학생의 성취수준 판정이 아닙니다.</p><h3 className="subhead">추천 확인·전달 방법</h3><div className="recommended-tools">{recommendedTools.map(t=><ToolCard key={t[1]} tool={t}/>)}</div></Section>
-      <Section no="03" title="5단계 Teacher Talk"><p className="section-desc">단계 카드를 누르면 실제 교실에서 이어 갈 수 있는 대화 예시가 열립니다. 4·5단계는 학생의 응답에 따라 질문을 바꾸며 주고받는 과정이 핵심입니다.</p><div className="talk-list">{personalizedStages.map((s,i)=>{const isOpen=open.includes(i);return <article key={s.name} className={isOpen?'open':''}><button className="stage-card-button" onClick={()=>toggle(i)} aria-expanded={isOpen}><div className="talk-top"><span>0{i+1}</span><div><h3>{s.name} <small>{s.ko}</small></h3><CenterBadge center={s.center}/><blockquote>“<HighlightTalk stage={s}/>”</blockquote></div></div><span className="stage-open-label">{isOpen?'예시 접기 −':'자세한 예시 보기 +'}</span></button>{isOpen&&<div className="talk-detail"><div className="detail-note">학생 문장은 정답이 아닌 <b>예상 응답</b>입니다. 실제 대답을 듣고 다음 질문을 이어 가세요.</div><Dialogue lines={s.dialogue}/><dl><div><dt>단계의 목적</dt><dd>{s.desc}</dd></div><div><dt>사용 시점</dt><dd>{s.when}</dd></div><div><dt>교사가 주의할 점</dt><dd>{s.caution}</dd></div></dl></div>}</article>})}</div></Section>
-      <Section no="04" title="교사 확인"><div className="teacher-check"><p>학생에게 말하기 전에 세 가지를 확인해 주세요.</p><label><input type="checkbox"/> 입력한 관찰 사실과 제안 문장이 일치하나요?</label><label><input type="checkbox"/> 학생의 수준을 낙인찍는 표현이 없나요?</label><label><input type="checkbox"/> 학생이 직접 해 볼 다음 행동이 분명한가요?</label></div></Section>
-    </div>
-  </main>
+  const [open, setOpen] = useState([]);
+  const personalizedStages = buildPersonalizedStages(data);
+  const coachReady = /스스로|고쳤|수정|비교|확인|질문/.test(data.observation);
+  const recommended = coachReady ? stages[3] : stages[2];
+  const recommendedTools = coachReady ? [tools[4], tools[5], tools[6]] : [tools[3], tools[5], tools[8]];
+  const context = [data.grade, data.subject, data.unit, data.session].filter(Boolean).join(" · ") || "수업 맥락 미입력";
+  const toggle = (i) => setOpen(open.includes(i) ? open.filter((x) => x !== i) : [...open, i]);
+  return (
+    <main className="page result-page">
+      <button className="back" onClick={edit}>
+        ← 수행 기록 수정
+      </button>
+      <PageIntro step="피드백 만들기 · 2/2" title="학생의 다음 행동을 위한 피드백" desc={context} />
+      <div className="record-warning">
+        <b>공식 성적·평가 기록이 아닌 피드백 설계 제안입니다.</b>
+        <p>교사가 실제 수행 증거와 학습 목표를 다시 확인하고, 학생에게 맞게 수정한 뒤 사용해 주세요.</p>
+      </div>
+      <div className="result-doc">
+        <Section no="01" title="관찰 사실">
+          <div className="evidence">
+            <span className="result-label fact">교사가 입력한 원문</span>
+            <p>“{data.observation}”</p>
+            <dl>
+              <div>
+                <dt>학습 목표</dt>
+                <dd>{data.goal}</dd>
+              </div>
+            </dl>
+          </div>
+        </Section>
+        <Section no="02" title="FeedON 제안">
+          <div className="strategy">
+            <div>
+              <span>추천 단계</span>
+              <h3>
+                {recommended.name} · {recommended.ko}
+              </h3>
+            </div>
+            <p>
+              {recommended.desc} {coachReady ? "학생이 스스로 확인하거나 수정한 흔적이 있어, 질문을 통해 다음 해결 방법을 이끌어내는 접근을 우선 제안합니다." : "현재 기록만으로 학생의 해결 전략이 충분히 드러나지 않아, 목표와 현재 수행의 차이를 구체적으로 안내하는 접근을 우선 제안합니다."}
+            </p>
+          </div>
+          <p className="proposal-note">이 추천은 입력 문장의 표현을 바탕으로 한 로컬 규칙 기반 제안이며, 학생의 성취수준 판정이 아닙니다.</p>
+          <h3 className="subhead">추천 확인·전달 방법</h3>
+          <div className="recommended-tools">
+            {recommendedTools.map((t) => (
+              <ToolCard key={t[1]} tool={t} />
+            ))}
+          </div>
+        </Section>
+        <Section no="03" title="5단계 Teacher Talk">
+          <p className="section-desc">단계 카드를 누르면 실제 교실에서 이어 갈 수 있는 대화 예시가 열립니다. 4·5단계는 학생의 응답에 따라 질문을 바꾸며 주고받는 과정이 핵심입니다.</p>
+          <div className="talk-list">
+            {personalizedStages.map((s, i) => {
+              const isOpen = open.includes(i);
+              return (
+                <article key={s.name} className={isOpen ? "open" : ""}>
+                  <button className="stage-card-button" onClick={() => toggle(i)} aria-expanded={isOpen}>
+                    <div className="talk-top">
+                      <span>0{i + 1}</span>
+                      <div>
+                        <h3>
+                          {s.name} <small>{s.ko}</small>
+                        </h3>
+                        <CenterBadge center={s.center} />
+                        <blockquote>
+                          “<HighlightTalk stage={s} />”
+                        </blockquote>
+                      </div>
+                    </div>
+                    <span className="stage-open-label">{isOpen ? "예시 접기 −" : "자세한 예시 보기 +"}</span>
+                  </button>
+                  {isOpen && (
+                    <div className="talk-detail">
+                      <div className="detail-note">
+                        학생 문장은 정답이 아닌 <b>예상 응답</b>입니다. 실제 대답을 듣고 다음 질문을 이어 가세요.
+                      </div>
+                      <Dialogue lines={s.dialogue} />
+                      <dl>
+                        <div>
+                          <dt>단계의 목적</dt>
+                          <dd>{s.desc}</dd>
+                        </div>
+                        <div>
+                          <dt>사용 시점</dt>
+                          <dd>{s.when}</dd>
+                        </div>
+                        <div>
+                          <dt>교사가 주의할 점</dt>
+                          <dd>{s.caution}</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </Section>
+        <Section no="04" title="교사 확인">
+          <div className="teacher-check">
+            <p>학생에게 말하기 전에 세 가지를 확인해 주세요.</p>
+            <label>
+              <input type="checkbox" /> 입력한 관찰 사실과 제안 문장이 일치하나요?
+            </label>
+            <label>
+              <input type="checkbox" /> 학생의 수준을 낙인찍는 표현이 없나요?
+            </label>
+            <label>
+              <input type="checkbox" /> 학생이 직접 해 볼 다음 행동이 분명한가요?
+            </label>
+          </div>
+        </Section>
+      </div>
+    </main>
+  );
 }
 
 function App() {
-  const [page,setPage]=useState('home'),[help,setHelp]=useState(null),[fForm,setFForm]=useState(null),[fResult,setFResult]=useState(null)
-  const feedbackDone=f=>{setFForm(f);setFResult(f);setPage('feedbackResult');scrollTo(0,0)}
-  const nav=p=>{setPage(p);scrollTo(0,0)}
-  return <><Header goHome={()=>nav('home')} openHelp={setHelp}/>{page==='home'&&<Home navigate={nav} openHelp={setHelp}/>} {page==='feedback'&&<FeedbackForm initial={fForm} onSubmit={feedbackDone} back={()=>nav('home')}/>} {page==='feedbackResult'&&<FeedbackResult data={fResult} edit={()=>nav('feedback')}/>} {help&&<Modal type={help} close={()=>setHelp(null)}/>}<footer><b>FeedON</b><span>학생 주도성을 켜는 퍼스널 피드백 도우미</span></footer></>
+  const [page, setPage] = useState("home"),
+    [help, setHelp] = useState(null),
+    [fForm, setFForm] = useState(null),
+    [fResult, setFResult] = useState(null);
+  const feedbackDone = (f) => {
+    setFForm(f);
+    setFResult(f);
+    setPage("feedbackResult");
+    scrollTo(0, 0);
+  };
+  const nav = (p) => {
+    setPage(p);
+    scrollTo(0, 0);
+  };
+  return (
+    <>
+      <Header goHome={() => nav("home")} openHelp={setHelp} />
+      {page === "home" && <Home navigate={nav} openHelp={setHelp} />} {page === "feedback" && <FeedbackForm initial={fForm} onSubmit={feedbackDone} back={() => nav("home")} />} {page === "feedbackResult" && <FeedbackResult data={fResult} edit={() => nav("feedback")} />} {help && <Modal type={help} close={() => setHelp(null)} />}
+      <footer>
+        <b>FeedON</b>
+        <span>학생 주도성을 켜는 퍼스널 피드백 도우미</span>
+      </footer>
+    </>
+  );
 }
 
-export default App
+export default App;
