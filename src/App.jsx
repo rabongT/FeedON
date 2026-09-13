@@ -1019,6 +1019,7 @@ function buildPersonalizedStages(data) {
 
 function FeedbackResult({ data, edit }) {
   const [open, setOpen] = useState([]);
+  const [view, setView] = useState("proposal");
   const personalizedStages = buildPersonalizedStages(data);
   const coachReady = /스스로|고쳤|수정|비교|확인|질문/.test(data.observation);
   const recommended = coachReady ? stages[3] : stages[2];
@@ -1035,8 +1036,22 @@ function FeedbackResult({ data, edit }) {
         <b>공식 성적·평가 기록이 아닌 피드백 설계 제안입니다.</b>
         <p>교사가 실제 수행 증거와 학습 목표를 다시 확인하고, 학생에게 맞게 수정한 뒤 사용해 주세요.</p>
       </div>
+      <nav className="result-tabs" aria-label="피드백 결과 메뉴">
+        <button className={view === "evidence" ? "active" : ""} onClick={() => setView("evidence")} aria-pressed={view === "evidence"}>
+          <span>01</span>관찰 사실
+        </button>
+        <button className={view === "proposal" ? "active" : ""} onClick={() => setView("proposal")} aria-pressed={view === "proposal"}>
+          <span>02</span>FeedON 제안
+        </button>
+        <button className={view === "talk" ? "active" : ""} onClick={() => setView("talk")} aria-pressed={view === "talk"}>
+          <span>03</span>5단계 Teacher Talk
+        </button>
+        <button className={`summary-tab ${view === "all" ? "active" : ""}`} onClick={() => setView("all")} aria-pressed={view === "all"}>
+          한 화면에 정리하기
+        </button>
+      </nav>
       <div className="result-doc">
-        <Section no="01" title="관찰 사실">
+        {(view === "evidence" || view === "all") && <Section no="01" title="관찰 사실">
           <div className="evidence">
             <span className="result-label fact">교사가 입력한 원문</span>
             <p>“{data.observation}”</p>
@@ -1047,8 +1062,8 @@ function FeedbackResult({ data, edit }) {
               </div>
             </dl>
           </div>
-        </Section>
-        <Section no="02" title="FeedON 제안">
+        </Section>}
+        {(view === "proposal" || view === "all") && <Section no="02" title="FeedON 제안">
           <div className="strategy">
             <div>
               <span>추천 단계</span>
@@ -1067,8 +1082,8 @@ function FeedbackResult({ data, edit }) {
               <ToolCard key={t[1]} tool={t} />
             ))}
           </div>
-        </Section>
-        <Section no="03" title="5단계 Teacher Talk">
+        </Section>}
+        {(view === "talk" || view === "all") && <Section no="03" title="5단계 Teacher Talk">
           <p className="section-desc">단계 카드를 누르면 실제 교실에서 이어 갈 수 있는 대화 예시가 열립니다. 4·5단계는 학생의 응답에 따라 질문을 바꾸며 주고받는 과정이 핵심입니다.</p>
           <div className="talk-list">
             {personalizedStages.map((s, i) => {
@@ -1116,8 +1131,8 @@ function FeedbackResult({ data, edit }) {
               );
             })}
           </div>
-        </Section>
-        <Section no="04" title="교사 확인">
+        </Section>}
+        {view === "all" && <Section no="04" title="교사 확인">
           <div className="teacher-check">
             <p>학생에게 말하기 전에 세 가지를 확인해 주세요.</p>
             <label>
@@ -1130,7 +1145,7 @@ function FeedbackResult({ data, edit }) {
               <input type="checkbox" /> 학생이 직접 해 볼 다음 행동이 분명한가요?
             </label>
           </div>
-        </Section>
+        </Section>}
       </div>
     </main>
   );
