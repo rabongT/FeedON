@@ -814,14 +814,14 @@ const feedbackExamples = {
   과학: { grade: "5학년", subject: "과학", unit: "식물의 구조와 기능", session: "3차시", goal: "관찰 결과를 근거로 식물의 구조와 기능 설명하기", observation: "잎과 줄기의 특징은 정확히 관찰해 기록했지만, 각 구조가 하는 일을 설명할 때 관찰 결과를 근거로 연결하지 못했다. 친구의 설명을 듣고 자신의 기록에서 근거가 될 부분에 밑줄을 그었다." },
 };
 const observationExamples = [
-  { label: "생각을 말로 설명함", category: "학생이 한 말", text: "답은 정확히 제시했지만 풀이한 까닭을 묻자 ‘그냥 이렇게 하면 돼요’라고 답했다. 교사가 사용한 방법을 순서대로 말해 보게 하자 첫 단계까지는 설명했다." },
-  { label: "근거를 들어 말함", category: "학생이 한 말", text: "자신의 생각을 먼저 말한 뒤 자료에서 근거가 되는 부분을 찾아 가리켰다. 다만 그 근거가 자신의 생각을 어떻게 뒷받침하는지는 설명하지 못했다." },
-  { label: "여러 방법을 시도함", category: "시도한 방법", text: "처음 사용한 방법으로 해결되지 않자 그림과 표로 다시 나타내 보았다. 두 방법의 결과를 비교했지만 어느 방법이 더 알맞은지는 선택하지 못했다." },
-  { label: "도움을 받아 이어감", category: "시도한 방법", text: "과제를 시작하지 못하고 있었으나 교사가 첫 순서를 질문으로 안내하자 필요한 자료를 스스로 찾아 다음 단계까지 수행했다." },
-  { label: "오류를 스스로 고침", category: "오류와 수정", text: "결과를 다시 확인하는 과정에서 앞의 답과 맞지 않는 부분을 발견했다. 계산 과정을 한 줄씩 비교해 오류가 난 곳에 표시하고 답을 스스로 수정했다." },
-  { label: "같은 오류가 반복됨", category: "오류와 수정", text: "교사의 안내를 듣고 한 문항의 오류는 고쳤지만 비슷한 다음 문항에서는 같은 오류가 다시 나타났다. 무엇을 확인해야 하는지 묻자 기준을 말로 설명하지 못했다." },
-  { label: "친구 설명 후 수정함", category: "친구와의 상호작용", text: "친구의 설명을 들으며 자신의 결과와 다른 부분에 표시했다. 질문을 한 뒤 빠진 내용을 찾아 자신의 기록을 고치고 수정한 까닭을 친구에게 설명했다." },
-  { label: "의견을 조율함", category: "친구와의 상호작용", text: "모둠에서 서로 다른 의견이 나오자 두 의견의 공통점과 차이점을 정리했다. 자료를 근거로 한 의견을 선택하자고 제안했지만 최종 기준을 합의하지는 못했다." },
+  { label: "정답은 맞았지만 풀이 설명은 못함", category: "학생이 한 말", text: "답은 정확히 제시했지만 풀이한 까닭을 묻자 ‘그냥 이렇게 하면 돼요’라고 답했다. 교사가 사용한 방법을 순서대로 말해 보게 하자 첫 단계까지는 설명했다." },
+  { label: "생각은 먼저 말하고 근거는 뒤늦게 찾음", category: "학생이 한 말", text: "자신의 생각을 먼저 말한 뒤 자료에서 근거가 되는 부분을 찾아 가리켰다. 다만 그 근거가 자신의 생각을 어떻게 뒷받침하는지는 설명하지 못했다." },
+  { label: "안 되는 방법 대신 다른 방법으로 재시도", category: "시도한 방법", text: "처음 사용한 방법으로 해결되지 않자 그림과 표로 다시 나타내 보았다. 두 방법의 결과를 비교했지만 어느 방법이 더 알맞은지는 선택하지 못했다." },
+  { label: "혼자 시작 못했지만 힌트 받고 끝까지 이어감", category: "시도한 방법", text: "과제를 시작하지 못하고 있었으나 교사가 첫 순서를 질문으로 안내하자 필요한 자료를 스스로 찾아 다음 단계까지 수행했다." },
+  { label: "검산 중 오류를 발견하고 스스로 고침", category: "오류와 수정", text: "결과를 다시 확인하는 과정에서 앞의 답과 맞지 않는 부분을 발견했다. 계산 과정을 한 줄씩 비교해 오류가 난 곳에 표시하고 답을 스스로 수정했다." },
+  { label: "지적받은 오류가 다음 문제에서 또 반복됨", category: "오류와 수정", text: "교사의 안내를 듣고 한 문항의 오류는 고쳤지만 비슷한 다음 문항에서는 같은 오류가 다시 나타났다. 무엇을 확인해야 하는지 묻자 기준을 말로 설명하지 못했다." },
+  { label: "친구 설명 듣고 자기 기록을 스스로 고침", category: "친구와의 상호작용", text: "친구의 설명을 들으며 자신의 결과와 다른 부분에 표시했다. 질문을 한 뒤 빠진 내용을 찾아 자신의 기록을 고치고 수정한 까닭을 친구에게 설명했다." },
+  { label: "모둠 의견 차이를 근거로 조율하려 시도", category: "친구와의 상호작용", text: "모둠에서 서로 다른 의견이 나오자 두 의견의 공통점과 차이점을 정리했다. 자료를 근거로 한 의견을 선택하자고 제안했지만 최종 기준을 합의하지는 못했다." },
 ];
 function FeedbackForm({ initial, onSubmit, back }) {
   const [f, setF] = useState({ ...blankFeedback, ...initial });
@@ -850,6 +850,7 @@ function FeedbackForm({ initial, onSubmit, back }) {
     e.preventDefault();
     const next = {};
     if (!f.grade) next.grade = "학생 눈높이에 맞는 말로 제안하려면 학년이 필요해요.";
+    if (!f.subject) next.subject = "교과에 맞는 예시와 표현을 제안하려면 과목이 필요해요.";
     if (!f.goal.trim()) next.goal = "관찰하려던 학습 목표나 평가 요소를 적어 주세요.";
     if (!f.observation.trim()) next.observation = "학생이 실제로 말하거나 행동한 모습을 적어 주세요.";
     else if (f.observation.trim().length < 20) next.observation = "판단만 적기보다 구체적인 말·행동·오류·해결 과정 중 한 가지를 더 적어 주세요.";
@@ -880,7 +881,7 @@ function FeedbackForm({ initial, onSubmit, back }) {
         )}
         <div className="form-section-label">
           <span>수업 정보</span>
-          <p>학년은 필수이며, 나머지는 알고 있는 만큼만 입력해도 괜찮아요.</p>
+          <p>학년과 과목은 필수이며, 나머지는 알고 있는 만큼만 입력해도 괜찮아요.</p>
         </div>
         <div className="form-grid">
           <div className={errors.grade ? "field-error" : ""}>
@@ -898,14 +899,21 @@ function FeedbackForm({ initial, onSubmit, back }) {
               )}
             </Field>
           </div>
-          <Field label="과목">
-            <select className={exampleFields.has("subject") ? "example-value" : ""} value={f.subject} onChange={(e) => set("subject", e.target.value)}>
-              <option value="">선택하지 않아도 돼요</option>
-              {["국어", "수학", "사회", "과학", "도덕", "체육", "음악", "미술", "실과", "영어"].map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
-          </Field>
+          <div className={errors.subject ? "field-error" : ""}>
+            <Field label="과목" required>
+              <select className={exampleFields.has("subject") ? "example-value" : ""} value={f.subject} onChange={(e) => set("subject", e.target.value)} aria-invalid={!!errors.subject}>
+                <option value="">과목을 선택하세요</option>
+                {["국어", "수학", "사회", "과학", "도덕", "체육", "음악", "미술", "실과", "영어"].map((x) => (
+                  <option key={x}>{x}</option>
+                ))}
+              </select>
+              {errors.subject && (
+                <span className="error-message" role="alert">
+                  {errors.subject}
+                </span>
+              )}
+            </Field>
+          </div>
         </div>
         <div className="form-grid">
           <Field label="단원">
@@ -1153,7 +1161,7 @@ function FeedbackResult({ data, edit }) {
               </h3>
             </div>
             <p>
-              {recommended.desc} {coachReady ? "학생이 스스로 확인하거나 수정한 흔적이 있어, 질문을 통해 다음 해결 방법을 이끌어내는 접근을 우선 제안합니다." : "현재 기록만으로 학생의 해결 전략이 충분히 드러나지 않아, 목표와 현재 수행의 차이를 구체적으로 안내하는 접근을 우선 제안합니다."}
+              <b>{recommended.desc}</b> {coachReady ? "학생이 스스로 확인하거나 수정한 흔적이 있어, 질문을 통해 다음 해결 방법을 이끌어내는 접근을 우선 제안합니다." : "현재 기록만으로 학생의 해결 전략이 충분히 드러나지 않아, 목표와 현재 수행의 차이를 구체적으로 안내하는 접근을 우선 제안합니다."}
             </p>
           </div>
           <p className="proposal-note">이 추천은 입력 문장의 표현을 바탕으로 한 로컬 규칙 기반 제안이며, 학생의 성취수준 판정이 아닙니다.</p>
