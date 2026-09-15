@@ -180,11 +180,11 @@ function Header({ goHome, openHelp }) {
       <div className="header-inner">
         <button className="brand" onClick={() => { goHome(); setMenuOpen(false); }}>
           <img src="/school-logo.png" alt="서울경인초등학교" className="brand-logo" />
-          Feed<span>ON</span>
+          <span className="brand-name"><span className="brand-feed">Feed</span><span className="brand-on">ON</span></span>
         </button>
         <nav className="site-nav" aria-label="주요 메뉴">
-          <button className="nav-link" onClick={() => openHelp("stages")}>피드백 5단계</button>
-          <button className="nav-link" onClick={() => openHelp("tools")}>피드백 도구</button>
+          <button className="nav-link nav-stages" onClick={() => openHelp("stages")}><span aria-hidden="true">⑤</span> 피드백 5단계</button>
+          <button className="nav-link nav-tools" onClick={() => openHelp("tools")}><span aria-hidden="true">▣</span> 피드백 도구</button>
         </nav>
         <button
           className="hamburger"
@@ -197,8 +197,8 @@ function Header({ goHome, openHelp }) {
       </div>
       {menuOpen && (
         <nav className="mobile-nav" aria-label="모바일 메뉴">
-          <button className="mobile-nav-link" onClick={() => { openHelp("stages"); setMenuOpen(false); }}>피드백 5단계</button>
-          <button className="mobile-nav-link" onClick={() => { openHelp("tools"); setMenuOpen(false); }}>피드백 도구</button>
+          <button className="mobile-nav-link nav-stages" onClick={() => { openHelp("stages"); setMenuOpen(false); }}>⑤ 피드백 5단계</button>
+          <button className="mobile-nav-link nav-tools" onClick={() => { openHelp("tools"); setMenuOpen(false); }}>▣ 피드백 도구</button>
         </nav>
       )}
     </header>
@@ -493,6 +493,9 @@ function Home({ navigate, openHelp }) {
       <section className="hero-v2" aria-labelledby="hero-heading">
         <div className="hero-text">
           <p className="hero-label">피드백 한 스푼, 성장 두 스푼</p>
+          <div className="hero-product-name" aria-label="FeedON">
+            <span>Feed</span><strong>ON</strong><i aria-hidden="true" />
+          </div>
           <h1 className="hero-title" id="hero-heading">
             학생 주도성을 켜는<br />
             퍼스널 평가·피드백 도우미
@@ -1225,6 +1228,7 @@ function App() {
       {page === "home" && <Home navigate={nav} openHelp={setHelp} />} {page === "feedback" && <FeedbackForm initial={fForm} onSubmit={feedbackDone} back={() => nav("home")} />} {page === "feedbackResult" && <FeedbackResult data={fResult} edit={() => nav("feedback")} />} {help && <Modal type={help} close={() => setHelp(null)} />}
       <footer>
         <b>FeedON</b>
+        <small className="copyright">© 2026 rabongT <span aria-hidden="true">🍊</span></small>
       </footer>
     </>
   );
