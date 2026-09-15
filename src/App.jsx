@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import oneMarkerPhoto from "./assets/feedback-tools/one-marker-classroom.png";
 import fiveFingersPhoto from "./assets/feedback-tools/five-fingers-classroom.png";
-import heroIllustration from "./assets/hero-illustration.jpg";
 import "./App.css";
 
 const stages = [
@@ -180,8 +179,8 @@ function Header({ goHome, openHelp }) {
     <header className="header">
       <div className="header-inner">
         <button className="brand" onClick={() => { goHome(); setMenuOpen(false); }}>
+          <img src="/school-logo.png" alt="서울경인초등학교" className="brand-logo" />
           Feed<span>ON</span>
-          <small className="brand-tagline">학생 주도성을 켜는 퍼스널 평가·피드백 도우미</small>
         </button>
         <nav className="site-nav" aria-label="주요 메뉴">
           <button className="nav-link" onClick={() => openHelp("stages")}>피드백 5단계</button>
@@ -490,20 +489,14 @@ function HomeOriginal({ navigate, openHelp }) {
 function Home({ navigate, openHelp }) {
   return (
     <main className="home-v2">
-      {/* Background decorative blobs */}
-      <div className="bg-blob bg-blob-1" aria-hidden="true" />
-      <div className="bg-blob bg-blob-2" aria-hidden="true" />
-      <div className="bg-blob bg-blob-3" aria-hidden="true" />
-
       {/* Hero */}
       <section className="hero-v2" aria-labelledby="hero-heading">
         <div className="hero-text">
           <p className="hero-label">더 깊은 관찰, 더 성장하는 아이들</p>
-          <h1 className="hero-brand-name" id="hero-heading">Feed<span>ON</span></h1>
-          <p className="hero-title">
+          <h1 className="hero-title" id="hero-heading">
             학생 주도성을 켜는<br />
             퍼스널 평가·피드백 도우미
-          </p>
+          </h1>
           <p className="hero-desc">
             학생의 실제 수행을 바탕으로,<br />
             다음 성장을 돕는 피드백을 설계하세요.
@@ -534,13 +527,6 @@ function Home({ navigate, openHelp }) {
               </svg>
             </button>
           </div>
-        </div>
-        <div className="hero-illust">
-          <img
-            src={heroIllustration}
-            alt="교사와 초등학생 3명이 노트북을 함께 보며 대화하는 교실 장면"
-            className="hero-illust-img"
-          />
         </div>
       </section>
 
