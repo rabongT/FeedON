@@ -506,11 +506,6 @@ function Home({ navigate, openHelp }) {
         </div>
         <aside className="hero-action-panel" aria-label="피드백 만들기 시작">
           <span className="panel-kicker">FEEDBACK ON</span>
-          <h2>학생 피드백 만들기</h2>
-          <p>관찰한 모습을 입력하면 바로 활용할 수 있는 피드백 문장과 Teacher Talk을 제안합니다.</p>
-          <div className="panel-flow" aria-label="피드백 만들기 과정">
-            <span><b>1</b> 실제 수행 기록</span><i aria-hidden="true">→</i><span><b>2</b> 피드백 확인</span>
-          </div>
           <div className="hero-actions">
             <button className="btn-primary" onClick={() => navigate("feedback")}>
               <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -528,8 +523,12 @@ function Home({ navigate, openHelp }) {
                 <polyline points="12 5 19 12 12 19" />
               </svg>
             </button>
+            <p className="panel-description">관찰한 모습을 입력하면 바로 활용할 수 있는 피드백 문장과 Teacher Talk을 제안합니다.</p>
+            <div className="panel-flow" aria-label="피드백 만들기 과정">
+              <span><b>1</b> 실제 수행 기록</span><i aria-hidden="true">→</i><span><b>2</b> 피드백 확인</span>
+            </div>
             <button className="btn-secondary" onClick={() => openHelp("stages")}>
-              <span className="steps-icon" aria-hidden="true">5</span>
+              <span aria-hidden="true">💡</span>
               피드백 5단계 알아보기
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{width:15,height:15}}>
                 <line x1="5" y1="12" x2="19" y2="12" />
