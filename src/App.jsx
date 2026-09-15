@@ -496,10 +496,10 @@ function Home({ navigate, openHelp }) {
           <div className="hero-product-name" aria-label="FeedON">
             <span>Feed</span><button type="button" onClick={() => navigate("feedback")} aria-label="ON: 피드백 만들기 시작" title="피드백 만들기 시작">ON</button>
           </div>
-          <p className="on-action-hint"><span aria-hidden="true">↗</span> ON을 눌러 피드백을 시작하세요</p>
+          <p className="on-action-hint">ON을 클릭하세요 <span aria-hidden="true">→</span></p>
           <h1 className="hero-title" id="hero-heading">
             학생 주도성을 켜는<br />
-            퍼스널 평가·피드백 도우미
+            퍼스널 피드백 도우미
           </h1>
           <p className="hero-intro">학생의 실제 수행을 바탕으로 다음 성장을 돕는 피드백을 설계하세요.</p>
         </div>

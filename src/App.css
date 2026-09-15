@@ -91,3 +91,5 @@ body{background:#f5f6f3}.header{height:68px;background:#fff;border-bottom:1px so
 @media(max-width:600px){.hero-product-name>button{margin-left:5px;font-size:53px;letter-spacing:-3px}.on-action-hint{margin-top:-15px;font-size:11px}.home-v2{background:radial-gradient(circle at 100% 8%,rgba(178,225,206,.24),transparent 22%),#fcfbf7}}
 .on-action-hint+.hero-title{margin-bottom:20px;font-size:clamp(33px,3.3vw,46px);line-height:1.3;letter-spacing:-2px}
 @media(max-width:600px){.on-action-hint+.hero-title{font-size:29px;line-height:1.34;letter-spacing:-1.2px}}
+.hero-copy{display:flex;flex-direction:column;align-items:flex-start}.on-action-hint{margin-left:4px;letter-spacing:-.1px}.on-action-hint span{display:inline-block;margin-left:2px}.on-action-hint+.hero-title{max-width:560px;text-wrap:balance}.hero-intro{max-width:490px;text-wrap:pretty}.hero-action-panel h2,.hero-action-panel>p{text-wrap:balance}.btn-title,.btn-sub{word-break:keep-all}
+@media(max-width:600px){.hero-copy{align-items:flex-start}.on-action-hint+.hero-title{max-width:330px;text-wrap:initial}.hero-intro{max-width:350px}.hero-action-panel h2,.hero-action-panel>p{text-wrap:pretty}}
