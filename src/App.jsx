@@ -3,6 +3,7 @@ import oneMarkerPhoto from "./assets/feedback-tools/one-marker-classroom.png";
 import fiveFingersPhoto from "./assets/feedback-tools/five-fingers-classroom.png";
 import "./App.css";
 import "./Home.css";
+import "./Theme.css";
 
 const stages = [
   {
@@ -1237,8 +1238,7 @@ function App() {
       <Header goHome={() => nav("home")} openHelp={setHelp} />
       {page === "home" && <Home navigate={nav} openHelp={setHelp} />} {page === "feedback" && <FeedbackForm initial={fForm} onSubmit={feedbackDone} back={() => nav("home")} />} {page === "feedbackResult" && <FeedbackResult data={fResult} edit={() => nav("feedback")} />} {help && <Modal type={help} close={() => setHelp(null)} />}
       <footer>
-        <b>FeedON</b>
-        <small className="copyright">© 2026 rabongT <span aria-hidden="true">🍊</span></small>
+        <small className="copyright">© 경인초 학생평가 연구팀</small>
       </footer>
     </>
   );

@@ -1,0 +1,82 @@
+/* Shared navy / cream shell, with mint and apricot support accents. */
+:root {
+  --navy: #19334e;
+  --green: #24516e;
+  --green-dark: #19334e;
+  --mint: #e5f2ed;
+  --muted: #627584;
+  --line: #dce3e6;
+  --paper: #fffefa;
+  color: #263e51;
+  background: #faf9f4;
+}
+body { background: #faf9f4; color: #263e51; }
+.header { background: #fffefa; border-bottom-color: #e1e5e5; box-shadow: none; }
+.brand .brand-feed { color: #19334e; }
+footer {
+  width: 100%; max-width: none; margin: 0; padding: 26px 20px;
+  display: flex; align-items: center; justify-content: center;
+  background: #faf9f4; border-top: 1px solid #e1e5e5; text-align: center;
+}
+footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6; }
+.page { max-width: 1180px; padding: 38px 32px 72px; }
+.page .back { color: #526d82; margin-bottom: 24px; }
+.page .page-intro {
+  display: block; padding: 30px 34px; margin-bottom: 28px;
+  background: #19334e; border-radius: 14px; color: #fff;
+}
+.page .page-intro .step {
+  display: inline-block; width: auto; height: auto; margin: 0 0 15px;
+  padding: 6px 11px; border: 0; border-radius: 6px;
+  background: #e4fa59; color: #19334e; box-shadow: none;
+}
+.page .page-intro h1 { color: #fff; font-size: clamp(28px, 3vw, 40px); line-height: 1.4; letter-spacing: -.04em; word-break: keep-all; }
+.page .page-intro p { margin-bottom: 0; color: #cad9e4; font-size: 16px; line-height: 1.75; word-break: keep-all; }
+.page .form-sheet, .page .result-doc { max-width: none; background: #fffefa; border-color: #dce3e6; border-radius: 12px; box-shadow: 0 4px 18px #19334e06; }
+.page .form-sheet { border-top: 3px solid #19334e; }
+.page .form-welcome { background: #eaf4ef; border-color: #c7dfd4; box-shadow: none; }
+.page .form-welcome:before { content: '?'; background: #19334e; color: #e4fa59; box-shadow: none; }
+.page .form-welcome span, .page .form-welcome b { color: #294f48; }
+.page .form-welcome button { color: #19334e; background: #fffefa; border-color: #b8cec8; }
+.page .form-welcome button:hover { background: #19334e; color: #fff; }
+.page .form-section-label { border-bottom-color: #dce3e6; }
+.page .form-section-label span, .page .section-heading h2 { color: #19334e; }
+.page .form-section-label span:before { background: #19334e; }
+.page .field > span, .page fieldset legend { color: #263e51; }
+.page .field input, .page .field select, .page .field textarea { background: #fff; border-color: #ccd7df; color: #263e51; }
+.page .field input:focus, .page .field select:focus, .page .field textarea:focus { outline: 3px solid #aacbdc; outline-offset: 2px; border-color: #24516e; }
+.page .field input.example-value, .page .field select.example-value, .page .field textarea.example-value { color: #80919d; }
+.page .field .example-value:focus { color: #263e51; }
+.page .field-error .field input, .page .field-error .field select, .page .field-error .field textarea,
+.page .field input[aria-invalid="true"], .page .field select[aria-invalid="true"], .page .field textarea[aria-invalid="true"] { border-color: #b54c45; background: #fff6f4; }
+.page .primary { background: #19334e; border-color: #19334e; color: #fff; border-radius: 10px; min-height: 48px; box-shadow: none; }
+.page .primary:hover { background: #284c6c; border-color: #284c6c; }
+.page .secondary { background: #fffefa; border-color: #ccd7df; color: #19334e; border-radius: 10px; min-height: 48px; }
+.page .observation-guide { background: #eff4f7; border-color: #d6e1e8; }
+.page .result-tabs { background: #fffefa; border-color: #dce3e6; border-radius: 12px; box-shadow: 0 4px 16px #19334e08; }
+.page .result-tabs button { color: #536c7e; }
+.page .result-tabs button:hover { background: #edf2f5; color: #19334e; }
+.page .result-tabs button.active { background: #19334e; color: #fff; box-shadow: none; }
+.page .result-tabs button.active span { color: #e4fa59; }
+.page .result-tabs .summary-tab { background: #eaf4ef; color: #28584b; }
+.page .result-tabs .summary-tab.active { border-color: #19334e; background: #19334e; color: #fff; }
+.page .section-heading > span { background: #e5edf3; color: #24516e; }
+.page .record-warning { background: #fff5e5; border-color: #efdab9; border-left-color: #d48b36; }
+.page .stage-picker button.active { border-color: #19334e; box-shadow: inset 0 0 0 1px #19334e; }
+.overlay { background: #19334e33; }
+.modal { background: #faf9f4; color: #263e51; box-shadow: -10px 0 36px #19334e1a; }
+.modal-head { border-bottom-color: #dce3e6; }
+.modal-head h2, .modal-head .eyebrow { color: #19334e; }
+.modal .close { flex-shrink: 0; background: #fffefa; color: #19334e; border-color: #ccd7df; }
+.modal .close:hover { background: #e5edf3; }
+.modal .notice { background: #eaf4ef; color: #335449; }
+.modal .stage-help-picker button.active { border-color: #19334e; background: #e8eef3; }
+@media (max-width: 700px) {
+  .page { padding: 24px 20px 48px; }
+  .page .page-intro { padding: 24px 20px; margin-bottom: 22px; }
+  .page .page-intro h1 { font-size: 27px; }
+  .page .page-intro p { font-size: 15px; }
+  .page .form-sheet { padding: 24px 18px; }
+  .page .result-tabs button { min-height: 48px; font-size: 14px; }
+  .page .form-section-label { flex-wrap: wrap; gap: 6px; }
+}
