@@ -491,15 +491,25 @@ function Home({ navigate, openHelp }) {
     <main className="home-v2">
       {/* Hero */}
       <section className="hero-v2" aria-labelledby="hero-heading">
-        <div className="hero-text">
+        <div className="hero-copy">
           <p className="hero-label">피드백 한 스푼, 성장 두 스푼</p>
           <div className="hero-product-name" aria-label="FeedON">
-            <span>Feed</span><strong>ON</strong><i aria-hidden="true" />
+            <span>Feed</span><button type="button" onClick={() => navigate("feedback")} aria-label="ON: 피드백 만들기 시작" title="피드백 만들기 시작">ON</button>
           </div>
+          <p className="on-action-hint"><span aria-hidden="true">↗</span> ON을 눌러 피드백을 시작하세요</p>
           <h1 className="hero-title" id="hero-heading">
             학생 주도성을 켜는<br />
             퍼스널 평가·피드백 도우미
           </h1>
+          <p className="hero-intro">학생의 실제 수행을 바탕으로 다음 성장을 돕는 피드백을 설계하세요.</p>
+        </div>
+        <aside className="hero-action-panel" aria-label="피드백 만들기 시작">
+          <span className="panel-kicker">FEEDBACK ON</span>
+          <h2>학생 피드백 만들기</h2>
+          <p>관찰한 모습을 입력하면 바로 활용할 수 있는 피드백 문장과 Teacher Talk을 제안합니다.</p>
+          <div className="panel-flow" aria-label="피드백 만들기 과정">
+            <span><b>1</b> 실제 수행 기록</span><i aria-hidden="true">→</i><span><b>2</b> 피드백 확인</span>
+          </div>
           <div className="hero-actions">
             <button className="btn-primary" onClick={() => navigate("feedback")}>
               <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -509,8 +519,8 @@ function Home({ navigate, openHelp }) {
                 <line x1="16" y1="17" x2="8" y2="17" />
               </svg>
               <span className="btn-content">
-                <span className="btn-title">피드백 만들기</span>
-                <span className="btn-sub">학년 · 과목 · 학습 목표 · 학생의 실제 수행 모습을 입력하세요.</span>
+                <span className="btn-title">피드백 만들기 시작</span>
+                <span className="btn-sub">학년 · 학습 목표 · 실제 수행 모습을 입력하세요.</span>
               </span>
               <svg className="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12" />
@@ -526,7 +536,7 @@ function Home({ navigate, openHelp }) {
               </svg>
             </button>
           </div>
-        </div>
+        </aside>
       </section>
 
       {/* Value props */}
