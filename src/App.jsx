@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import oneMarkerPhoto from "./assets/feedback-tools/one-marker-classroom.png";
 import fiveFingersPhoto from "./assets/feedback-tools/five-fingers-classroom.png";
 import "./App.css";
+import "./Home.css";
 
 const stages = [
   {
@@ -496,7 +497,6 @@ function Home({ navigate, openHelp }) {
           <div className="hero-product-name" aria-label="FeedON">
             <span>Feed</span><button type="button" onClick={() => navigate("feedback")} aria-label="ON: 피드백 만들기 시작" title="피드백 만들기 시작">ON</button>
           </div>
-          <p className="on-action-hint">ON을 클릭하세요 <span aria-hidden="true">→</span></p>
           <h1 className="hero-title" id="hero-heading">
             학생 주도성을 켜는<br />
             퍼스널 피드백 도우미
