@@ -492,15 +492,11 @@ function Home({ navigate, openHelp }) {
       {/* Hero */}
       <section className="hero-v2" aria-labelledby="hero-heading">
         <div className="hero-text">
-          <p className="hero-label">피드백 한스푼, 성장 두 스푼</p>
+          <p className="hero-label">피드백 한 스푼, 성장 두 스푼</p>
           <h1 className="hero-title" id="hero-heading">
             학생 주도성을 켜는<br />
             퍼스널 평가·피드백 도우미
           </h1>
-          <p className="hero-desc">
-            학생의 실제 수행을 바탕으로,<br />
-            다음 성장을 돕는 피드백을 설계하세요.
-          </p>
           <div className="hero-actions">
             <button className="btn-primary" onClick={() => navigate("feedback")}>
               <svg className="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1229,7 +1225,6 @@ function App() {
       {page === "home" && <Home navigate={nav} openHelp={setHelp} />} {page === "feedback" && <FeedbackForm initial={fForm} onSubmit={feedbackDone} back={() => nav("home")} />} {page === "feedbackResult" && <FeedbackResult data={fResult} edit={() => nav("feedback")} />} {help && <Modal type={help} close={() => setHelp(null)} />}
       <footer>
         <b>FeedON</b>
-        <span>@경인초 학생평가 연구팀</span>
       </footer>
     </>
   );
