@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import oneMarkerPhoto from "./assets/feedback-tools/one-marker-classroom.png";
-import fiveFingersPhoto from "./assets/feedback-tools/five-fingers-classroom.png";
 import "./App.css";
 import "./Home.css";
 import "./Theme.css";
@@ -372,11 +370,29 @@ function Dialogue({ lines }) {
     </div>
   );
 }
+const toolProductPhotos = {
+  one: {
+    src: "https://cdn.i-screammall.co.kr/files/data/sigong/images/goods/252/2019/03/242205_tmp_d41d8cd98f00b204e9800998ecf8427e4863large.jpg",
+    url: "https://i-screammall.co.kr/goods/detail/242205",
+    name: "미니 양면 원마커",
+    alt: "빨강 면과 초록 면을 보여 주는 아이스크림 미니 양면 원마커 상품 사진",
+  },
+  traffic: {
+    src: "https://cdn.i-screammall.co.kr/files/data/sigong/images/goods/252/2018/03/222379_tmp_d41d8cd98f00b204e9800998ecf8427e0366large.jpg",
+    url: "https://i-screammall.co.kr/goods/detail/222379",
+    name: "NEW 학습 신호등",
+    alt: "색깔과 표정을 넘겨 표시하는 아이스크림 NEW 학습 신호등 상품 사진",
+  },
+};
 function ToolCard({ tool: t, detailed = false }) {
-  const special = t[0] === "one" || t[0] === "hand";
+  const photo = toolProductPhotos[t[0]];
+  const [photoFailed, setPhotoFailed] = useState(false);
   return (
-    <article className={`tool-card ${special && detailed ? "featured-tool" : ""}`}>
-      {special && detailed && <img className="tool-photo" src={t[0] === "one" ? oneMarkerPhoto : fiveFingersPhoto} alt={t[0] === "one" ? "책상 위에 빨간 면이 보이도록 놓은 양면 원마커를 보고 교사가 학생에게 다가가는 모습" : "학생들이 주먹, 한두 손가락, 다섯 손가락으로 이해 정도를 표시하는 교실 모습"} />}
+    <article className={`tool-card ${photo && detailed ? "featured-tool" : ""}`}>
+      {photo && detailed && <figure className="tool-product-photo">
+        {!photoFailed ? <img src={photo.src} alt={photo.alt} loading="lazy" referrerPolicy="no-referrer" onError={() => setPhotoFailed(true)} /> : <p>사진을 불러오지 못했습니다. 아래 상품 페이지에서 확인해 주세요.</p>}
+        <figcaption><a href={photo.url} target="_blank" rel="noopener noreferrer">사진 출처: 아이스크림몰 · {photo.name} ↗</a></figcaption>
+      </figure>}
       <div className="tool-line">
         <span className="tool-icon">
           <Icon type={t[0]} />

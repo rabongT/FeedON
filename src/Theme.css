@@ -178,6 +178,10 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .tool-video-link small { color: #d5e3eb; font-size: 13px; font-weight: 400; }
 .tool-video-link:hover { background: #284c6c; }
 .tool-video-link:focus-visible { outline: 3px solid #648fac; outline-offset: 3px; }
+.tool-product-photo { margin: 0 0 20px; padding: 16px; background: #fff; border: 1px solid #dce3e6; border-radius: 10px; }
+.tool-product-photo img { display: block; width: 100%; height: auto; max-height: 320px; object-fit: contain; }
+.tool-product-photo figcaption { margin-top: 12px; font-size: 14px; line-height: 1.7; }
+.tool-product-photo a { color: #40566a; text-underline-offset: 3px; }
 .advice-prompts { margin-top: 28px; padding: 24px; border: 1px solid #dce3e6; border-radius: 12px; background: #faf9f4; color: #19334e; }
 .advice-prompts > div > span { font-size: 15px; font-weight: 700; color: #40566a; }
 .advice-prompts h3 { margin: 8px 0 16px; font-size: 23px; }
