@@ -62,7 +62,33 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .page .result-tabs .summary-tab.active { border-color: #19334e; background: #19334e; color: #fff; }
 .page .section-heading > span { background: #e5edf3; color: #24516e; }
 .page .record-warning { background: #fff5e5; border-color: #efdab9; border-left-color: #d48b36; }
-.page .stage-picker button.active { border-color: #19334e; box-shadow: inset 0 0 0 1px #19334e; }
+/* Consistent stage colors across the selector and the selected explanation. */
+.page .stage-1 { --talk-accent: #146348; --talk-tint: #d9f2e5; }
+.page .stage-2 { --talk-accent: #1c58a5; --talk-tint: #deecff; }
+.page .stage-3 { --talk-accent: #815400; --talk-tint: #fff0bb; }
+.page .stage-4 { --talk-accent: #7540a0; --talk-tint: #efddfc; }
+.page .stage-5 { --talk-accent: #ab3f33; --talk-tint: #ffdfd6; }
+.page .stage-picker { gap: 10px; }
+.page .stage-picker button {
+  background: var(--talk-tint); color: var(--talk-accent);
+  border: 1px solid var(--talk-accent); border-top-width: 5px;
+  padding: 14px 11px; min-height: 118px;
+}
+.page .stage-picker button > span { color: inherit; font-size: 12px; font-weight: 700; padding-right: 28px; }
+.page .stage-picker button > b { color: inherit; font-size: 17px; margin-top: 8px; }
+.page .stage-picker button > small { color: inherit; font-size: 13px; white-space: normal; overflow: visible; line-height: 1.5; margin-top: 5px; word-break: keep-all; }
+.page .stage-picker button > em { background: #fffefa; color: #19334e; border: 1px solid #19334e26; }
+.page .stage-picker button:hover { box-shadow: inset 0 0 0 2px var(--talk-accent); }
+.page .stage-picker button.active { background: var(--talk-accent); color: #fff; border-color: var(--talk-accent); box-shadow: 0 3px 0 #19334e24; }
+.page .stage-picker button:focus-visible { outline: 3px solid #19334e; outline-offset: 3px; }
+.page .selected-talk { border-top: 6px solid var(--talk-accent); }
+.page .selected-talk .talk-summary { background: var(--talk-tint); }
+.page .selected-talk .full-talk-toggle { background: var(--talk-tint); color: var(--talk-accent); border-color: var(--talk-accent); }
+.page .selected-talk .full-talk-toggle:hover { box-shadow: inset 0 0 0 1px var(--talk-accent); }
+@media (max-width: 700px) {
+  .page .stage-picker { padding: 4px 4px 8px; }
+  .page .stage-picker button { flex-basis: 142px; }
+}
 .overlay { background: #19334e33; }
 .modal { background: #faf9f4; color: #263e51; box-shadow: -10px 0 36px #19334e1a; }
 .modal-head { border-bottom-color: #dce3e6; }
