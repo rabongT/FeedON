@@ -120,6 +120,17 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .modal .close:hover { background: #e5edf3; }
 .modal .notice { background: #eaf4ef; color: #335449; }
 .modal .stage-help-picker button.active { border-color: #19334e; background: #e8eef3; }
+.stage-help-talk .talk-time-highlight { background: #f1ee93; color: #19334e; font-weight: 800; padding: 1px 4px; border-radius: 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.stage-help-talk .dialogue { margin: 18px 0 0; gap: 14px; }
+.stage-help-talk .dialogue-line { max-width: 94%; padding: 15px 17px; }
+.stage-help-talk .dialogue-line b { font-size: 15px; }
+.stage-help-talk .dialogue-line p { font-size: 17px; line-height: 1.85; color: #263e51; word-break: keep-all; }
+.stage-help-talk blockquote { font-size: 18px; line-height: 1.85; }
+.stage-example-context { padding: 16px; background: #eef3f6; border-radius: 9px; color: #40566a; font-size: 16px; line-height: 1.75; }
+.stage-example-context b { display: block; margin-bottom: 6px; color: #19334e; }
+.stage-distinction { margin-top: 16px; padding: 16px; border-left: 3px solid #19334e; background: #faf9f4; }
+.stage-distinction b { color: #19334e; font-size: 16px; }
+.stage-distinction p { margin: 6px 0 0; color: #40566a; font-size: 17px; line-height: 1.8; }
 @media (max-width: 700px) {
   .page { padding: 24px 20px 48px; }
   .page .page-intro { padding: 24px 20px; margin-bottom: 22px; }

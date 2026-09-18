@@ -11,8 +11,9 @@ const stages = [
     ko: "평가적 피드백",
     desc: "학생의 성취나 산출물에 대해 인정·불인정 또는 옳고 그름을 알려주는 단계",
     role: "현재 수행에 대한 판단을 짧고 분명하게 전달합니다.",
-    talk: "이 답은 정확해. 계산 순서도 실수 없이 잘 썼구나.",
-    focus: "이 답은 정확해",
+    talk: "주장하는 글을 잘 썼구나!",
+    focus: "잘 썼구나",
+    distinction: "교사가 잘했는지 판단해 줍니다. 무엇을 잘했는지, 어떻게 고칠지는 아직 설명하지 않습니다.",
     center: "teacher",
     when: "수행의 옳고 그름이나 완료 여부를 즉시 알려야 할 때",
     caution: "막연한 칭찬이나 학생의 특성을 평가하는 말로 끝나지 않게 합니다.",
@@ -25,6 +26,8 @@ const stages = [
     role: "지난 수행과 비교해 나아진 점과 이미 충족한 기준을 구체적인 증거로 확인해 줍니다.",
     talk: "지난번엔 근거를 한 가지만 썼는데, 이번엔 두 가지 근거를 모두 찾아 기준을 충족했어.",
     focus: "두 가지 근거를 모두 찾아 기준을 충족",
+    highlightWords: ["지난번엔", "이번엔"],
+    distinction: "막연한 칭찬에서 한 걸음 더 나아가, 이전보다 향상한 점과 충족한 기준을 구체적으로 확인해 줍니다.",
     center: "teacher",
     when: "학생이 자신의 진전과 현재 성취를 분명히 인식해야 할 때",
     caution: "다음 행동을 일방적으로 지시하기보다 성취 근거를 구체적으로 말합니다.",
@@ -35,8 +38,9 @@ const stages = [
     ko: "차이와 개선점 안내",
     desc: "학습 목표와 현재 상태의 차이를 밝히고 개선할 점과 필요한 설명·힌트를 제공하는 단계",
     role: "현재 수행과 목표 사이의 차이를 짚고, 문제를 풀어 갈 설명이나 단서를 구체적으로 안내합니다.",
-    talk: "중심 생각은 정확히 찾았어. 이걸 뒷받침하는 문장을 한 가지만 더 찾아 근거로 덧붙여 보자.",
-    focus: "뒷받침하는 문장을 한 가지만 더",
+    talk: "오늘 목표는 알맞은 근거 두 가지로 주장을 뒷받침하는 거야. 지금 네 글에는 근거가 한 가지만 있어서, 목표에 도달하려면 근거 한 가지가 더 필요해. 우리가 읽은 자료에서 네 주장을 뒷받침하는 내용을 하나 더 찾아 덧붙여 보자.",
+    focus: "지금 네 글에는 근거가 한 가지만 있어서, 목표에 도달하려면 근거 한 가지가 더 필요해",
+    distinction: "교사가 ‘목표는 근거 두 가지, 현재는 한 가지’라는 차이를 짚고, 보완할 방법을 안내합니다.",
     center: "teacher",
     when: "학생에게 다음 수행의 방향과 기대 수준을 명확히 안내할 때",
     caution: "힌트는 제공하되 학생의 수행 전체를 교사가 대신 완성하지 않습니다.",
@@ -44,24 +48,45 @@ const stages = [
   },
   {
     name: "Coach",
+    distinction: "교사가 수정 방법을 바로 정해 주지 않습니다. 학생의 응답을 듣고 질문을 이어 가며, 학생이 해결 방법을 선택하도록 돕습니다.",
     ko: "해결 방법 이끌어내기",
     desc: "이전과 현재를 비교하며 더 나아갈 방법을 학생과 대화로 함께 찾는 단계",
     role: "부족한 점보다 앞으로의 방법에 초점을 두고, 질문을 통해 해결 전략을 학생에게서 이끌어냅니다.",
     talk: "이 부분에서 막혔구나. 다른 방법으로 풀어본다면 어디서부터 다시 시작해 보고 싶어?",
     focus: "어디서부터 다시 시작",
     center: "together",
+    guideDialogue: [
+      { who: "교사", text: "‘일회용품을 줄이자’는 글을 썼네. 다시 읽어 보니 독자를 설득하기에 어떤 부분이 아쉬워?" },
+      { who: "학생", text: "근거를 두 개 썼는데 둘 다 ‘환경에 안 좋아서’라는 같은 말 같아요." },
+      { who: "교사", text: "두 근거가 비슷하다는 걸 찾았구나. 다른 근거를 찾으려면 어떤 방법을 써 볼 수 있을까?" },
+      { who: "학생", text: "학교에서 나오는 일회용 컵을 조사하거나, 우리가 읽은 자료를 다시 볼 수 있어요." },
+      { who: "교사", text: "두 방법 중 지금 네 글을 고치는 데 어떤 방법이 더 도움이 될까?" },
+      { who: "학생", text: "먼저 자료를 다시 볼래요. 쓰레기를 처리하는 데 드는 비용도 근거로 쓸 수 있을 것 같아요." },
+      { who: "교사", text: "그럼 네가 고른 근거로 바꿔 보고, 처음 글과 비교해 설득력이 어떻게 달라졌는지 함께 확인하자." },
+    ],
     when: "학생이 대화를 통해 개선 방법을 스스로 찾을 수 있을 때",
     caution: "정답으로 유도하는 질문보다 학생의 전략과 근거를 묻습니다.",
     examples: ["네 주장을 더 설득력 있게 만들 방법에는 무엇이 있을까?", "두 풀이를 비교하면 오류를 확인할 기준을 어떻게 세울 수 있을까?", "친구 의견을 반영한다면 어느 부분부터 바꾸고 싶니?"],
   },
   {
     name: "Designer",
+    distinction: "해결 방법을 찾는 데서 더 나아가, 무엇을 잘한 수행으로 볼지 채점 기준부터 함께 만들고 그 기준으로 교사와 학생이 공동 평가합니다.",
     ko: "평가기준 공동 설계",
     desc: "학생과 학습 목표·성공 기준을 함께 만들고, 그 기준으로 수행을 공동 평가하는 단계",
     role: "최종 성취를 먼저 생각하는 백워드 설계로 성공 기준을 함께 만들고 자기·동료평가와 수정까지 연결합니다.",
     talk: "이 글이 잘 썼다고 말할 수 있으려면, 우리가 어떤 기준으로 확인해 보면 좋을까?",
     focus: "어떤 기준으로 확인",
     center: "together",
+    guideDialogue: [
+      { who: "교사", text: "근거를 들어 독자를 설득하는 글을 쓰려고 해. 어떤 글을 잘 쓴 글이라고 할 수 있을지 채점 기준을 함께 만들어 볼까?" },
+      { who: "학생", text: "주장이 분명해야 해요. 근거도 두 가지는 있으면 좋겠어요." },
+      { who: "교사", text: "주장의 분명함과 근거 두 가지를 제안했네. 근거는 개수만 채우면 될까?" },
+      { who: "학생", text: "아니요. 주장과 관련이 있어야 하고, 같은 말을 반복하면 안 돼요." },
+      { who: "교사", text: "그럼 ‘주장이 분명한가’, ‘서로 다른 근거 두 가지가 주장과 연결되는가’를 기준으로 삼자. 각 기준은 글 속 증거를 보며 ‘충족’이나 ‘보완 필요’로 함께 판단하면 어떨까?" },
+      { who: "학생", text: "좋아요. 제 글은 ‘일회용품을 줄이자’고 분명히 썼으니 첫 기준은 충족해요. 두 근거는 둘 다 환경 이야기라 둘째 기준은 보완이 필요해요." },
+      { who: "교사", text: "나도 첫 문장에서 분명한 주장을 확인했어. 둘째 기준은 근거가 같은 내용을 반복하니 보완이 필요하다는 네 판단에 동의해. 어떻게 수정하고 싶니?" },
+      { who: "학생", text: "한 근거를 쓰레기 처리 비용에 관한 내용으로 바꿀래요. 수정한 다음 우리가 만든 기준으로 다시 같이 평가해 봐요." },
+    ],
     when: "학생이 목표와 성공 기준을 이해하고 평가 과정에 참여할 수 있을 때",
     caution: "교사가 미리 정한 기준을 형식적으로 확인받는 활동이 되지 않게 합니다.",
     examples: ["설득하는 글을 잘 썼다고 판단할 기준을 함께 정해 볼까?", "좋은 풀이 설명이 갖추어야 할 조건으로 무엇을 넣으면 좋을까?", "지역 조사 결과를 평가할 체크리스트를 함께 만들어 보자."],
@@ -263,12 +288,14 @@ function FeedbackStagesGuide() {
   const participation = selected < 3 ? "교사가 정보를 제공해요" : selected === 3 ? "교사와 학생이 해결 방법을 함께 찾아요" : "교사와 학생이 기준을 함께 만들고 평가해요";
   return <>
     <p className="modal-intro">단계가 올라갈수록 좋은 피드백이라는 뜻이 아닙니다. 지금 학생에게 필요한 <b>지원 방식</b>을 골라 사용하세요.</p>
+    <p className="stage-example-context"><b>같은 수업으로 비교해 보세요 · 국어, 주장하는 글쓰기</b>아래는 단계별 차이를 보여 주는 서로 다른 예시 상황입니다. 1→5단계를 순서대로 모두 사용할 필요는 없습니다.</p>
     <div className="stage-help-picker" role="tablist" aria-label="피드백 5단계 선택">{stages.map((s,i)=><button key={s.name} role="tab" aria-selected={selected===i} className={selected===i?"active":""} onClick={()=>setSelected(i)}><span>{i+1}</span><b>{s.name}</b><small>{s.ko}</small></button>)}</div>
     <article className={`stage-help-detail stage-${selected+1}`} role="tabpanel">
       <div className="stage-help-head"><span>{selected+1}단계</span><h3>{stage.name} <small>{stage.ko}</small></h3></div>
       <div className="stage-help-point"><b>한마디로</b><p>{stage.desc}</p></div>
+      <div className="stage-distinction"><b>이 단계의 차이</b><p>{stage.distinction}</p></div>
       <dl><div><dt>누가 중심인가요?</dt><dd>{participation}<CenterBadge center={stage.center}/></dd></div><div><dt>교사는 무엇을 하나요?</dt><dd>{stage.role}</dd></div><div><dt>언제 사용하나요?</dt><dd>{stage.when}</dd></div></dl>
-      <div className="stage-help-talk"><span>교실에서 이렇게 말해요</span><blockquote>“<HighlightTalk stage={stage}/>”</blockquote></div>
+      <div className="stage-help-talk"><span>교실에서 이렇게 말해요</span>{stage.guideDialogue ? <Dialogue lines={stage.guideDialogue}/> : <blockquote>“<HighlightTalk stage={stage}/>”</blockquote>}</div>
       {selected===4&&<p className="backward-note"><b>디자이너의 핵심</b> 최종적으로 무엇을 성취해야 하는지 먼저 정한 뒤, 학생과 성공 기준을 만들고 그 기준으로 자기·동료평가와 수정을 이어 갑니다.</p>}
     </article>
     <div className="notice"><b>학생을 다섯 수준으로 나누는 체계가 아닙니다.</b><p>같은 학생에게도 상황에 따라 다른 단계를 사용할 수 있습니다.</p></div>
@@ -322,6 +349,11 @@ function CenterBadge({ center }) {
   );
 }
 function HighlightTalk({ stage }) {
+  if (stage.highlightWords) {
+    return stage.talk.split(/(지난번엔|이번엔)/).map((part, i) =>
+      stage.highlightWords.includes(part) ? <mark className="talk-time-highlight" key={i}>{part}</mark> : part
+    );
+  }
   const parts = stage.talk.split(stage.focus);
   return (
     <>
