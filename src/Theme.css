@@ -62,29 +62,31 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .page .result-tabs .summary-tab.active { border-color: #19334e; background: #19334e; color: #fff; }
 .page .section-heading > span { background: #e5edf3; color: #24516e; }
 .page .record-warning { background: #fff5e5; border-color: #efdab9; border-left-color: #d48b36; }
-/* Consistent stage colors across the selector and the selected explanation. */
-.page .stage-1 { --talk-accent: #146348; --talk-tint: #d9f2e5; }
-.page .stage-2 { --talk-accent: #1c58a5; --talk-tint: #deecff; }
-.page .stage-3 { --talk-accent: #815400; --talk-tint: #fff0bb; }
-.page .stage-4 { --talk-accent: #7540a0; --talk-tint: #efddfc; }
-.page .stage-5 { --talk-accent: #ab3f33; --talk-tint: #ffdfd6; }
+/* Muted accents support the shared navy / cream palette. */
+.page .stage-1 { --talk-accent: #526b80; --talk-tint: #f0f4f7; --stage-stripe: #92a9bb; }
+.page .stage-2 { --talk-accent: #456d70; --talk-tint: #eef5f3; --stage-stripe: #83aba7; }
+.page .stage-3 { --talk-accent: #626e50; --talk-tint: #f3f5ed; --stage-stripe: #a6b28a; }
+.page .stage-4 { --talk-accent: #7c6949; --talk-tint: #f8f4ec; --stage-stripe: #c4ad84; }
+.page .stage-5 { --talk-accent: #7c6055; --talk-tint: #f7f1ed; --stage-stripe: #bba093; }
 .page .stage-picker { gap: 10px; }
 .page .stage-picker button {
-  background: var(--talk-tint); color: var(--talk-accent);
-  border: 1px solid var(--talk-accent); border-top-width: 5px;
+  background: #fffefa; color: #19334e;
+  border: 1px solid #dce3e6; border-top: 4px solid var(--stage-stripe);
   padding: 14px 11px; min-height: 118px;
 }
-.page .stage-picker button > span { color: inherit; font-size: 12px; font-weight: 700; padding-right: 28px; }
+.page .stage-picker button > span { color: #627584; font-size: 12px; font-weight: 700; padding-right: 28px; }
 .page .stage-picker button > b { color: inherit; font-size: 17px; margin-top: 8px; }
-.page .stage-picker button > small { color: inherit; font-size: 13px; white-space: normal; overflow: visible; line-height: 1.5; margin-top: 5px; word-break: keep-all; }
+.page .stage-picker button > small { color: #627584; font-size: 13px; white-space: normal; overflow: visible; line-height: 1.5; margin-top: 5px; word-break: keep-all; }
 .page .stage-picker button > em { background: #fffefa; color: #19334e; border: 1px solid #19334e26; }
-.page .stage-picker button:hover { box-shadow: inset 0 0 0 2px var(--talk-accent); }
-.page .stage-picker button.active { background: var(--talk-accent); color: #fff; border-color: var(--talk-accent); box-shadow: 0 3px 0 #19334e24; }
+.page .stage-picker button:hover { background: var(--talk-tint); box-shadow: inset 0 0 0 1px #19334e30; }
+.page .stage-picker button.active { background: var(--talk-tint); color: #19334e; border-color: #19334e; border-top-color: var(--stage-stripe); box-shadow: inset 0 0 0 1px #19334e; }
+.page .stage-picker button.active > span { color: #19334e; }
 .page .stage-picker button:focus-visible { outline: 3px solid #19334e; outline-offset: 3px; }
-.page .selected-talk { border-top: 6px solid var(--talk-accent); }
+.page .selected-talk { border-top: 4px solid var(--stage-stripe); }
+.page .selected-talk-head h3 { color: #19334e; }
 .page .selected-talk .talk-summary { background: var(--talk-tint); }
-.page .selected-talk .full-talk-toggle { background: var(--talk-tint); color: var(--talk-accent); border-color: var(--talk-accent); }
-.page .selected-talk .full-talk-toggle:hover { box-shadow: inset 0 0 0 1px var(--talk-accent); }
+.page .selected-talk .full-talk-toggle { background: #f0f4f6; color: #19334e; border-color: #ccd7df; }
+.page .selected-talk .full-talk-toggle:hover { background: #e7eef3; border-color: #19334e; }
 @media (max-width: 700px) {
   .page .stage-picker { padding: 4px 4px 8px; }
   .page .stage-picker button { flex-basis: 142px; }
