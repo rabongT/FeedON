@@ -106,11 +106,6 @@ const feedbackFocus = [
   },
 ];
 
-const advicePrompts = [
-  { name: "상기 프롬프트", summary: "학습 목표를 다시 떠올리게 해요", desc: "학습 목표를 분명하게 다시 말해 줍니다.", when: "내용은 이해하고 있지만 과제를 조금 조정해야 할 때", example: "오늘 목표는 근거 두 가지로 주장을 뒷받침하는 거야. 네 글이 목표에 맞는지 다시 살펴볼까?" },
-  { name: "비계 프롬프트", summary: "스스로 해결하도록 디딤돌을 놓아요", desc: "문제를 작은 단위로 나누어 단계별 안내나 명확한 구조를 제공합니다.", when: "학습 목표를 다시 말해 주는 것만으로 충분하지 않을 때", example: "먼저 주장에 밑줄을 긋고, 근거마다 번호를 붙여 보자. 각 근거가 주장과 어떻게 연결되는지 하나씩 확인해 볼까?" },
-  { name: "예시 프롬프트", summary: "모델을 보고 자기 방법을 만들게 해요", desc: "여러 예시(모델)를 보여 주고, 학생이 하나를 선택하거나 비슷한 방식으로 자신의 수행을 보완하도록 돕습니다.", when: "구체적인 방안을 보고 선택하거나 응용할 필요가 있을 때", example: "이 글은 조사한 수치를, 저 글은 실제 사례를 근거로 썼어. 네 주장에는 어떤 방법이 어울릴까? 골라서 네 근거를 써 보자." },
-];
 const padletBoard = "https://padlet.com/kyongincho/padlet-gxkembohi3huy41s";
 const toolVideos = {
   "다섯 손가락": "AL83WzYVYejeZ0Pg",
@@ -257,18 +252,6 @@ function FeedbackToolsGuide() {
           return <section key={t[1]} className={isOpen ? "open" : ""}><button onClick={() => setSelectedTool(isOpen ? null : i)} aria-expanded={isOpen}><span className="tool-icon"><Icon type={t[0]} /></span><b>{t[1]}</b><i>{isOpen ? "−" : "+"}</i></button>{isOpen && <div className="tool-accordion-detail"><ToolCard tool={t} detailed /></div>}</section>;
         })}
       </div>
-      <section className="advice-prompts">
-        <div>
-          <span>조언적 피드백 제공 시 · 3~5단계</span>
-          <h3>3가지 유형의 프롬프트</h3>
-        </div>
-        <p>프롬프트는 학생의 다음 생각과 행동을 돕는 발문·안내입니다. 단계와 일대일로 대응하지 않으며, 필요한 지원에 맞춰 골라 사용하세요.</p>
-        <div className="advice-prompt-list">{advicePrompts.map((prompt, i) => <article key={prompt.name}>
-          <h4><span>{i+1}</span>{prompt.name}</h4><strong>{prompt.summary}</strong><p>{prompt.desc}</p>
-          <p><b>언제 쓰나요?</b> {prompt.when}</p><blockquote><b>글쓰기 수업 예시</b>“{prompt.example}”</blockquote>
-        </article>)}</div>
-        <p className="source-note">유형과 활용 시기: 경인초 평가 피드백 자료 · 발문 예시는 FeedON에서 구성했습니다.</p>
-      </section>
       <p className="source-note">구성 근거: 김선·반재천, 『학생의 배움과 성장을 지원하는 과정 중심 피드백』의 과정·결과 피드백 구분 및 효과적인 피드백 원칙. 교실 활용 방법은 FeedON에서 수업 적용을 위해 별도로 정리했습니다.</p>
     </>
   );
