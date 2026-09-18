@@ -78,7 +78,7 @@ const stages = [
     focus: "어떤 기준으로 확인",
     center: "together",
     guideDialogue: [
-      { who: "교사", text: "근거를 들어 독자를 설득하는 글을 쓰려고 해. 어떤 글을 잘 쓴 글이라고 할 수 있을지 채점 기준을 함께 만들어 볼까?" },
+      { who: "교사", text: "근거를 들어 독자를 설득하는 글을 쓰려고 해. 어떤 글을 잘 쓴 글이라고 할 수 있을지 채점 기준을 함께 만들어 볼까?", highlight: "채점 기준을 함께 만들어 볼까?" },
       { who: "학생", text: "주장이 분명해야 해요. 근거도 두 가지는 있으면 좋겠어요." },
       { who: "교사", text: "주장의 분명함과 근거 두 가지를 제안했네. 근거는 개수만 채우면 될까?" },
       { who: "학생", text: "아니요. 주장과 관련이 있어야 하고, 같은 말을 반복하면 안 돼요." },
@@ -372,7 +372,7 @@ function Dialogue({ lines }) {
             {line.who}
             {line.who === "학생" && <small> 예상 응답</small>}
           </b>
-          <p>{line.text}</p>
+          <p>{line.highlight ? line.text.split(line.highlight).map((part, index) => <span key={index}>{index > 0 && <mark className="talk-time-highlight">{line.highlight}</mark>}{part}</span>) : line.text}</p>
         </div>
       ))}
     </div>
@@ -986,7 +986,7 @@ function FeedbackForm({ initial, onSubmit, back }) {
           </Field>
         </div>
         <div className="observation-guide">
-          <div className="observation-guide-head"><b>교·수·평 설계용 사례 불러오기</b><span>실제 기록이 아직 없다면 비슷한 사례를 골라 Teacher Talk를 미리 설계해 보세요.</span></div>
+          <div className="observation-guide-head"><b>수행 모습 예시</b><span>비슷한 사례를 골라 Teacher Talk을 미리 설계해보세요.</span></div>
           <div className="observation-example-buttons">
             {observationExamples.map((example) => <button key={example.label} type="button" onClick={() => fillObservationExample(example.text)} title={`${example.category}: ${example.text}`}>{example.label}<small>{example.category}</small></button>)}
           </div>
