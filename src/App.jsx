@@ -314,9 +314,9 @@ function InfoTip({ text }) {
 }
 function CenterBadge({ center }) {
   return (
-    <div className={`center-badge ${center}`} aria-label={center === "teacher" ? "교사 중심" : center === "student" ? "학생 중심" : "교사와 학생 공동 중심"}>
+    <div className={`center-badge ${center}`} aria-label={center === "teacher" ? "교사 중심" : center === "student" ? "학생 중심" : "교사와 학생의 쌍방향 상호작용"}>
       <span>교사</span>
-      <i>→</i>
+      <i aria-hidden="true">{center === "together" ? "↔" : "→"}</i>
       <span>학생</span>
     </div>
   );
