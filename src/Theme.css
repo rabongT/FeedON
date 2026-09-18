@@ -72,12 +72,12 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .page .stage-picker button {
   background: #fffefa; color: #19334e;
   border: 1px solid #dce3e6; border-top: 4px solid var(--stage-stripe);
-  padding: 14px 11px; min-height: 118px;
+  padding: 18px 14px; min-height: 150px;
 }
-.page .stage-picker button > span { color: #627584; font-size: 12px; font-weight: 700; padding-right: 28px; }
-.page .stage-picker button > b { color: inherit; font-size: 17px; margin-top: 8px; }
-.page .stage-picker button > small { color: #627584; font-size: 13px; white-space: normal; overflow: visible; line-height: 1.5; margin-top: 5px; word-break: keep-all; }
-.page .stage-picker button > em { background: #fffefa; color: #19334e; border: 1px solid #19334e26; }
+.page .stage-picker button > span { color: #40566a; font-size: 15px; font-weight: 700; padding-right: 0; line-height: 1.6; }
+.page .stage-picker button > b { color: inherit; font-size: 20px; margin-top: 8px; }
+.page .stage-picker button > small { color: #40566a; font-size: 16px; white-space: normal; overflow: visible; line-height: 1.6; margin-top: 5px; word-break: keep-all; }
+.page .stage-picker button > em { position: static; display: inline-block; margin-top: 10px; padding: 2px 8px; font-size: 13px; background: #eaf4ef; color: #28584b; border: 1px solid #bed3c8; }
 .page .stage-picker button:hover { background: var(--talk-tint); box-shadow: inset 0 0 0 1px #19334e30; }
 .page .stage-picker button.active { background: var(--talk-tint); color: #19334e; border-color: #19334e; border-top-color: var(--stage-stripe); box-shadow: inset 0 0 0 1px #19334e; }
 .page .stage-picker button.active > span { color: #19334e; }
@@ -87,9 +87,30 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .page .selected-talk .talk-summary { background: var(--talk-tint); }
 .page .selected-talk .full-talk-toggle { background: #f0f4f6; color: #19334e; border-color: #ccd7df; }
 .page .selected-talk .full-talk-toggle:hover { background: #e7eef3; border-color: #19334e; }
+.page .selected-talk-head > div > span { font-size: 15px; }
+.page .selected-talk-head h3 { font-size: 25px; line-height: 1.5; }
+.page .selected-talk-head h3 small { display: block; margin: 4px 0 0; font-size: 17px; color: #40566a; }
+.page .selected-talk .talk-summary > span,
+.page .selected-talk .stage-quick-info b,
+.page .selected-talk .talk-caution b { font-size: 16px; }
+.page .selected-talk .talk-summary blockquote { font-size: 20px; line-height: 1.85; color: #19334e; }
+.page .selected-talk .stage-quick-info p,
+.page .selected-talk .talk-caution p,
+.page .selected-talk .detail-note { font-size: 16px; line-height: 1.8; color: #40566a; }
+.page .selected-talk .dialogue-line p { font-size: 18px; line-height: 1.85; color: #263e51; }
+.page .selected-talk .dialogue-line b,
+.page .selected-talk .center-badge span,
+.page .selected-talk .center-badge i { font-size: 15px; }
+.page .selected-talk .full-talk-toggle { font-size: 17px; min-height: 54px; }
+@media (min-width: 701px) and (max-width: 1000px) {
+  .page .stage-picker { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 @media (max-width: 700px) {
-  .page .stage-picker { padding: 4px 4px 8px; }
-  .page .stage-picker button { flex-basis: 142px; }
+  .page .stage-picker { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; margin-left: 0; margin-right: 0; padding: 4px 0 8px; }
+  .page .stage-picker button { min-height: 130px; padding: 14px 10px; }
+  .page .stage-picker button:last-child { grid-column: 1 / -1; min-height: 110px; }
+  .page .selected-talk .talk-summary blockquote { font-size: 18px; }
+  .page .selected-talk .dialogue-line p { font-size: 17px; }
 }
 .overlay { background: #19334e33; }
 .modal { background: #faf9f4; color: #263e51; box-shadow: -10px 0 36px #19334e1a; }
