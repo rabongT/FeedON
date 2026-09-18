@@ -37,7 +37,7 @@ const stages = [
     name: "Guide",
     ko: "차이와 개선점 안내",
     desc: "학습 목표와 현재 상태의 차이를 밝히고 개선할 점과 필요한 설명·힌트를 제공하는 단계",
-    role: "현재 수행과 목표 사이의 차이를 짚고, 문제를 풀어 갈 설명이나 단서를 구체적으로 안내합니다.",
+    role: "현재 수행과 목표 사이의 차이를 짚고, 학생에게 어떻게 문제·과제를 푸는지 보여주거나 설명 및 정답(힌트)을 제공합니다.",
     talk: "오늘 목표는 알맞은 근거 두 가지로 주장을 뒷받침하는 거야. 지금 네 글에는 근거가 한 가지만 있어서, 목표에 도달하려면 근거 한 가지가 더 필요해. 우리가 읽은 자료에서 네 주장을 뒷받침하는 내용을 하나 더 찾아 덧붙여 보자.",
     focus: "지금 네 글에는 근거가 한 가지만 있어서, 목표에 도달하려면 근거 한 가지가 더 필요해",
     distinction: "교사가 ‘목표는 근거 두 가지, 현재는 한 가지’라는 차이를 짚고, 보완할 방법을 안내합니다.",
@@ -108,14 +108,19 @@ const feedbackFocus = [
   },
 ];
 
-const feedbackChecks = [
-  ["기준", "학습 목표와 분명한 평가 기준에 근거했나요?"],
-  ["시기", "학생이 다시 시도할 수 있을 때 제공하나요?"],
-  ["초점", "핵심 내용에 집중하고 분량은 알맞나요?"],
-  ["구체성", "다음 행동은 보이되 답을 대신해 주지는 않나요?"],
-  ["주도성", "학생이 선택하고 수정할 여지를 남겼나요?"],
-  ["근거", "실제 수행과 학생의 생각을 반영했나요?"],
+const advicePrompts = [
+  { name: "상기 프롬프트", summary: "학습 목표를 다시 떠올리게 해요", desc: "학습 목표를 분명하게 다시 말해 줍니다.", when: "내용은 이해하고 있지만 과제를 조금 조정해야 할 때", example: "오늘 목표는 근거 두 가지로 주장을 뒷받침하는 거야. 네 글이 목표에 맞는지 다시 살펴볼까?" },
+  { name: "비계 프롬프트", summary: "스스로 해결하도록 디딤돌을 놓아요", desc: "문제를 작은 단위로 나누어 단계별 안내나 명확한 구조를 제공합니다.", when: "학습 목표를 다시 말해 주는 것만으로 충분하지 않을 때", example: "먼저 주장에 밑줄을 긋고, 근거마다 번호를 붙여 보자. 각 근거가 주장과 어떻게 연결되는지 하나씩 확인해 볼까?" },
+  { name: "예시 프롬프트", summary: "모델을 보고 자기 방법을 만들게 해요", desc: "여러 예시(모델)를 보여 주고, 학생이 하나를 선택하거나 비슷한 방식으로 자신의 수행을 보완하도록 돕습니다.", when: "구체적인 방안을 보고 선택하거나 응용할 필요가 있을 때", example: "이 글은 조사한 수치를, 저 글은 실제 사례를 근거로 썼어. 네 주장에는 어떤 방법이 어울릴까? 골라서 네 근거를 써 보자." },
 ];
+const padletBoard = "https://padlet.com/kyongincho/padlet-gxkembohi3huy41s";
+const toolVideos = {
+  "다섯 손가락": "AL83WzYVYejeZ0Pg",
+  "학습신호등": "lkROZPwLwbevQjMg",
+  "양면 원마커": "kxodWG9w9Lo0QgP7",
+  "입장티켓": "94PGWn5J5RAoZLRV",
+  "퇴장티켓": "lDK1ZRz3zrBMZJ9z",
+};
 
 // 책의 공식 도구 분류가 아니라, 피드백 정보를 확인하고 전달하는 교실 활용 방법이다.
 const tools = [
@@ -124,14 +129,6 @@ const tools = [
   ["traffic", "학습신호등", "빨강·노랑·초록 세 가지 색으로 학생이 자신의 이해 정도를 표현하는 도구", "중요한 내용을 설명한 뒤 학생별 이해 정도를 한눈에 확인할 때", "이해도 확인과 도움 대상 파악"],
   ["ticket", "입장티켓", "수업 시작 단계에서 학생들이 알고 있는 것 또는 알고 싶은 것을 확인하는 활동", "수업을 시작하며 선개념과 궁금한 점을 확인할 때", "수업 전 진단과 학습 방향 설정"],
   ["ticket", "퇴장티켓", "수업을 마칠 때 학생이 배운 점이나 어려웠던 점에 대한 간단한 피드백을 작성하여 교사에게 제출하는 활동", "수업을 마치며 이해 정도와 다음 지원이 필요한 부분을 확인할 때", "배움 회고와 후속 수업 계획"],
-  ["check", "체크리스트", "수행 요소의 충족 여부를 빠르게 확인하는 도구", "여러 수행 기준을 빠짐없이 확인할 때", "과정 점검"],
-  ["document", "자기점검표", "학생이 자신의 수행을 스스로 돌아보게 하는 도구", "과제 제출 전 기준에 따라 스스로 검토할 때", "자기 조절"],
-  ["compare", "예시 비교", "좋은 예와 수정이 필요한 예를 비교하며 기준을 이해하도록 돕는 도구", "평가 기준을 구체적인 사례로 이해시킬 때", "기준 이해"],
-  ["speech", "다시 말하기", "학생이 자신의 생각이나 답을 다시 표현하며 점검하게 하는 도구", "생각은 있으나 표현이 불명확할 때", "재수행"],
-  ["people", "동료 설명", "친구에게 설명하며 이해를 정리하고 확인하는 도구", "말로 설명하며 개념을 정교화할 때", "상호 피드백"],
-  ["oral", "즉시 구두 피드백", "활동 중 바로 짧게 말로 제공하는 피드백", "즉시 수정할 수 있는 수행 장면에서", "즉각적 교정"],
-  ["comment", "디지털 코멘트", "디지털 플랫폼에서 개별 의견이나 조언을 남기는 피드백 방식", "결과물에 개별 기록을 남기고 다시 확인할 때", "기록형 피드백"],
-  ["postit", "포스트잇 동료평가", "포스트잇에 친구의 강점과 도움이 될 조언을 짧게 적어 주고받는 동료평가 방법", "작품이나 수행 결과를 함께 살펴보고 구체적인 의견을 나눌 때", "동료 피드백과 수행 개선"],
 ];
 
 function Icon({ type }) {
@@ -262,20 +259,17 @@ function FeedbackToolsGuide() {
           return <section key={t[1]} className={isOpen ? "open" : ""}><button onClick={() => setSelectedTool(isOpen ? null : i)} aria-expanded={isOpen}><span className="tool-icon"><Icon type={t[0]} /></span><b>{t[1]}</b><i>{isOpen ? "−" : "+"}</i></button>{isOpen && <div className="tool-accordion-detail"><ToolCard tool={t} detailed /></div>}</section>;
         })}
       </div>
-      <section className="quality-check">
+      <section className="advice-prompts">
         <div>
-          <span>EFFECTIVE FEEDBACK</span>
-          <h3>말하기 전, 효과적인 피드백 점검</h3>
+          <span>조언적 피드백 제공 시 · 3~5단계</span>
+          <h3>3가지 유형의 프롬프트</h3>
         </div>
-        <ul>
-          {feedbackChecks.map(([key, value]) => (
-            <li key={key}>
-              <b>{key}</b>
-              <span>{value}</span>
-            </li>
-          ))}
-        </ul>
-        <p>강점은 구체적으로 확인하고, 개선점은 학생이 실행할 수 있는 한 가지 다음 행동으로 좁혀 보세요.</p>
+        <p>프롬프트는 학생의 다음 생각과 행동을 돕는 발문·안내입니다. 단계와 일대일로 대응하지 않으며, 필요한 지원에 맞춰 골라 사용하세요.</p>
+        <div className="advice-prompt-list">{advicePrompts.map((prompt, i) => <article key={prompt.name}>
+          <h4><span>{i+1}</span>{prompt.name}</h4><strong>{prompt.summary}</strong><p>{prompt.desc}</p>
+          <p><b>언제 쓰나요?</b> {prompt.when}</p><blockquote><b>글쓰기 수업 예시</b>“{prompt.example}”</blockquote>
+        </article>)}</div>
+        <p className="source-note">유형과 활용 시기: 경인초 평가 피드백 자료 · 발문 예시는 FeedON에서 구성했습니다.</p>
       </section>
       <p className="source-note">구성 근거: 김선·반재천, 『학생의 배움과 성장을 지원하는 과정 중심 피드백』의 과정·결과 피드백 구분 및 효과적인 피드백 원칙. 교실 활용 방법은 FeedON에서 수업 적용을 위해 별도로 정리했습니다.</p>
     </>
@@ -393,6 +387,7 @@ function ToolCard({ tool: t, detailed = false }) {
         </div>
         <InfoTip text={t[2]} />
       </div>
+      {toolVideos[t[1]] && <a className="tool-video-link" href={`${padletBoard}/wish/${toolVideos[t[1]]}`} target="_blank" rel="noopener noreferrer" aria-label={`${t[1]} 수업 영상 보기 · Padlet 새 탭`}><span aria-hidden="true">▷</span> 수업 영상 보기 <small>Padlet · 새 탭</small></a>}
       {detailed && (
         <>
           <p>{t[2]}</p>
@@ -1151,7 +1146,7 @@ function FeedbackResult({ data, edit }) {
   const activeStageIndex = selectedStage ?? recommendedIndex;
   const activeStage = personalizedStages[activeStageIndex];
   const byName = (name) => tools.find((tool) => tool[1] === name);
-  const recommendedTools = coachReady ? [byName("자기점검표"), byName("예시 비교"), byName("다시 말하기")] : [byName("체크리스트"), byName("예시 비교"), byName("즉시 구두 피드백")];
+  const recommendedTools = coachReady ? [byName("다섯 손가락"), byName("퇴장티켓")] : [byName("양면 원마커"), byName("학습신호등"), byName("입장티켓")];
   const context = [data.grade, data.subject, data.unit, data.session].filter(Boolean).join(" · ") || "수업 맥락 미입력";
   return (
     <main className="page result-page">
