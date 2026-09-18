@@ -7,6 +7,11 @@
   --muted: #627584;
   --line: #dce3e6;
   --paper: #fffefa;
+  --s1: #DCE6EF;
+  --s2: #A9BFD3;
+  --s3: #6F90AE;
+  --s4: #3C5F82;
+  --s5: #1B3350;
   color: #263e51;
   background: #faf9f4;
 }
@@ -63,25 +68,52 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .page .section-heading > span { background: #e5edf3; color: #24516e; }
 .page .record-warning { background: #fff5e5; border-color: #efdab9; border-left-color: #d48b36; }
 /* Muted accents support the shared navy / cream palette. */
-.page .stage-1 { --talk-accent: #526b80; --talk-tint: #f0f4f7; --stage-stripe: #92a9bb; }
-.page .stage-2 { --talk-accent: #456d70; --talk-tint: #eef5f3; --stage-stripe: #83aba7; }
-.page .stage-3 { --talk-accent: #626e50; --talk-tint: #f3f5ed; --stage-stripe: #a6b28a; }
-.page .stage-4 { --talk-accent: #7c6949; --talk-tint: #f8f4ec; --stage-stripe: #c4ad84; }
-.page .stage-5 { --talk-accent: #7c6055; --talk-tint: #f7f1ed; --stage-stripe: #bba093; }
-.page .stage-picker { gap: 10px; }
-.page .stage-picker button {
-  background: #fffefa; color: #19334e;
-  border: 1px solid #dce3e6; border-top: 4px solid var(--stage-stripe);
-  padding: 18px 14px; min-height: 150px;
+.page .stage-1 { --talk-accent: #526b80; --talk-tint: #f0f4f7; --stage-stripe: #92a9bb; --stage-color: var(--s1); }
+.page .stage-2 { --talk-accent: #456d70; --talk-tint: #eef5f3; --stage-stripe: #83aba7; --stage-color: var(--s2); }
+.page .stage-3 { --talk-accent: #626e50; --talk-tint: #f3f5ed; --stage-stripe: #a6b28a; --stage-color: var(--s3); }
+.page .stage-4 { --talk-accent: #7c6949; --talk-tint: #f8f4ec; --stage-stripe: #c4ad84; --stage-color: var(--s4); }
+.page .stage-5 { --talk-accent: #7c6055; --talk-tint: #f7f1ed; --stage-stripe: #bba093; --stage-color: var(--s5); }
+.page .stage-picker { position: relative; gap: 10px; padding-top: 34px; }
+.page .stage-picker:before {
+  content: ""; position: absolute; top: 34px; left: 9%; right: 9%; height: 3px;
+  transform: translateY(-50%); border-radius: 2px; z-index: 0;
+  background: linear-gradient(to right, var(--s1), var(--s2), var(--s3), var(--s4), var(--s5));
 }
-.page .stage-picker button > span { color: #40566a; font-size: 15px; font-weight: 700; padding-right: 0; line-height: 1.6; }
+.page .stage-picker button {
+  position: relative; z-index: 1; overflow: visible;
+  background: #fffefa; color: #19334e;
+  border: 1px solid #dce3e6; border-top: 6px solid var(--stage-color);
+  padding: 22px 14px 18px; min-height: 150px;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.page .stage-picker button > span {
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  font-size: 15px; font-weight: 800; padding: 0; line-height: 1;
+  background: var(--stage-color); color: #fff;
+  box-shadow: 0 0 0 4px #faf9f4;
+  z-index: 2;
+}
+.page .stage-1 > span, .page .stage-2 > span { color: #19334e; }
 .page .stage-picker button > b { color: inherit; font-size: 20px; margin-top: 8px; }
 .page .stage-picker button > small { color: #40566a; font-size: 16px; white-space: normal; overflow: visible; line-height: 1.6; margin-top: 5px; word-break: keep-all; }
-.page .stage-picker button > em { position: static; display: inline-block; margin-top: 10px; padding: 2px 8px; font-size: 13px; background: #eaf4ef; color: #28584b; border: 1px solid #bed3c8; }
-.page .stage-picker button:hover { background: var(--talk-tint); box-shadow: inset 0 0 0 1px #19334e30; }
-.page .stage-picker button.active { background: var(--talk-tint); color: #19334e; border-color: #19334e; border-top-color: var(--stage-stripe); box-shadow: inset 0 0 0 1px #19334e; }
-.page .stage-picker button.active > span { color: #19334e; }
+.page .stage-picker button > em {
+  position: absolute; top: -10px; right: 14px; z-index: 2;
+  display: inline-block; margin: 0; padding: 4px 12px;
+  border-radius: 999px; font-size: 12px; font-weight: 800; font-style: normal;
+  background: #e4fa59; color: #19334e; box-shadow: 0 2px 6px #19334e26;
+}
+.page .stage-picker button:hover { transform: translateY(-3px); background: var(--talk-tint); box-shadow: 0 10px 22px #19334e1f; }
+.page .stage-picker button.active {
+  background: #19334e; border-color: #19334e; border-top-color: var(--stage-color); color: #fff;
+  box-shadow: inset 0 0 0 1px #19334e;
+}
+.page .stage-picker button.active:hover { box-shadow: inset 0 0 0 1px #19334e, 0 10px 22px #19334e33; }
+.page .stage-picker button.active > b, .page .stage-picker button.active > small { color: #fff; }
+.page .stage-picker button.active > span { background: #e4fa59; color: #19334e; }
 .page .stage-picker button:focus-visible { outline: 3px solid #19334e; outline-offset: 3px; }
+.page .stage-axis-label { margin: 8px 2px 24px; color: #7c8a97; font-size: 13px; font-weight: 700; letter-spacing: .02em; text-align: center; }
 .page .selected-talk { border-top: 4px solid var(--stage-stripe); }
 .page .selected-talk-head h3 { color: #19334e; }
 .page .selected-talk .talk-summary { background: var(--talk-tint); }
@@ -104,11 +136,22 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .page .selected-talk .full-talk-toggle { font-size: 17px; min-height: 54px; }
 @media (min-width: 701px) and (max-width: 1000px) {
   .page .stage-picker { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .page .stage-picker:before { display: none; }
 }
 @media (max-width: 700px) {
-  .page .stage-picker { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; margin-left: 0; margin-right: 0; padding: 4px 0 8px; }
-  .page .stage-picker button { min-height: 130px; padding: 14px 10px; }
-  .page .stage-picker button:last-child { grid-column: 1 / -1; min-height: 110px; }
+  .page .stage-picker {
+    display: flex; flex-direction: column; gap: 16px;
+    overflow: visible; margin-left: 0; margin-right: 0;
+    padding: 6px 0 8px 44px;
+  }
+  .page .stage-picker:before {
+    top: 10px; bottom: 10px; left: 20px; right: auto; width: 3px; height: auto;
+    transform: none;
+    background: linear-gradient(to bottom, var(--s1), var(--s2), var(--s3), var(--s4), var(--s5));
+  }
+  .page .stage-picker button { min-height: auto; padding: 16px 14px; }
+  .page .stage-picker button > span { top: 50%; left: -44px; transform: translateY(-50%); }
+  .page .stage-picker button:last-child { grid-column: auto; min-height: auto; }
   .page .selected-talk .talk-summary blockquote { font-size: 18px; }
   .page .selected-talk .dialogue-line p { font-size: 17px; }
 }

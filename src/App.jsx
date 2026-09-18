@@ -1213,8 +1213,9 @@ function FeedbackResult({ data, edit }) {
         {(view === "talk" || view === "all") && <Section no="03" title="5단계 Teacher Talk">
           <p className="section-desc">단계 하나를 선택해 핵심 문장을 먼저 확인하세요. 4·5단계는 전체 대화에서 학생과 주고받는 흐름을 볼 수 있습니다.</p>
           <div className="stage-picker" role="tablist" aria-label="Teacher Talk 단계 선택">
-            {personalizedStages.map((s,i)=><button key={s.name} role="tab" aria-selected={activeStageIndex===i} className={`stage-${i+1}${activeStageIndex===i?" active":""}`} onClick={()=>{setSelectedStage(i);setShowFullTalk(false);setSelectedTalk(0)}}><span>0{i+1}{activeStageIndex===i&&" · 선택됨"}</span><b>{s.name}</b><small>{s.ko}</small>{i===recommendedIndex&&<em>추천</em>}</button>)}
+            {personalizedStages.map((s,i)=><button key={s.name} role="tab" aria-selected={activeStageIndex===i} className={`stage-${i+1}${activeStageIndex===i?" active":""}`} onClick={()=>{setSelectedStage(i);setShowFullTalk(false);setSelectedTalk(0)}}><span>0{i+1}</span><b>{s.name}</b><small>{s.ko}</small>{i===recommendedIndex&&<em>추천</em>}</button>)}
           </div>
+          <p className="stage-axis-label">◀ 교사 주도 / 학생 주도 ▶</p>
           <article className={`selected-talk stage-${activeStageIndex+1}`} role="tabpanel">
             <div className="selected-talk-head"><div><span>STEP 0{activeStageIndex+1}</span><h3>{activeStage.name} <small>{activeStage.ko}</small></h3></div><CenterBadge center={activeStage.center}/></div>
             <div className="talk-summary">
