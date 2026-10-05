@@ -191,3 +191,11 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
   .page .result-tabs button { min-height: 48px; font-size: 14px; }
   .page .form-section-label { flex-wrap: wrap; gap: 6px; }
 }
+/* Source-grounded feedback: optional teacher confirmation. */
+.accuracy-fields { margin: 24px 0; padding: 20px; border: 1px solid #c5d6dc; border-radius: 12px; background: #f2f7f7; }
+.accuracy-fields summary { cursor: pointer; font-weight: 700; color: #19344e; padding: 8px 0; line-height: 1.6; }
+.accuracy-fields summary:focus-visible { outline: 3px solid #247b86; outline-offset: 4px; }
+.accuracy-fields p, .accuracy-note { font-size: 16px; line-height: 1.8; color: #425867; overflow-wrap: anywhere; }
+.accuracy-fields .field { margin-top: 18px; }
+.accuracy-note { padding: 16px 20px; border-left: 4px solid #247b86; background: #f0f6f5; }
+@media (max-width: 480px) { .accuracy-fields { padding: 16px; } }

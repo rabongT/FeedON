@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { buildFeedback, caseInput, researchCases, researchSource } from "./feedbackEngine";
 import "./App.css";
 import "./Home.css";
 import "./Theme.css";
@@ -838,13 +839,12 @@ const blankFeedback = {
   session: "",
   goal: "",
   observation: "",
+  achieved: "",
+  gap: "",
+  purpose: "",
+  researchCaseId: "",
 };
-const feedbackExamples = {
-  국어: { grade: "4학년", subject: "국어", unit: "중심 생각을 찾아요", session: "3차시", goal: "글의 중심 생각을 찾고 뒷받침하는 내용을 근거로 설명하기", observation: "글의 중심 생각은 정확히 찾았지만, 뒷받침하는 문장을 고를 때 자신의 느낌을 근거로 제시했다. 교사가 ‘글에서 확인할 수 있는 문장을 찾아보자’고 하자 해당 문장에 밑줄을 그었다." },
-  수학: { grade: "5학년", subject: "수학", unit: "분수의 덧셈과 뺄셈", session: "4차시", goal: "분모가 다른 분수의 덧셈 과정을 설명하고 답이 타당한지 확인하기", observation: "통분하여 계산한 답은 맞았으나 왜 통분해야 하는지 설명하지 못했다. 두 분수 모형을 비교한 뒤에는 ‘조각의 크기를 같게 해야 더할 수 있다’고 말했지만 풀이에는 그 내용을 쓰지 않았다." },
-  사회: { grade: "4학년", subject: "사회", unit: "우리 지역의 모습", session: "2차시", goal: "지도와 사진 자료를 근거로 우리 지역의 특징과 생활 모습을 연결하여 설명하기", observation: "지도에서 하천과 도로의 위치를 찾아 표시했고 사람이 많이 모이는 장소도 찾았다. 그러나 지역의 자연환경과 사람들의 생활 모습이 어떻게 연결되는지는 자료를 근거로 설명하지 못했다." },
-  과학: { grade: "5학년", subject: "과학", unit: "식물의 구조와 기능", session: "3차시", goal: "관찰 결과를 근거로 식물의 구조와 기능 설명하기", observation: "잎과 줄기의 특징은 정확히 관찰해 기록했지만, 각 구조가 하는 일을 설명할 때 관찰 결과를 근거로 연결하지 못했다. 친구의 설명을 듣고 자신의 기록에서 근거가 될 부분에 밑줄을 그었다." },
-};
+const feedbackExamples = Object.fromEntries(researchCases.map(c => [c.subject, caseInput(c)]));
 const observationExamples = [
   { label: "정답은 맞았지만 풀이 설명은 못함", category: "학생이 한 말", text: "답은 정확히 제시했지만 풀이한 까닭을 묻자 ‘그냥 이렇게 하면 돼요’라고 답했다. 교사가 사용한 방법을 순서대로 말해 보게 하자 첫 단계까지는 설명했다." },
   { label: "생각은 먼저 말하고 근거는 뒤늦게 찾음", category: "학생이 한 말", text: "자신의 생각을 먼저 말한 뒤 자료에서 근거가 되는 부분을 찾아 가리켰다. 다만 그 근거가 자신의 생각을 어떻게 뒷받침하는지는 설명하지 못했다." },
@@ -860,7 +860,8 @@ function FeedbackForm({ initial, onSubmit, back }) {
   const [errors, setErrors] = useState({});
   const [exampleFields, setExampleFields] = useState(new Set());
   const set = (key, value) => {
-    setF({ ...f, [key]: value });
+    const contextChanged = ["grade", "subject", "goal", "observation", "unit"].includes(key);
+    setF({ ...f, [key]: value, ...(contextChanged ? { researchCaseId: "", achieved: "", gap: "" } : {}) });
     setErrors({ ...errors, [key]: "" });
     setExampleFields((current) => {
       const next = new Set(current);
@@ -869,12 +870,12 @@ function FeedbackForm({ initial, onSubmit, back }) {
     });
   };
   const fillExample = (subject) => {
-    setF(feedbackExamples[subject]);
+    setF(caseInput(researchCases.find(c => c.subject === subject)));
     setErrors({});
     setExampleFields(new Set(["grade", "subject", "unit", "session", "goal", "observation"]));
   };
   const fillObservationExample = (text) => {
-    setF((current) => ({ ...current, observation: text }));
+    setF((current) => ({ ...current, observation: text, achieved: "", gap: "", researchCaseId: "" }));
     setErrors((current) => ({ ...current, observation: "" }));
     setExampleFields((current) => new Set([...current, "observation"]));
   };
@@ -907,7 +908,7 @@ function FeedbackForm({ initial, onSubmit, back }) {
       <form className="form-sheet" onSubmit={submit} noValidate>
         {exampleFields.size > 0 && (
           <div className="example-edit-notice" role="status">
-            <b>예시)</b> 흐린 글씨로 채워진 내용은 입력 예시입니다.
+            <b>예시)</b> 연구자료의 평가 요소를 바탕으로 재구성한 가상 사례입니다. 실제 학생 기록이 아닙니다.
             <span>각 칸을 눌러 수업 내용에 맞게 수정해 주세요.</span>
           </div>
         )}
@@ -979,6 +980,26 @@ function FeedbackForm({ initial, onSubmit, back }) {
             )}
           </Field>
         </div>
+        <details className="accuracy-fields" open={!!f.researchCaseId}>
+          <summary>피드백 정확도 높이기 · 확인된 성취와 보완점</summary>
+          <p>자동으로 잘함·부족함을 판단하지 않습니다. 관찰한 증거로 확인한 내용만 적어 주세요. 수업 정보나 수행 기록을 바꾸면 이 확인 내용은 초기화됩니다.</p>
+          <Field label="확인한 성취 · 선택">
+            <textarea rows="2" value={f.achieved || ""} onChange={e => set("achieved", e.target.value)} placeholder="예: 분모를 같게 하여 덧셈을 정확히 계산한 것" />
+          </Field>
+          <Field label="목표에 비추어 보완할 점 · 선택">
+            <textarea rows="2" value={f.gap || ""} onChange={e => set("gap", e.target.value)} placeholder="예: 통분이 필요한 이유를 설명하는 것" />
+          </Field>
+          <Field label="이번에 제공하려는 지원 · 선택">
+            <select value={f.purpose || ""} onChange={e => set("purpose", e.target.value)}>
+              <option value="">결과에서 5단계를 살펴보고 선택</option>
+              <option value="judge">Starter · 수행에 대한 짧은 판단</option>
+              <option value="acknowledge">Planner · 확인된 성취 알리기</option>
+              <option value="guide">Guide · 목표와 차이, 방법 안내</option>
+              <option value="coach">Coach · 대화로 학생의 전략 이끌기</option>
+              <option value="design">Designer · 기준 만들기와 공동 평가</option>
+            </select>
+          </Field>
+        </details>
         <div className="observation-guide">
           <div className="observation-guide-head"><b>수행 모습 예시</b><span>비슷한 사례를 골라 Teacher Talk을 미리 설계해보세요.</span></div>
           <div className="observation-example-buttons">
@@ -998,151 +1019,18 @@ function FeedbackForm({ initial, onSubmit, back }) {
   );
 }
 
-function buildPersonalizedStages(data) {
-  const evidence = data.observation.trim().replace(/\s+/g, " ").slice(0, 72) + (data.observation.trim().length > 72 ? "…" : "");
-  const goal = data.goal.trim();
-  const grade = Number.parseInt(data.grade) || 4;
-  const low = grade <= 2;
-  const talks = [
-    {
-      talk: low ? `여기까지 했구나. 선생님이 본 모습은 이거야. ${evidence}` : `여기까지 한 내용은 확인했어. ${evidence}`,
-      focus: "확인했어",
-      dialogue: [
-        {
-          who: "교사",
-          text: low ? "여기까지 했구나. 선생님이 본 모습을 같이 확인해 보자." : "지금까지 한 내용을 먼저 확인해 보자.",
-        },
-      ],
-    },
-    {
-      talk: low ? `아까 ${evidence} 그 부분은 잘 해냈어.` : `${evidence} 이 부분은 ‘${goal}’에 맞게 해냈어.`,
-      focus: "해냈어",
-      dialogue: [{ who: "교사", text: `${evidence} 이 부분은 오늘 목표에 맞게 해냈어.` }],
-    },
-    {
-      talk: low ? `여기까지 좋아. 이제 한 가지만 더 해 보자. ${goal}을 생각하며 빠진 곳을 찾아볼까?` : `여기까지는 좋아. 이제 ‘${goal}’에 비추어 빠진 근거 한 가지를 보완해 보자.`,
-      focus: "한 가지만 더",
-      dialogue: [
-        {
-          who: "교사",
-          text: `${evidence} 여기까지는 좋아. 이제 ‘${goal}’에 비추어 무엇을 보완해야 하는지 한 가지 짚어 보자.`,
-        },
-      ],
-    },
-    {
-      talk: low ? "어떻게 하면 더 잘할 수 있을까? 네가 먼저 해 보고 싶은 방법을 말해 줄래?" : `네가 한 방법을 돌아보면, ‘${goal}’에 더 가까워지기 위해 다음에는 어떤 전략을 써 보고 싶어?`,
-      focus: low ? "네가 먼저" : "어떤 전략",
-      dialogue: [
-        { who: "교사", text: `네가 한 것을 같이 볼까? ${evidence}` },
-        {
-          who: "교사",
-          text: low ? "이 가운데 네 마음에 드는 부분은 어디야?" : `이 가운데 스스로 잘됐다고 생각하는 부분은 어디야? 그렇게 생각한 까닭도 말해 줄래?`,
-        },
-        {
-          who: "학생",
-          text: low ? "이 부분이요. 제가 혼자 해 봤어요." : "이 부분은 제가 생각한 방법대로 해 봤고, 앞보다 더 나아진 것 같아요.",
-        },
-        {
-          who: "교사",
-          text: `그렇구나. 그럼 ‘${goal}’을 생각했을 때 아직 더 살펴볼 곳은 어디일까?`,
-        },
-        {
-          who: "학생",
-          text: low ? "여기요. 한 번 더 해 볼래요." : "근거가 충분한지 다시 확인해 봐야 할 것 같아요.",
-        },
-        {
-          who: "교사",
-          text: low ? "좋아. 어떤 방법으로 다시 해 볼래?" : `좋아. 확인하기 위해 네가 먼저 써 보고 싶은 방법은 뭐야?`,
-        },
-        {
-          who: "학생",
-          text: low ? "그림이랑 다시 비교해 볼래요." : "기준과 제 결과를 하나씩 비교하고, 빠진 부분을 표시해 볼게요.",
-        },
-        {
-          who: "교사",
-          text: "좋은 방법이야. 먼저 그렇게 해 보고, 바뀐 점을 다시 이야기해 보자.",
-        },
-      ],
-    },
-    {
-      talk: low ? "우리가 잘했다고 말하려면 무엇을 보면 좋을까? 같이 약속을 정해 보자." : `‘${goal}’을 잘 해냈다고 판단할 기준을 우리가 함께 정해 볼까?`,
-      focus: low ? "같이 약속" : "함께 정해",
-      dialogue: [
-        {
-          who: "교사",
-          text: `오늘 목표는 ‘${goal}’이야. 이 목표를 잘 해냈다고 말하려면 무엇을 확인해야 할까?`,
-        },
-        {
-          who: "학생",
-          text: low ? "해야 할 일을 끝까지 했는지 보면 좋겠어요." : "결과만 맞는지 보지 말고, 어떤 방법을 썼는지도 보면 좋겠어요.",
-        },
-        {
-          who: "학생",
-          text: low ? "친구에게 말로 알려 줄 수 있는지도 봐요." : "제 생각을 근거와 함께 설명할 수 있는지도 기준에 넣고 싶어요.",
-        },
-        {
-          who: "교사",
-          text: "좋아. 지금 나온 의견을 짧은 확인표로 만들어 보자. 빠진 기준은 없을까?",
-        },
-        {
-          who: "학생",
-          text: "친구의 설명을 듣고 내 생각을 고치거나 보탠 것도 확인하면 좋겠어요.",
-        },
-        {
-          who: "교사",
-          text: "그 기준도 넣자. 활동이 끝나면 이 확인표로 먼저 스스로 살펴보고, 친구와도 의견을 나눠 보자.",
-        },
-        {
-          who: "학생",
-          text: "확인표를 보고 부족한 부분을 고친 뒤 다시 보여 드릴게요.",
-        },
-        {
-          who: "교사",
-          text: "좋아. 우리가 만든 기준으로 무엇이 달라졌는지 마지막에 함께 확인하자.",
-        },
-      ],
-    },
-  ];
-  const talkOptions = [
-    [
-      { label: "관찰 그대로", talk: `선생님이 확인한 모습은 이거야. ${evidence}` },
-      { label: "수행 짚기", talk: `지금 한 것부터 함께 확인해 보자. ${evidence}` },
-      { label: "짧게 확인", talk: low ? `여기까지 했구나. ${evidence}` : `현재 수행에서 확인된 내용을 먼저 말해 줄게. ${evidence}` },
-    ],
-    [
-      { label: "목표 연결", talk: `${evidence} 이 부분은 ‘${goal}’이라는 목표와 연결되는 성취야.` },
-      { label: "충족한 점", talk: `오늘 목표 가운데 네가 해낸 부분부터 볼게. ${evidence}` },
-      { label: "기준 확인", talk: `‘${goal}’의 기준으로 보면, 현재 수행에서 확인되는 점은 이거야. ${evidence}` },
-    ],
-    [
-      { label: "한 가지 보완", talk: `여기까지는 확인했어. 이제 ‘${goal}’에 더 가까워지도록 한 가지만 보완해 보자.` },
-      { label: "근거 더하기", talk: `${evidence} 이 내용을 바탕으로, 목표에 필요한 근거나 설명을 하나 더 찾아 넣어 보자.` },
-      { label: "차이 찾기", talk: `현재 수행과 ‘${goal}’을 나란히 놓고 보면 무엇이 빠져 있을까? 선생님과 한 가지씩 찾아보자.` },
-    ],
-    [
-      { label: "전략 돌아보기", talk: `네가 사용한 방법 가운데 도움이 된 것은 무엇이었어? 그렇게 생각한 까닭도 말해 줄래?` },
-      { label: "다음 시도", talk: `‘${goal}’에 더 가까워지려면 다음에는 어떤 방법으로 다시 해 보고 싶어?` },
-      { label: "스스로 수정", talk: `${evidence} 이 모습을 돌아보면, 어디부터 바꾸고 싶어? 바꾼 뒤에는 어떻게 확인할 수 있을까?` },
-    ],
-    [
-      { label: "성공 기준", talk: `‘${goal}’을 잘 해냈다고 판단하려면 어떤 기준이 필요할까? 함께 정해 보자.` },
-      { label: "자기 점검", talk: `우리가 만든 기준으로 네 수행을 살펴보면 무엇을 유지하고 무엇을 수정하고 싶어?` },
-      { label: "동료와 평가", talk: `친구의 수행을 살펴볼 때 꼭 확인할 기준은 무엇일까? 그 기준을 네 수행에도 적용해 보자.` },
-    ],
-  ];
-  return stages.map((stage, index) => ({ ...stage, ...talks[index], talkOptions: talkOptions[index] }));
-}
 
 function FeedbackResult({ data, edit }) {
   const [view, setView] = useState("proposal");
   const [selectedStage, setSelectedStage] = useState(null);
   const [showFullTalk, setShowFullTalk] = useState(false);
   const [selectedTalk, setSelectedTalk] = useState(0);
-  const personalizedStages = buildPersonalizedStages(data);
-  const coachReady = /스스로|고쳤|수정|비교|확인|질문/.test(data.observation);
-  const recommended = coachReady ? stages[3] : stages[2];
-  const recommendedIndex = coachReady ? 3 : 2;
-  const activeStageIndex = selectedStage ?? recommendedIndex;
+  const feedback = buildFeedback(data, stages);
+  const personalizedStages = feedback.stages;
+  const recommendedIndex = feedback.recommendedIndex;
+  const recommended = stages[recommendedIndex ?? 2];
+  const coachReady = recommendedIndex === 3 || recommendedIndex === 4;
+  const activeStageIndex = selectedStage ?? recommendedIndex ?? 2;
   const activeStage = personalizedStages[activeStageIndex];
   const byName = (name) => tools.find((tool) => tool[1] === name);
   const recommendedTools = coachReady ? [byName("다섯 손가락"), byName("퇴장티켓")] : [byName("양면 원마커"), byName("학습신호등"), byName("입장티켓")];
@@ -1187,14 +1075,14 @@ function FeedbackResult({ data, edit }) {
         {(view === "proposal" || view === "all") && <Section no="02" title="FeedON 제안">
           <div className="strategy">
             <div>
-              <span>추천 단계</span>
+              <span>{recommendedIndex === null ? "지원 목적에 따라 단계 선택" : "선택한 지원 목적"}</span>
               <h3>
-                {recommended.name} · {recommended.ko}
+                {recommendedIndex === null ? "자동 판정하지 않습니다" : `${recommended.name} · ${recommended.ko}`}
               </h3>
             </div>
             <div className="strategy-body">
-              <p className="strategy-desc"><i>✓</i>{recommended.desc}</p>
-              <p className="strategy-reason"><i>→</i>{coachReady ? "학생이 스스로 확인하거나 수정한 흔적이 있어요. 질문으로 다음 해결 방법을 이끌어내는 접근을 우선 제안합니다." : "현재 기록만으로 해결 전략이 충분히 드러나지 않아요. 목표와 현재 수행의 차이를 구체적으로 안내하는 접근을 우선 제안합니다."}</p>
+              {recommendedIndex !== null && <p className="strategy-desc"><i>✓</i>{recommended.desc}</p>}
+              <p className="strategy-reason"><i>→</i>{feedback.reason}</p>
             </div>
           </div>
           <h3 className="subhead">추천 확인·전달 방법</h3>
@@ -1206,6 +1094,7 @@ function FeedbackResult({ data, edit }) {
         </Section>}
         {(view === "talk" || view === "all") && <Section no="03" title="5단계 Teacher Talk">
           <p className="section-desc">단계 하나를 선택해 핵심 문장을 먼저 확인하세요. 4·5단계는 전체 대화에서 학생과 주고받는 흐름을 볼 수 있습니다.</p>
+          <p className="accuracy-note">성취·보완점을 확인하지 않은 단계는 판단을 보류합니다. 4·5단계 학생 대사는 실제 수행 기록이 아닌 예상 응답이며, 실제 반응에 따라 질문을 바꿔 주세요.</p>
           <div className="stage-picker" role="tablist" aria-label="Teacher Talk 단계 선택">
             {personalizedStages.map((s,i)=><button key={s.name} role="tab" aria-selected={activeStageIndex===i} className={`stage-${i+1}${activeStageIndex===i?" active":""}`} onClick={()=>{setSelectedStage(i);setShowFullTalk(false);setSelectedTalk(0)}}><span>0{i+1}</span><b>{s.name}</b><small>{s.ko}</small>{i===recommendedIndex&&<em>추천</em>}</button>)}
           </div>
@@ -1213,12 +1102,12 @@ function FeedbackResult({ data, edit }) {
           <article className={`selected-talk stage-${activeStageIndex+1}`} role="tabpanel">
             <div className="selected-talk-head"><div><span>STEP 0{activeStageIndex+1}</span><h3>{activeStage.name} <small>{activeStage.ko}</small></h3></div><CenterBadge center={activeStage.center}/></div>
             <div className="talk-summary">
-              <span>입력 내용에 맞춘 Teacher Talk · 3가지 표현</span>
+              <span>{feedback.sourceCase ? "연구자료 기반 재구성 예시" : "교사 확인 내용을 반영한 대화 틀"} · 3가지 표현</span>
               <div className="talk-option-tabs" role="tablist" aria-label={`${activeStage.name} Teacher Talk 표현 선택`}>
                 {activeStage.talkOptions.map((option, i) => <button key={option.label} role="tab" aria-selected={selectedTalk === i} className={selectedTalk === i ? "active" : ""} onClick={() => setSelectedTalk(i)}>{option.label}</button>)}
               </div>
               <blockquote>“{activeStage.talkOptions[selectedTalk].talk}”</blockquote>
-              <small>교사가 입력한 학습 목표·평가 요소와 실제 수행 모습을 반영한 문장입니다.</small>
+              <small>{feedback.sourceCase ? `${researchSource} · PDF ${feedback.sourceCase.pages}. 원문 인용이 아닌 재구성 예시이며 연구팀의 최종 검토가 필요합니다.` : "일치하는 연구자료 사례를 확정하지 않았습니다. 대화 틀의 설명·힌트는 실제 교과 내용에 맞게 구체화해 주세요."}</small>
             </div>
             <div className="stage-quick-info"><div><b>언제 쓰나요?</b><p>{activeStage.when}</p></div><div><b>무엇이 다른가요?</b><p>{activeStage.desc}</p></div></div>
             <button className="full-talk-toggle" onClick={()=>setShowFullTalk(!showFullTalk)} aria-expanded={showFullTalk}>{showFullTalk?"핵심만 보기":"전체 대화 보기"}<span>{showFullTalk?"−":"+"}</span></button>
