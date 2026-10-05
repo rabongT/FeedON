@@ -991,7 +991,7 @@ function FeedbackForm({ initial, onSubmit, back }) {
           </Field>
           <Field label="이번에 제공하려는 지원 · 선택">
             <select value={f.purpose || ""} onChange={e => set("purpose", e.target.value)}>
-              <option value="">결과에서 5단계를 살펴보고 선택</option>
+              <option value="">관찰 내용으로 지원 단계 제안받기</option>
               <option value="judge">Starter · 수행에 대한 짧은 판단</option>
               <option value="acknowledge">Planner · 확인된 성취 알리기</option>
               <option value="guide">Guide · 목표와 차이, 방법 안내</option>
@@ -1041,10 +1041,6 @@ function FeedbackResult({ data, edit }) {
         ← 수행 기록 수정
       </button>
       <PageIntro step="피드백 만들기 · 2/2" title="학생의 다음 행동을 위한 피드백" desc={context} />
-      <div className="record-warning">
-        <b>공식 성적·평가 기록이 아닌 피드백 설계 제안입니다.</b>
-        <p>교사가 실제 수행 증거와 학습 목표를 다시 확인하고, 학생에게 맞게 수정한 뒤 사용해 주세요.</p>
-      </div>
       <nav className="result-tabs" aria-label="피드백 결과 메뉴">
         <button className={view === "evidence" ? "active" : ""} onClick={() => setView("evidence")} aria-pressed={view === "evidence"}>
           <span>01</span>관찰 사실
@@ -1075,14 +1071,15 @@ function FeedbackResult({ data, edit }) {
         {(view === "proposal" || view === "all") && <Section no="02" title="FeedON 제안">
           <div className="strategy">
             <div>
-              <span>{recommendedIndex === null ? "지원 목적에 따라 단계 선택" : "선택한 지원 목적"}</span>
+              <span>제안 단계 · {feedback.recommendation.basis}</span>
               <h3>
-                {recommendedIndex === null ? "자동 판정하지 않습니다" : `${recommended.name} · ${recommended.ko}`}
+                {recommended.name} · {recommended.ko}
               </h3>
             </div>
             <div className="strategy-body">
               {recommendedIndex !== null && <p className="strategy-desc"><i>✓</i>{recommended.desc}</p>}
               <p className="strategy-reason"><i>→</i>{feedback.reason}</p>
+              {feedback.recommendation.evidence && <p className="recommendation-evidence">관찰 근거: “{feedback.recommendation.evidence}”</p>}
             </div>
           </div>
           <h3 className="subhead">추천 확인·전달 방법</h3>
@@ -1094,7 +1091,6 @@ function FeedbackResult({ data, edit }) {
         </Section>}
         {(view === "talk" || view === "all") && <Section no="03" title="5단계 Teacher Talk">
           <p className="section-desc">단계 하나를 선택해 핵심 문장을 먼저 확인하세요. 4·5단계는 전체 대화에서 학생과 주고받는 흐름을 볼 수 있습니다.</p>
-          <p className="accuracy-note">성취·보완점을 확인하지 않은 단계는 판단을 보류합니다. 4·5단계 학생 대사는 실제 수행 기록이 아닌 예상 응답이며, 실제 반응에 따라 질문을 바꿔 주세요.</p>
           <div className="stage-picker" role="tablist" aria-label="Teacher Talk 단계 선택">
             {personalizedStages.map((s,i)=><button key={s.name} role="tab" aria-selected={activeStageIndex===i} className={`stage-${i+1}${activeStageIndex===i?" active":""}`} onClick={()=>{setSelectedStage(i);setShowFullTalk(false);setSelectedTalk(0)}}><span>0{i+1}</span><b>{s.name}</b><small>{s.ko}</small>{i===recommendedIndex&&<em>추천</em>}</button>)}
           </div>
@@ -1107,14 +1103,19 @@ function FeedbackResult({ data, edit }) {
                 {activeStage.talkOptions.map((option, i) => <button key={option.label} role="tab" aria-selected={selectedTalk === i} className={selectedTalk === i ? "active" : ""} onClick={() => setSelectedTalk(i)}>{option.label}</button>)}
               </div>
               <blockquote>“{activeStage.talkOptions[selectedTalk].talk}”</blockquote>
-              <small>{feedback.sourceCase ? `${researchSource} · PDF ${feedback.sourceCase.pages}. 원문 인용이 아닌 재구성 예시이며 연구팀의 최종 검토가 필요합니다.` : "일치하는 연구자료 사례를 확정하지 않았습니다. 대화 틀의 설명·힌트는 실제 교과 내용에 맞게 구체화해 주세요."}</small>
             </div>
             <div className="stage-quick-info"><div><b>언제 쓰나요?</b><p>{activeStage.when}</p></div><div><b>무엇이 다른가요?</b><p>{activeStage.desc}</p></div></div>
             <button className="full-talk-toggle" onClick={()=>setShowFullTalk(!showFullTalk)} aria-expanded={showFullTalk}>{showFullTalk?"핵심만 보기":"전체 대화 보기"}<span>{showFullTalk?"−":"+"}</span></button>
-            {showFullTalk&&<div className="selected-talk-detail"><div className="detail-note">학생 문장은 정답이 아닌 <b>예상 응답</b>입니다. 실제 대답을 듣고 다음 질문을 이어 가세요.</div><Dialogue lines={activeStage.dialogue}/><div className="talk-caution"><b>교사가 주의할 점</b><p>{activeStage.caution}</p></div></div>}
+            {showFullTalk&&<div className="selected-talk-detail"><span className="result-label">대화 예시</span><Dialogue lines={activeStage.dialogue}/></div>}
           </article>
         </Section>}
         {view === "all" && <Section no="04" title="교사 확인">
+          <div className="record-warning">
+            <b>공식 성적·평가 기록이 아닌 피드백 설계 제안입니다.</b>
+            <p>교사가 실제 수행 증거와 학습 목표를 확인하고 학생에게 맞게 조정해 사용해 주세요. 학생 대사는 예상 응답입니다.</p>
+          </div>
+          <p className="accuracy-note">단계 제안은 {researchSource}의 단계별 특징(PDF 1·3쪽)을 적용한 규칙 기반 제안입니다. 학생의 성취 수준을 판정하는 기능은 아닙니다. {feedback.sourceCase ? `사례 참고: PDF ${feedback.sourceCase.pages}. 원문 인용이 아닌 재구성 예시입니다.` : "교과별 대화 내용은 수업 맥락에 맞게 구체화해 주세요."}</p>
+          <p>{activeStage.name} 활용: {activeStage.caution}</p>
           <div className="teacher-check">
             <p>학생에게 말하기 전에 세 가지를 확인해 주세요.</p>
             <label>

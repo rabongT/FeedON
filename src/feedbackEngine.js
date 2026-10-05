@@ -44,6 +44,32 @@ export function caseInput(c) {
     observation: c.observation, researchCaseId: c.id, purpose: '', achieved: c.achieved, gap: c.gap };
 }
 
+// Stage definitions: researchSource, PDF pp. 1 and 3.
+// Recommend a support strategy, not a student attainment level. Keep the
+// matching clause as evidence; negated, hypothetical and reported instructions
+// must not be counted as completed student actions.
+export function recommendStage(data) {
+  const purposes = { judge: 0, acknowledge: 1, guide: 2, coach: 3, design: 4 };
+  if (Object.hasOwn(purposes, data.purpose)) return {
+    index: purposes[data.purpose], reason: '선택하신 지원 목적에 맞는 단계입니다.', evidence: '', basis: '교사 선택',
+  };
+  const clauses = String(data.observation || '').split(/[.!?。\n]|지만|으나|그러나|그런데/).map(s => s.trim()).filter(Boolean);
+  const negative = /못|않|없|어려|모르|미흡|부족|필요|실패|헷갈|틀렸|틀린|빠뜨|빠져/;
+  const hypothetical = /싶|예정|계획|하면|할까|하도록|해\s*보자|해\s*봐|라고\s*(?:안내|지시|말했|했)/;
+  const positive = clauses.filter(s => !negative.test(s) && !hypothetical.test(s) && !/교사가|선생님이/.test(s));
+  const design = positive.find(s => /함께|같이|서로|친구와|모둠/.test(s) &&
+    /(?:평가|채점|성공)\s*기준|체크리스트/.test(s) && /만들|정했|세웠|합의|제안/.test(s));
+  if (design) return { index: 4, evidence: design, basis: '기준 공동 설계', reason: '기준을 함께 구성하는 모습이 나타납니다. 만든 기준으로 수행을 함께 평가하고 수정하는 Designer를 제안합니다.' };
+  const gap = clauses.find(s => negative.test(s) || /오류/.test(s));
+  const coach = positive.find(s => /스스로|직접|다른\s*방법|방법을\s*바|전략을\s*바/.test(s) &&
+    /고쳤|수정했|수정하였|선택했|선택하였|비교했|비교하였|시도했|시도하였|찾아냈|설명했|설명하였/.test(s));
+  if (coach) return { index: 3, evidence: coach, basis: '학생의 전략 탐색', reason: '학생이 방법을 시도하거나 자신의 수행을 돌아본 장면이 있습니다. 대화로 다음 전략을 학생에게서 이끌어내는 Coach를 제안합니다.' };
+  if (gap || String(data.gap || '').trim()) return { index: 2, evidence: gap || data.gap, basis: '목표와 현재 수행의 차이', reason: '현재 기록에 어려움이나 보완할 부분이 나타납니다. 목표와의 차이를 짚고 설명·힌트를 제공하는 Guide를 제안합니다.' };
+  const success = positive.find(s => /정확|알맞|올바|맞았|충족|향상|나아졌/.test(s) && /했|하였|썼|찾|말|맞았|충족|향상|나아졌/.test(s));
+  if (success || String(data.achieved || '').trim()) return { index: 1, evidence: success || data.achieved, basis: '성취와 충족 기준', reason: '수행에서 해낸 부분이 기록되어 있습니다. 어떤 기준을 충족했는지 구체적으로 알려주는 Planner를 제안합니다.' };
+  return { index: 2, evidence: '', basis: '수행 확인부터 시작', reason: '우선 목표와 현재 수행을 함께 확인하는 Guide로 시작해 보세요. 설명·힌트를 준 뒤 학생의 반응에 따라 다른 단계로 이어갈 수 있습니다.' };
+}
+
 export function buildFeedback(data, stages) {
   const grade = Number.parseInt(data.grade, 10);
   const low = grade <= 2;
@@ -56,8 +82,8 @@ export function buildFeedback(data, stages) {
   const goal = (data.goal || '').trim();
   const achieved = (data.achieved || '').trim();
   const gap = (data.gap || '').trim();
-  const purposeIndex = { judge: 0, acknowledge: 1, guide: 2, coach: 3, design: 4 };
-  const recommendedIndex = Object.hasOwn(purposeIndex, data.purpose) ? purposeIndex[data.purpose] : null;
+  const recommendation = recommendStage(data);
+  const recommendedIndex = recommendation.index;
   const hint = sourceCase?.hint || (low
     ? '선생님이 첫 부분을 보여 줄게. 그다음 부분은 네가 해 보자.'
     : mid ? '선생님이 한 부분을 예로 보여 줄게. 그 방법으로 다음 부분을 해 보자.'
@@ -67,7 +93,7 @@ export function buildFeedback(data, stages) {
   const strategy = sourceCase?.strategy || (low ? '제가 해 볼 방법을 하나 골라 말해 볼게요.' : '제가 써 볼 방법과 그 방법을 고른 까닭을 말해 볼게요.');
   const guide = gap
     ? `오늘 목표는 ‘${goal}’이야. 지금 더 필요한 부분은 ‘${gap}’이야. ${hint}`
-    : '목표와 현재 수행 사이의 차이가 아직 확인되지 않았어요. 교사가 보완할 점을 확인한 뒤 구체적인 설명이나 힌트를 제시해 주세요.';
+    : `오늘 목표는 ‘${goal}’이야. 네가 한 것과 목표를 나란히 보고, 더 해 볼 부분을 하나 찾아보자. ${hint}`;
   const starter = achieved ? '이 부분은 해냈구나.' : '판단 근거가 아직 확인되지 않았어요. 학생의 답이나 수행을 확인한 뒤 옳고 그름을 짧게 알려 주세요.';
   const planner = achieved ? `‘${achieved}’을 확인했어. 오늘 수행에서 해낸 부분이야.` : '확인된 성취가 아직 없어요. 관찰 기록에서 실제로 충족한 기준을 먼저 확인해 주세요.';
   const coach = low ? '다음에는 어떻게 해 보고 싶어?' : mid ? '다른 방법으로 해 본다면 무엇부터 바꿔 보고 싶어?' : '목표에 더 가까워지려면 어떤 방법을 선택하고 싶어? 그 방법을 고른 까닭도 말해 줄래?';
@@ -102,8 +128,8 @@ export function buildFeedback(data, stages) {
     ['기준 만들기', low ? '우리 약속을 확인할 때 무엇을 보면 좋을까?' : '우리 기준을 충족했다는 증거는 무엇일까? 함께 정해 보자.', '공동 평가', '우리가 함께 만든 기준으로 같은 수행을 살펴보자. 판단이 다르다면 각각 어떤 증거를 보았는지 이야기해 볼까?'],
   ];
   return {
-    sourceCase, recommendedIndex,
-    reason: recommendedIndex === null ? '기록의 단어만으로 학생의 상태나 단계를 판정하지 않습니다. 필요한 지원 목적에 맞게 단계를 선택해 주세요.' : '교사가 선택한 지원 목적에 따른 제안입니다. 학생을 수준별로 분류한 결과가 아닙니다.',
+    sourceCase, recommendedIndex, recommendation,
+    reason: recommendation.reason,
     stages: stages.map((s, i) => ({ ...s, talk: texts[i], dialogue: dialogues[i], talkOptions: [
       { label: '핵심 표현', talk: texts[i] }, { label: alternatives[i][0], talk: alternatives[i][1] }, { label: alternatives[i][2], talk: alternatives[i][3] },
     ] })),

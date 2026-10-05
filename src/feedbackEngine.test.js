@@ -1,16 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildFeedback, caseInput, researchCases } from './feedbackEngine.js';
+import { buildFeedback, caseInput, researchCases, recommendStage } from './feedbackEngine.js';
 
 const stages = ['Starter', 'Planner', 'Guide', 'Coach', 'Designer'].map(name => ({ name }));
 const blank = { grade: '5학년', subject: '수학', goal: '풀이 설명하기', observation: '계산을 스스로 수정하지 못했고, 질문에도 설명하지 못했다.' };
 
-test('negative and ambiguous observations never auto-classify a student', () => {
-  for (const observation of [blank.observation, '스스로 고쳤다.', '질문하지 않았다.', '잘함', '']) {
+test('negative and ambiguous observations receive guidance without invented success', () => {
+  for (const observation of [blank.observation, '질문하지 않았다.', '잘함', '']) {
     const r = buildFeedback({ ...blank, observation }, stages);
-    assert.equal(r.recommendedIndex, null);
+    assert.equal(r.recommendedIndex, 2);
     assert.match(r.stages[1].talk, /아직 없어요/);
-    assert.match(r.stages[2].talk, /아직 확인되지/);
+    assert.match(r.stages[2].talk, /오늘 목표/);
     assert.doesNotMatch(r.stages[1].talk, /해냈어|충족했어/);
   }
 });
@@ -34,12 +34,12 @@ test('editing case context or evidence cannot keep source-specific claims', () =
     assert.ok(!r.stages[2].talk.includes(c.hint), key);
   }
 });
-test('recommendations use only explicit teacher purpose', () => {
+test('explicit teacher purpose overrides the observation suggestion', () => {
   for (const [i, purpose] of ['judge','acknowledge','guide','coach','design'].entries()) {
     assert.equal(buildFeedback({ ...blank, purpose }, stages).recommendedIndex, i);
   }
-  assert.equal(buildFeedback({ ...blank, purpose: 'unknown' }, stages).recommendedIndex, null);
-  assert.equal(buildFeedback({ ...blank, purpose: '__proto__' }, stages).recommendedIndex, null);
+  assert.equal(buildFeedback({ ...blank, purpose: 'unknown' }, stages).recommendedIndex, 2);
+  assert.equal(buildFeedback({ ...blank, purpose: '__proto__' }, stages).recommendedIndex, 2);
 });
 test('Coach includes learner choice and Designer includes shared judgment', () => {
   const r = buildFeedback(blank, stages);
@@ -54,4 +54,24 @@ test('Coach includes learner choice and Designer includes shared judgment', () =
 test('grade groups use distinct accessible opening questions', () => {
   const talks = [1,3,6].map(g => buildFeedback({ ...blank, grade: `${g}학년` }, stages).stages[3].talk);
   assert.equal(new Set(talks).size, 3);
+});
+
+test('research stage features produce explanations for ordinary observations', () => {
+  for (const [observation, index] of [
+    ['근거를 정확하게 찾아 설명했다.', 1],
+    ['답은 맞았지만 풀이 이유는 설명하지 못했다.', 2],
+    ['오류를 발견한 뒤 스스로 수정했다.', 3],
+    ['다른 방법으로 시도했다.', 3],
+    ['친구와 평가 기준을 함께 만들었다.', 4],
+    ['함께 평가 기준을 만들지 못했다.', 2],
+    ['스스로 수정하지 않았다.', 2],
+    ['스스로 수정하고 싶다고 말했다.', 2],
+    ['교사가 직접 수정했다.', 2],
+    ['기준을 읽었다.', 2],
+  ]) {
+    const r = recommendStage({ ...blank, observation });
+    assert.equal(r.index, index, observation);
+    assert.ok(r.reason.length > 10);
+    if (r.evidence) assert.ok(observation.includes(r.evidence));
+  }
 });
