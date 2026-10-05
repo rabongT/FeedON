@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { buildFeedback, caseInput, researchCases, researchSource } from "./feedbackEngine";
+import { buildFeedback, caseInput, researchCases } from "./feedbackEngine";
 import "./App.css";
 import "./Home.css";
 import "./Theme.css";
@@ -1114,7 +1114,6 @@ function FeedbackResult({ data, edit }) {
             <b>공식 성적·평가 기록이 아닌 피드백 설계 제안입니다.</b>
             <p>교사가 실제 수행 증거와 학습 목표를 확인하고 학생에게 맞게 조정해 사용해 주세요. 학생 대사는 예상 응답입니다.</p>
           </div>
-          <p className="accuracy-note">단계 제안은 {researchSource}의 단계별 특징(PDF 1·3쪽)을 적용한 규칙 기반 제안입니다. 학생의 성취 수준을 판정하는 기능은 아닙니다. {feedback.sourceCase ? `사례 참고: PDF ${feedback.sourceCase.pages}. 원문 인용이 아닌 재구성 예시입니다.` : "교과별 대화 내용은 수업 맥락에 맞게 구체화해 주세요."}</p>
           <p>{activeStage.name} 활용: {activeStage.caution}</p>
           <div className="teacher-check">
             <p>학생에게 말하기 전에 세 가지를 확인해 주세요.</p>
