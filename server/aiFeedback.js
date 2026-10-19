@@ -5,7 +5,7 @@ export const POLICY = Object.freeze({
   end: Date.parse('2026-12-31T15:00:00Z'),
   ledger: 'feedon:ai:2026-pilot:attempts',
   attempts: 100, daily: 20, perMinute: 3,
-  model: 'gemini-2.5-flash', maxOutput: 5000,
+  model: 'gemini-3.8-flash', maxOutput: 5000,
 });
 export class SafeError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -124,7 +124,7 @@ export async function generate({ body, env, now = Date.now(), fetcher = fetch })
     contents: [{ role: 'user', parts: [{ text: JSON.stringify(data) }] }],
     generationConfig: { responseFormat: { text: { mimeType: 'application/json', schema } },
       candidateCount: 1, maxOutputTokens: POLICY.maxOutput, temperature: 0.4,
-      thinkingConfig: { thinkingBudget: 0 } },
+      thinkingConfig: { thinkingLevel: 'LOW' } },
   });
   if (Buffer.byteLength(payload, 'utf8') > 24000) fail(400, '입력이 너무 깁니다. 핵심 관찰을 짧게 정리해 주세요.');
   // Reserve BEFORE generation; failures and timeouts are never automatically retried.
