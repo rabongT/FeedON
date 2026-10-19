@@ -199,3 +199,17 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .accuracy-fields .field { margin-top: 18px; }
 .accuracy-note { padding: 16px 20px; border-left: 4px solid #247b86; background: #f0f6f5; }
 @media (max-width: 480px) { .accuracy-fields { padding: 16px; } }
+.ai-feedback-panel { padding: 24px; margin: 0 0 24px; border: 1px solid #bdcfd7; border-radius: 16px; background: #f2f7f6; color: #19344e; }
+.ai-feedback-panel strong { font-size: 1.25rem; }
+.ai-feedback-panel p { margin: 8px 0; line-height: 1.7; }
+.ai-feedback-panel form > label { display: block; margin-top: 16px; font-weight: 600; }
+.ai-access-row { display: flex; gap: 12px; margin: 8px 0 16px; }
+.ai-access-row input { min-width: 0; flex: 1; padding: 12px; border: 1px solid #91a7b3; border-radius: 8px; font-size: 16px; }
+.ai-access-row button { background: #19344e; color: white; padding: 12px 20px; border: 0; border-radius: 8px; min-height: 48px; font: inherit; font-weight: 700; cursor: pointer; }
+.ai-access-row button:disabled { opacity: .55; cursor: not-allowed; }
+.ai-feedback-panel .ai-consent { display: flex; align-items: flex-start; gap: 12px; font-size: 16px; line-height: 1.6; }
+.ai-consent input { flex: 0 0 20px; width: 20px; height: 20px; margin-top: 3px; }
+.ai-feedback-panel details { margin-top: 16px; font-size: 16px; }
+.ai-feedback-panel summary { cursor: pointer; padding: 8px 0; }
+.ai-feedback-panel :focus-visible { outline: 3px solid #167b8a; outline-offset: 3px; }
+@media (max-width: 640px) { .ai-feedback-panel { padding: 20px; } .ai-access-row { flex-direction: column; } .ai-access-row input { width: 100%; box-sizing: border-box; } }

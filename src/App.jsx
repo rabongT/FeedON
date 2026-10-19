@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { buildFeedback, caseInput, researchCases } from "./feedbackEngine";
+import AiFeedbackPanel from "./AiFeedbackPanel";
 import "./App.css";
 import "./Home.css";
 import "./Theme.css";
@@ -1025,7 +1026,14 @@ function FeedbackResult({ data, edit }) {
   const [selectedStage, setSelectedStage] = useState(null);
   const [showFullTalk, setShowFullTalk] = useState(false);
   const [selectedTalk, setSelectedTalk] = useState(0);
-  const feedback = buildFeedback(data, stages);
+  const [aiFeedback, setAiFeedback] = useState(null);
+  const localFeedback = buildFeedback(data, stages);
+  const feedback = aiFeedback ? {
+    ...localFeedback, sourceCase: null,
+    recommendedIndex: aiFeedback.recommendedIndex, reason: aiFeedback.reason,
+    recommendation: { basis: "AI 맞춤 제안", evidence: aiFeedback.evidence },
+    stages: stages.map((stage, i) => ({ ...stage, ...aiFeedback.stages[i] })),
+  } : localFeedback;
   const personalizedStages = feedback.stages;
   const recommendedIndex = feedback.recommendedIndex;
   const recommended = stages[recommendedIndex ?? 2];
@@ -1041,6 +1049,9 @@ function FeedbackResult({ data, edit }) {
         ← 수행 기록 수정
       </button>
       <PageIntro step="피드백 만들기 · 2/2" title="학생의 다음 행동을 위한 피드백" desc={context} />
+      <AiFeedbackPanel data={data} generated={!!aiFeedback} onGenerated={result => {
+        setAiFeedback(result); setSelectedStage(null); setSelectedTalk(0); setShowFullTalk(false);
+      }} />
       <nav className="result-tabs" aria-label="피드백 결과 메뉴">
         <button className={view === "evidence" ? "active" : ""} onClick={() => setView("evidence")} aria-pressed={view === "evidence"}>
           <span>01</span>관찰 사실
@@ -1098,7 +1109,7 @@ function FeedbackResult({ data, edit }) {
           <article className={`selected-talk stage-${activeStageIndex+1}`} role="tabpanel">
             <div className="selected-talk-head"><div><span>STEP 0{activeStageIndex+1}</span><h3>{activeStage.name} <small>{activeStage.ko}</small></h3></div><CenterBadge center={activeStage.center}/></div>
             <div className="talk-summary">
-              <span>{feedback.sourceCase ? "연구자료 기반 재구성 예시" : "교사 확인 내용을 반영한 대화 틀"} · 3가지 표현</span>
+              <span>{aiFeedback ? "AI 맞춤 대화 예시" : feedback.sourceCase ? "연구자료 기반 재구성 예시" : "교사 확인 내용을 반영한 대화 틀"} · 3가지 표현</span>
               <div className="talk-option-tabs" role="tablist" aria-label={`${activeStage.name} Teacher Talk 표현 선택`}>
                 {activeStage.talkOptions.map((option, i) => <button key={option.label} role="tab" aria-selected={selectedTalk === i} className={selectedTalk === i ? "active" : ""} onClick={() => setSelectedTalk(i)}>{option.label}</button>)}
               </div>
