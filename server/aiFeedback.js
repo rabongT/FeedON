@@ -1,4 +1,3 @@
-import { createHash, timingSafeEqual } from 'node:crypto';
 import { researchCases } from '../src/feedbackEngine.js';
 
 // A single pilot allocation, NOT a monthly reset. Renewal requires a reviewed code change.
@@ -16,15 +15,9 @@ export function configuration(env, now = Date.now()) {
   if (env.AI_ENABLED !== 'true' || (env.VERCEL_ENV && env.VERCEL_ENV !== 'production'))
     fail(503, 'AI 생성은 아직 운영자가 활성화하지 않았습니다. 기존 무료 제안을 이용해 주세요.');
   if (now >= POLICY.end) fail(403, 'AI 운영 기간이 종료되었습니다. 예산과 기간 승인 후 재개할 수 있습니다.');
-  if (!env.OPENAI_API_KEY || (env.FEEDON_AI_ACCESS_CODE || '').length < 24 ||
+  if (!env.OPENAI_API_KEY ||
       !env.UPSTASH_REDIS_REST_TOKEN || !/^https:\/\/[a-z0-9-]+\.upstash\.io\/?$/.test(env.UPSTASH_REDIS_REST_URL || ''))
     fail(503, 'AI 연결 또는 예산 보호 설정이 준비되지 않았습니다.');
-}
-export function authorize(code, env) {
-  if (typeof code !== 'string' || code.length > 200) fail(401, '교사용 AI 이용 코드를 확인해 주세요.');
-  const digest = s => createHash('sha256').update(s).digest();
-  if (!timingSafeEqual(digest(code), digest(env.FEEDON_AI_ACCESS_CODE)))
-    fail(401, '교사용 AI 이용 코드를 확인해 주세요.');
 }
 export function validateInput(body) {
   if (!body || typeof body !== 'object' || body.consent !== true)
@@ -119,10 +112,9 @@ export function validateOutput(result, data) {
   return result;
 }
 
-export async function generate({ body, code, env, now = Date.now(), fetcher = fetch }) {
+export async function generate({ body, env, now = Date.now(), fetcher = fetch }) {
   const started = Date.now();
   configuration(env, now);
-  authorize(code, env);
   const data = validateInput(body);
   const payload = JSON.stringify({ model: POLICY.model, store: false, service_tier: 'default',
     reasoning: { effort: 'none' }, max_output_tokens: POLICY.maxOutput,

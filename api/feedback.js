@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   if (!/^application\/json(?:;|$)/i.test(req.headers['content-type'] || '')) return res.status(415).json({ error: 'JSON 요청이 필요합니다.' });
   try {
     if (Buffer.byteLength(JSON.stringify(req.body ?? ''), 'utf8') > 12000) return res.status(413).json({ error: '입력 내용이 너무 깁니다.' });
-    const result = await generate({ body: req.body, code: req.headers['x-feedon-code'], env: process.env });
+    const result = await generate({ body: req.body, env: process.env });
     return res.status(200).json(result);
   } catch (error) {
     // Never log prompts, credentials, raw provider errors or student content.
