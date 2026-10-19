@@ -551,7 +551,7 @@ function Home({ navigate, openHelp }) {
                 <polyline points="12 5 19 12 12 19" />
               </svg>
             </button>
-            <p className="panel-description">관찰한 모습을 입력하면 바로 활용할 수 있는 피드백 문장과 Teacher Talk을 제안합니다.</p>
+            <p className="panel-description service-note">Gemini 연결 · 입력과 결과는 FeedON 서버에 별도 저장하지 않습니다.</p>
             <div className="panel-flow" aria-label="피드백 만들기 과정">
               <span><b>1</b> 실제 수행 기록</span><i aria-hidden="true">→</i><span><b>2</b> 피드백 확인</span>
             </div>

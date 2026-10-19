@@ -52,6 +52,7 @@
 .home-v2 .panel-flow b { width: 28px; height: 28px; font-size: 13px; }
 .home-v2 .hero-action-panel .hero-actions { width: 100%; max-width: none; gap: 18px; margin-top: 26px; }
 .home-v2 .panel-description { margin: 4px 0 0; color: #5d707f; font-size: 18px; line-height: 1.8; word-break: keep-all; }
+.home-v2 .panel-description.service-note { font-size: 15px; line-height: 1.7; }
 .home-v2 .hero-actions .panel-flow { margin: 0 0 8px; }
 .home-v2 .btn-primary { background: #19334e; border-radius: 12px; box-shadow: none; min-height: 86px; padding: 20px; }
 .home-v2 .btn-primary:hover { background: #284c6c; }
