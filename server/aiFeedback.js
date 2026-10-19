@@ -5,7 +5,7 @@ export const POLICY = Object.freeze({
   end: Date.parse('2026-12-31T15:00:00Z'),
   ledger: 'feedon:ai:2026-pilot:attempts',
   attempts: 100, daily: 20, perMinute: 3,
-  model: 'gpt-5.4-mini-2026-03-17', maxOutput: 5000,
+  model: 'gemini-2.5-flash', maxOutput: 5000,
 });
 export class SafeError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -15,7 +15,9 @@ export function configuration(env, now = Date.now()) {
   if (env.AI_ENABLED !== 'true' || (env.VERCEL_ENV && env.VERCEL_ENV !== 'production'))
     fail(503, 'AI 생성은 아직 운영자가 활성화하지 않았습니다. 기존 무료 제안을 이용해 주세요.');
   if (now >= POLICY.end) fail(403, 'AI 운영 기간이 종료되었습니다. 예산과 기간 승인 후 재개할 수 있습니다.');
-  if (!env.OPENAI_API_KEY ||
+  if (env.GEMINI_FREE_TIER_CONFIRMED !== 'true')
+    fail(503, 'Gemini 무료 프로젝트 확인이 완료되지 않았습니다.');
+  if (!env.GEMINI_API_KEY ||
       !env.UPSTASH_REDIS_REST_TOKEN || !/^https:\/\/[a-z0-9-]+\.upstash\.io\/?$/.test(env.UPSTASH_REDIS_REST_URL || ''))
     fail(503, 'AI 연결 또는 예산 보호 설정이 준비되지 않았습니다.');
 }
@@ -65,7 +67,7 @@ async function reserve(env, requestId, now, fetcher) {
   }); } catch { fail(503, '예산 저장소에 연결하지 못하여 AI 호출을 차단했습니다. 운영자가 저장소 연결 설정을 확인해야 합니다.'); }
   if (!response.ok) fail(503, '예산 확인에 실패하여 유료 호출을 차단했습니다.');
   const result = await response.json();
-  if (result.result === -1) fail(429, '이번 운영 예산의 AI 생성 한도에 도달했습니다. 기존 무료 제안은 계속 이용할 수 있습니다.');
+  if (result.result === -1) fail(429, '이번 운영 기간의 공용 AI 생성 한도에 도달했습니다. 기존 무료 제안은 계속 이용할 수 있습니다.');
   if (result.result === -2) fail(429, '잠시 요청이 많거나 오늘 이용 한도에 도달했습니다. 기존 무료 제안을 이용해 주세요.');
   if (result.result === -4) fail(409, '이미 처리한 요청입니다. 중복 유료 호출을 차단했습니다.');
   if (result.error || !Number.isInteger(result.result) || result.result < 1 || result.result > POLICY.attempts)
@@ -117,27 +119,32 @@ export async function generate({ body, env, now = Date.now(), fetcher = fetch })
   const started = Date.now();
   configuration(env, now);
   const data = validateInput(body);
-  const payload = JSON.stringify({ model: POLICY.model, store: false, service_tier: 'default',
-    reasoning: { effort: 'none' }, max_output_tokens: POLICY.maxOutput,
-    instructions, input: JSON.stringify(data),
-    text: { format: { type: 'json_schema', name: 'feedon_feedback', strict: true, schema } },
+  const payload = JSON.stringify({
+    systemInstruction: { parts: [{ text: instructions }] },
+    contents: [{ role: 'user', parts: [{ text: JSON.stringify(data) }] }],
+    generationConfig: { responseMimeType: 'application/json', responseJsonSchema: schema,
+      candidateCount: 1, maxOutputTokens: POLICY.maxOutput, temperature: 0.4,
+      thinkingConfig: { thinkingBudget: 0 } },
   });
   if (Buffer.byteLength(payload, 'utf8') > 24000) fail(400, '입력이 너무 깁니다. 핵심 관찰을 짧게 정리해 주세요.');
-  // Reserve BEFORE OpenAI; failures and timeouts are never refunded or automatically retried.
+  // Reserve BEFORE generation; failures and timeouts are never automatically retried.
   await reserve(env, body.requestId, now, fetcher);
   configuration(env, now + Date.now() - started);
   let response;
-  try { response = await fetcher('https://api.openai.com/v1/responses', {
-    method: 'POST', headers: { Authorization: `Bearer ${env.OPENAI_API_KEY.trim()}`, 'Content-Type': 'application/json' },
+  try { response = await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${POLICY.model}:generateContent`, {
+    method: 'POST', headers: { 'x-goog-api-key': env.GEMINI_API_KEY.trim(), 'Content-Type': 'application/json' },
     body: payload, signal: AbortSignal.timeout(45000), redirect: 'error',
-  }); } catch { fail(503, 'OpenAI 서버 연결에 실패했습니다. 자동 재시도하지 않으며 기존 무료 제안을 유지합니다.'); }
+  }); } catch { fail(503, 'Gemini 서버 연결에 실패했습니다. 자동 재시도하지 않으며 기존 무료 제안을 유지합니다.'); }
+  if (response.status === 429) fail(429, 'Gemini 무료 이용 한도에 도달했거나 요청이 많습니다. 자동 재시도·유료 전환 없이 기존 무료 제안을 유지합니다.');
+  if (response.status === 401 || response.status === 403) fail(503, 'Gemini 키 또는 프로젝트 권한을 확인해야 합니다. 기존 무료 제안을 유지합니다.');
   if (!response.ok) fail(502, 'AI 응답을 받지 못했습니다. 자동 재시도하지 않으며 기존 무료 제안을 유지합니다.');
   const output = await response.json();
-  if (output.status !== 'completed') fail(502, 'AI 응답이 완성되지 않았습니다. 기존 무료 제안을 유지합니다.');
-  const content = (output.output || []).filter(o => o.type === 'message').flatMap(o => o.content || []);
-  if (content.some(c => c.type === 'refusal')) fail(422, '이 입력으로는 AI 피드백을 제공할 수 없습니다. 관찰 내용을 확인해 주세요.');
+  if (output.promptFeedback?.blockReason) fail(422, '이 입력으로는 AI 피드백을 제공할 수 없습니다. 관찰 내용을 확인해 주세요.');
+  const candidate = output.candidates?.[0];
+  if (candidate?.finishReason !== 'STOP') fail(502, 'AI 응답이 완성되지 않았습니다. 기존 무료 제안을 유지합니다.');
+  const content = candidate.content?.parts || [];
   let parsed;
-  try { parsed = JSON.parse(content.filter(c => c.type === 'output_text').map(c => c.text).join('')); }
+  try { parsed = JSON.parse(content.filter(c => !c.thought && typeof c.text === 'string').map(c => c.text).join('')); }
   catch { fail(502, 'AI 응답 형식을 확인하지 못했습니다. 기존 무료 제안을 유지합니다.'); }
   return validateOutput(parsed, data);
 }
