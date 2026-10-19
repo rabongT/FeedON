@@ -55,13 +55,14 @@ return total + 1`;
 
 async function reserve(env, requestId, now, fetcher) {
   const day = new Date(now + 9 * 3600000).toISOString().slice(0, 10);
-  const response = await fetcher(env.UPSTASH_REDIS_REST_URL, {
-    method: 'POST', headers: { Authorization: `Bearer ${env.UPSTASH_REDIS_REST_TOKEN}`, 'Content-Type': 'application/json' },
+  let response;
+  try { response = await fetcher(env.UPSTASH_REDIS_REST_URL.trim(), {
+    method: 'POST', headers: { Authorization: `Bearer ${env.UPSTASH_REDIS_REST_TOKEN.trim()}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(['EVAL', RESERVE, '4', POLICY.ledger, `${POLICY.ledger}:day:${day}`,
       `${POLICY.ledger}:minute:${Math.floor(now / 60000)}`, `${POLICY.ledger}:request:${requestId}`,
       String(POLICY.attempts), String(POLICY.daily), String(POLICY.perMinute)]),
     signal: AbortSignal.timeout(5000), redirect: 'error',
-  });
+  }); } catch { fail(503, '예산 저장소에 연결하지 못하여 AI 호출을 차단했습니다. 운영자가 저장소 연결 설정을 확인해야 합니다.'); }
   if (!response.ok) fail(503, '예산 확인에 실패하여 유료 호출을 차단했습니다.');
   const result = await response.json();
   if (result.result === -1) fail(429, '이번 운영 예산의 AI 생성 한도에 도달했습니다. 기존 무료 제안은 계속 이용할 수 있습니다.');
@@ -125,10 +126,11 @@ export async function generate({ body, env, now = Date.now(), fetcher = fetch })
   // Reserve BEFORE OpenAI; failures and timeouts are never refunded or automatically retried.
   await reserve(env, body.requestId, now, fetcher);
   configuration(env, now + Date.now() - started);
-  const response = await fetcher('https://api.openai.com/v1/responses', {
-    method: 'POST', headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+  let response;
+  try { response = await fetcher('https://api.openai.com/v1/responses', {
+    method: 'POST', headers: { Authorization: `Bearer ${env.OPENAI_API_KEY.trim()}`, 'Content-Type': 'application/json' },
     body: payload, signal: AbortSignal.timeout(45000), redirect: 'error',
-  });
+  }); } catch { fail(503, 'OpenAI 서버 연결에 실패했습니다. 자동 재시도하지 않으며 기존 무료 제안을 유지합니다.'); }
   if (!response.ok) fail(502, 'AI 응답을 받지 못했습니다. 자동 재시도하지 않으며 기존 무료 제안을 유지합니다.');
   const output = await response.json();
   if (output.status !== 'completed') fail(502, 'AI 응답이 완성되지 않았습니다. 기존 무료 제안을 유지합니다.');
