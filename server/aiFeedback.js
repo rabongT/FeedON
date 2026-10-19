@@ -122,7 +122,7 @@ export async function generate({ body, env, now = Date.now(), fetcher = fetch })
   const payload = JSON.stringify({
     systemInstruction: { parts: [{ text: instructions }] },
     contents: [{ role: 'user', parts: [{ text: JSON.stringify(data) }] }],
-    generationConfig: { responseFormat: { text: { mimeType: 'application/json', schema } },
+    generationConfig: { responseFormat: { text: { mimeType: 'APPLICATION_JSON', schema } },
       candidateCount: 1, maxOutputTokens: POLICY.maxOutput, temperature: 0.4,
       thinkingConfig: { thinkingLevel: 'LOW' } },
   });

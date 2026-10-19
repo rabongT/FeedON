@@ -51,6 +51,7 @@ test('valid generation reserves first, fixes model/output cap and excludes unrel
       assert.equal(options.headers['x-goog-api-key'], env.GEMINI_API_KEY);
       assert.equal(payload.generationConfig.maxOutputTokens, 5000); assert.equal(payload.tools, undefined);
       assert.equal(payload.generationConfig.candidateCount, 1);
+      assert.equal(payload.generationConfig.responseFormat.text.mimeType, 'APPLICATION_JSON');
       assert.ok(!options.body.includes('DO NOT SEND')); assert.ok(!options.body.includes(env.GEMINI_API_KEY));
       assert.ok(Buffer.byteLength(options.body) <= 24000);
       return ok({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text: JSON.stringify(sample()) }] } }] });
