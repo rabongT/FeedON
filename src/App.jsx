@@ -1120,9 +1120,8 @@ function FeedbackResult({ data, edit }) {
           <article className={`selected-talk stage-${activeStageIndex+1}`} role="tabpanel">
             <div className="selected-talk-head"><div><span>STEP 0{activeStageIndex+1}</span><h3>{activeStage.name} <small>{activeStage.ko}</small></h3></div><CenterBadge center={activeStage.center}/></div>
             <div className="talk-summary">
-              <span>{aiFeedback ? "AI 맞춤 대화 예시" : feedback.sourceCase ? "연구자료 기반 재구성 예시" : "교사 확인 내용을 반영한 대화 틀"} · 3가지 표현</span>
               <div className="talk-option-tabs" role="tablist" aria-label={`${activeStage.name} Teacher Talk 표현 선택`}>
-                {activeStage.talkOptions.map((option, i) => <button key={option.label} role="tab" aria-selected={selectedTalk === i} className={selectedTalk === i ? "active" : ""} onClick={() => setSelectedTalk(i)}>{option.label}</button>)}
+                {activeStage.talkOptions.map((option, i) => <button key={i} role="tab" aria-selected={selectedTalk === i} className={selectedTalk === i ? "active" : ""} onClick={() => setSelectedTalk(i)}>예시 {i + 1}</button>)}
               </div>
               <blockquote>“{activeStage.talkOptions[selectedTalk].talk}”</blockquote>
             </div>
