@@ -5,7 +5,7 @@ export const POLICY = Object.freeze({
   end: Date.parse('2026-12-31T15:00:00Z'),
   ledger: 'feedon:ai:2026-pilot:attempts',
   attempts: 100, daily: 20, perMinute: 3,
-  model: 'gemini-3.8-flash', maxOutput: 5000,
+  model: 'gemini-3.5-flash-lite', maxOutput: 5000,
 });
 export class SafeError extends Error {
   constructor(status, message) { super(message); this.status = status; }
