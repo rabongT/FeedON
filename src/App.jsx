@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { buildFeedback, caseInput, researchCases } from "./feedbackEngine";
-import AiFeedbackPanel from "./AiFeedbackPanel";
+import { generateFeedback } from "./generateFeedback";
 import PrivacyNotice from "./PrivacyNotice";
 import "./App.css";
 import "./Home.css";
@@ -606,12 +606,13 @@ const initialAssessment = {
   sessions: "4",
   focus: [],
 };
-function Field({ label, required, children, hint }) {
+function Field({ label, required, children, hint, notice }) {
   return (
     <label className="field">
       <span>
         {label}
         {required && <i>필수</i>}
+        {notice && <strong className="field-privacy-warning">{notice}</strong>}
       </span>
       {children}
       {hint && <small>{hint}</small>}
@@ -867,7 +868,7 @@ const observationExamples = [
   { label: "친구 설명 듣고 자기 기록을 스스로 고침", category: "친구와의 상호작용", text: "친구의 설명을 들으며 자신의 결과와 다른 부분에 표시했다. 질문을 한 뒤 빠진 내용을 찾아 자신의 기록을 고치고 수정한 까닭을 친구에게 설명했다." },
   { label: "모둠 의견 차이를 근거로 조율하려 시도", category: "친구와의 상호작용", text: "모둠에서 서로 다른 의견이 나오자 두 의견의 공통점과 차이점을 정리했다. 자료를 근거로 한 의견을 선택하자고 제안했지만 최종 기준을 합의하지는 못했다." },
 ];
-function FeedbackForm({ initial, onSubmit, back }) {
+function FeedbackForm({ initial, onSubmit, back, busy }) {
   const [f, setF] = useState({ ...blankFeedback, ...initial });
   const [errors, setErrors] = useState({});
   const [exampleFields, setExampleFields] = useState(new Set());
@@ -893,6 +894,7 @@ function FeedbackForm({ initial, onSubmit, back }) {
   };
   const submit = (e) => {
     e.preventDefault();
+    if (busy) return;
     const next = {};
     if (!f.grade) next.grade = "학생 눈높이에 맞는 말로 제안하려면 학년이 필요해요.";
     if (!f.subject) next.subject = "교과에 맞는 예시와 표현을 제안하려면 과목이 필요해요.";
@@ -983,7 +985,7 @@ function FeedbackForm({ initial, onSubmit, back }) {
           </Field>
         </div>
         <div className={errors.observation ? "field-error" : ""}>
-          <Field label="학생이 보인 실제 수행 모습" required hint="좋은 기록: 예상은 정확히 말했지만 결과를 기록할 때 측정 단위를 두 번 빠뜨렸다. 친구의 기록을 보고 스스로 한 곳을 고쳤다.">
+          <Field label="학생이 보인 실제 수행 모습" required notice="학생 이름, 학번 등 개인정보는 입력 금지" hint="좋은 기록: 예상은 정확히 말했지만 결과를 기록할 때 측정 단위를 두 번 빠뜨렸다. 친구의 기록을 보고 스스로 한 곳을 고쳤다.">
             <textarea className={exampleFields.has("observation") ? "example-value" : ""} rows="7" value={f.observation} onChange={(e) => set("observation", e.target.value)} aria-invalid={!!errors.observation} placeholder="‘잘함·부족함’ 같은 판단보다 학생이 실제로 말하거나 행동한 장면을 적어 주세요." />
             {errors.observation && (
               <span className="error-message" role="alert">
@@ -1022,22 +1024,22 @@ function FeedbackForm({ initial, onSubmit, back }) {
           <button type="button" className="secondary" onClick={back}>
             취소
           </button>
-          <button className="primary">
-            피드백 제안 확인하기 <span>→</span>
+          <button className="primary" disabled={busy} aria-busy={busy}>
+            {busy ? "연구자료를 바탕으로 피드백 만드는 중…" : "피드백 제안 확인하기"} <span>→</span>
           </button>
         </div>
+        {busy && <p role="status">제안과 5단계 Teacher Talk을 함께 만들고 있습니다. 잠시 기다려 주세요.</p>}
       </form>
     </main>
   );
 }
 
 
-function FeedbackResult({ data, edit }) {
+function FeedbackResult({ data, edit, aiFeedback, generationNotice }) {
   const [view, setView] = useState("proposal");
   const [selectedStage, setSelectedStage] = useState(null);
   const [showFullTalk, setShowFullTalk] = useState(false);
   const [selectedTalk, setSelectedTalk] = useState(0);
-  const [aiFeedback, setAiFeedback] = useState(null);
   const localFeedback = buildFeedback(data, stages);
   const feedback = aiFeedback ? {
     ...localFeedback, sourceCase: null,
@@ -1060,9 +1062,7 @@ function FeedbackResult({ data, edit }) {
         ← 수행 기록 수정
       </button>
       <PageIntro step="피드백 만들기 · 2/2" title="학생의 다음 행동을 위한 피드백" desc={context} />
-      <AiFeedbackPanel data={data} generated={!!aiFeedback} onGenerated={result => {
-        setAiFeedback(result); setSelectedStage(null); setSelectedTalk(0); setShowFullTalk(false);
-      }} />
+      <aside className="ai-feedback-panel"><p>퍼스널 피드백 5단계 연구에 기반합니다.</p>{generationNotice && <p role="status">{generationNotice}</p>}</aside>
       <nav className="result-tabs" aria-label="피드백 결과 메뉴">
         <button className={view === "evidence" ? "active" : ""} onClick={() => setView("evidence")} aria-pressed={view === "evidence"}>
           <span>01</span>관찰 사실
@@ -1155,24 +1155,46 @@ function FeedbackResult({ data, edit }) {
 }
 
 function App() {
+  const pending = useRef(null);
+  const [busy, setBusy] = useState(false);
+  const [aiResult, setAiResult] = useState(null);
+  const [generationNotice, setGenerationNotice] = useState("");
+  useEffect(() => () => pending.current?.abort(), []);
   const [page, setPage] = useState("home"),
     [help, setHelp] = useState(null),
     [fForm, setFForm] = useState(null),
     [fResult, setFResult] = useState(null);
-  const feedbackDone = (f) => {
+  const feedbackDone = async (f) => {
+    if (pending.current) return;
+    const controller = new AbortController();
+    pending.current = controller;
+    setBusy(true);
     setFForm(f);
-    setFResult(f);
-    setPage("feedbackResult");
-    scrollTo(0, 0);
+    try {
+      const result = await generateFeedback(f, controller.signal);
+      if (controller.signal.aborted) return;
+      setAiResult(result);
+      setGenerationNotice("");
+    } catch {
+      if (controller.signal.aborted) return;
+      setAiResult(null);
+      setGenerationNotice("AI 생성에 연결하지 못해 연구자료 기반 기본 예시를 표시합니다. AI 생성 결과는 아닙니다.");
+    } finally {
+      if (pending.current === controller) { pending.current = null; setBusy(false); }
+    }
+    if (!controller.signal.aborted) { setFResult(f); setPage("feedbackResult"); scrollTo(0, 0); }
   };
   const nav = (p) => {
+    pending.current?.abort();
+    pending.current = null;
+    setBusy(false);
     setPage(p);
     scrollTo(0, 0);
   };
   return (
     <>
       <Header goHome={() => nav("home")} openHelp={setHelp} />
-      {page === "home" && <Home navigate={nav} openHelp={setHelp} />} {page === "feedback" && <FeedbackForm initial={fForm} onSubmit={feedbackDone} back={() => nav("home")} />} {page === "feedbackResult" && <FeedbackResult data={fResult} edit={() => nav("feedback")} />} {help && <Modal type={help} close={() => setHelp(null)} />}
+      {page === "home" && <Home navigate={nav} openHelp={setHelp} />} {page === "feedback" && <FeedbackForm initial={fForm} onSubmit={feedbackDone} busy={busy} back={() => nav("home")} />} {page === "feedbackResult" && <FeedbackResult data={fResult} aiFeedback={aiResult} generationNotice={generationNotice} edit={() => nav("feedback")} />} {help && <Modal type={help} close={() => setHelp(null)} />}
       <footer>
         <button type="button" className="footer-privacy" onClick={() => setHelp("privacy")} aria-haspopup="dialog">개인정보 처리 안내</button>
         <small className="copyright">© 경인초 학생평가 연구팀</small>

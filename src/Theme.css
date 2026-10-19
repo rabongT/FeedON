@@ -222,3 +222,12 @@ footer { flex-direction: column; align-items: center; gap: 4px; }
 .privacy-notice h3 { font-size: 18px; color: #19334e; margin: 0 0 8px; }
 .privacy-notice p { margin: 8px 0; }
 .privacy-notice a { color: #24516e; text-decoration: underline; text-underline-offset: 3px; }
+.field .field-privacy-warning {
+  display: inline-block;
+  color: #b42318;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-left: 10px;
+  font-weight: 700;
+}
+.primary:disabled { opacity: .65; cursor: wait; }
