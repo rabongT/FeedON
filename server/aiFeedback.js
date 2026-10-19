@@ -23,7 +23,7 @@ export function configuration(env, now = Date.now()) {
 }
 export function validateInput(body) {
   if (!body || typeof body !== 'object' || body.consent !== true)
-    fail(400, '개인정보를 지웠는지 확인하고 전송에 동의해 주세요.');
+    fail(400, '개인정보가 포함되지 않았는지 확인하고 체크해 주세요.');
   if (!/^[a-f0-9-]{36}$/i.test(body.requestId || '')) fail(400, '요청 식별자가 올바르지 않습니다.');
   const data = {};
   for (const [key, max] of Object.entries({ grade: 8, subject: 20, goal: 300, observation: 1200, achieved: 250, gap: 250, purpose: 20 })) {
