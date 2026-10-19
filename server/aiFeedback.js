@@ -77,7 +77,7 @@ async function reserve(env, requestId, now, fetcher) {
 const str = { type: 'string' };
 const object = properties => ({ type: 'object', properties, required: Object.keys(properties), additionalProperties: false });
 export const schema = object({
-  recommendedIndex: { type: 'integer', enum: [0, 1, 2, 3, 4] }, reason: str, evidence: str,
+  recommendedIndex: { type: 'integer', minimum: 0, maximum: 4 }, reason: str, evidence: str,
   stages: { type: 'array', minItems: 5, maxItems: 5, items: object({
     talk: str,
     talkOptions: { type: 'array', minItems: 3, maxItems: 3, items: object({ label: str, talk: str }) },
@@ -122,7 +122,7 @@ export async function generate({ body, env, now = Date.now(), fetcher = fetch })
   const payload = JSON.stringify({
     systemInstruction: { parts: [{ text: instructions }] },
     contents: [{ role: 'user', parts: [{ text: JSON.stringify(data) }] }],
-    generationConfig: { responseMimeType: 'application/json', responseJsonSchema: schema,
+    generationConfig: { responseFormat: { text: { mimeType: 'application/json', schema } },
       candidateCount: 1, maxOutputTokens: POLICY.maxOutput, temperature: 0.4,
       thinkingConfig: { thinkingBudget: 0 } },
   });
@@ -137,6 +137,15 @@ export async function generate({ body, env, now = Date.now(), fetcher = fetch })
   }); } catch { fail(503, 'Gemini 서버 연결에 실패했습니다. 자동 재시도하지 않으며 기존 무료 제안을 유지합니다.'); }
   if (response.status === 429) fail(429, 'Gemini 무료 이용 한도에 도달했거나 요청이 많습니다. 자동 재시도·유료 전환 없이 기존 무료 제안을 유지합니다.');
   if (response.status === 401 || response.status === 403) fail(503, 'Gemini 키 또는 프로젝트 권한을 확인해야 합니다. 기존 무료 제안을 유지합니다.');
+  if (response.status === 400) {
+    // Classify only; never expose the provider's raw message, which may contain request data.
+    const problem = await response.json().catch(() => ({}));
+    const message = typeof problem.error?.message === 'string' ? problem.error.message : '';
+    if (/API.?key|credential|authentication/i.test(message)) fail(503, 'Gemini API 키 설정을 확인해야 합니다. 운영자가 등록한 키의 형식을 확인해 주세요.');
+    if (/schema|mime|response.?format|generation.?config|thinking/i.test(message)) fail(502, 'Gemini 생성 형식 설정을 확인해야 합니다. 기존 무료 제안을 유지합니다.');
+    fail(502, 'Gemini 요청을 처리할 수 없습니다(요청 설정 오류). 기존 무료 제안을 유지합니다.');
+  }
+  if (response.status === 404) fail(503, '현재 프로젝트에서 Gemini 모델을 사용할 수 없습니다. 운영자가 모델 제공 상태를 확인해야 합니다.');
   if (!response.ok) fail(502, 'AI 응답을 받지 못했습니다. 자동 재시도하지 않으며 기존 무료 제안을 유지합니다.');
   const output = await response.json();
   if (output.promptFeedback?.blockReason) fail(422, '이 입력으로는 AI 피드백을 제공할 수 없습니다. 관찰 내용을 확인해 주세요.');
