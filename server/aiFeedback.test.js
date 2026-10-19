@@ -62,7 +62,7 @@ test('valid generation reserves first, fixes model/output cap and excludes unrel
 test('provider failure is not automatically retried or refunded', async () => {
   let calls = 0;
   await assert.rejects(generate({ body, env, now,
-    fetcher: async () => ++calls === 1 ? ok({ result: 1 }) : { ok: false } }), /자동 재시도/);
+    fetcher: async () => ++calls === 1 ? ok({ result: 1 }) : { ok: false, status: 503 } }), /HTTP 503/);
   assert.equal(calls, 2);
 });
 test('free quota exhaustion never retries or falls back to a paid provider', async () => {

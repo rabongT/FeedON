@@ -146,7 +146,7 @@ export async function generate({ body, env, now = Date.now(), fetcher = fetch })
     fail(502, 'Gemini 요청을 처리할 수 없습니다(요청 설정 오류). 기존 무료 제안을 유지합니다.');
   }
   if (response.status === 404) fail(503, '현재 프로젝트에서 Gemini 모델을 사용할 수 없습니다. 운영자가 모델 제공 상태를 확인해야 합니다.');
-  if (!response.ok) fail(502, 'AI 응답을 받지 못했습니다. 자동 재시도하지 않으며 기존 무료 제안을 유지합니다.');
+  if (!response.ok) fail(502, `Gemini 응답을 받지 못했습니다(HTTP ${response.status}). 자동 재시도하지 않으며 기존 무료 제안을 유지합니다.`);
   const output = await response.json();
   if (output.promptFeedback?.blockReason) fail(422, '이 입력으로는 AI 피드백을 제공할 수 없습니다. 관찰 내용을 확인해 주세요.');
   const candidate = output.candidates?.[0];
