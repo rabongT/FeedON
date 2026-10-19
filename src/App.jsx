@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { buildFeedback, caseInput, researchCases } from "./feedbackEngine";
 import AiFeedbackPanel from "./AiFeedbackPanel";
+import PrivacyNotice from "./PrivacyNotice";
 import "./App.css";
 import "./Home.css";
 import "./Theme.css";
@@ -280,24 +281,34 @@ function FeedbackStagesGuide() {
 }
 
 function Modal({ type, close }) {
+  const dialog = useRef(null);
   useEffect(() => {
-    const f = (e) => e.key === "Escape" && close();
+    const trigger = document.activeElement;
+    dialog.current?.querySelector('.close')?.focus();
+    const f = (e) => {
+      if (e.key === "Escape") close();
+      if (e.key !== "Tab") return;
+      const targets = Array.from(dialog.current?.querySelectorAll('button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]') || []).filter(el => el.getClientRects().length);
+      const first = targets[0], last = targets.at(-1);
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+      if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+    };
     document.addEventListener("keydown", f);
-    return () => document.removeEventListener("keydown", f);
+    return () => { document.removeEventListener("keydown", f); if (trigger?.isConnected) trigger.focus(); };
   }, [close]);
   return (
     <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && close()}>
-      <section className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <section ref={dialog} className="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div className="modal-head">
           <div>
-            <p className="eyebrow">QUICK REFERENCE</p>
-            <h2 id="modal-title">FeedON 피드백 {type === "tools" ? "도구" : "5단계"}</h2>
+            <p className="eyebrow">{type === "privacy" ? "SERVICE INFO" : "QUICK REFERENCE"}</p>
+            <h2 id="modal-title">{type === "privacy" ? "개인정보 처리 안내" : `FeedON 피드백 ${type === "tools" ? "도구" : "5단계"}`}</h2>
           </div>
           <button className="close" onClick={close} aria-label="닫기">
             ×
           </button>
         </div>
-        {type === "tools" ? <FeedbackToolsGuide /> : <FeedbackStagesGuide />}
+        {type === "privacy" ? <PrivacyNotice /> : type === "tools" ? <FeedbackToolsGuide /> : <FeedbackStagesGuide />}
       </section>
     </div>
   );
@@ -1164,6 +1175,7 @@ function App() {
       <Header goHome={() => nav("home")} openHelp={setHelp} />
       {page === "home" && <Home navigate={nav} openHelp={setHelp} />} {page === "feedback" && <FeedbackForm initial={fForm} onSubmit={feedbackDone} back={() => nav("home")} />} {page === "feedbackResult" && <FeedbackResult data={fResult} edit={() => nav("feedback")} />} {help && <Modal type={help} close={() => setHelp(null)} />}
       <footer>
+        <button type="button" className="footer-privacy" onClick={() => setHelp("privacy")} aria-haspopup="dialog">개인정보 처리 안내</button>
         <small className="copyright">© 경인초 학생평가 연구팀</small>
       </footer>
     </>

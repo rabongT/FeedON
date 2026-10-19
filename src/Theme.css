@@ -24,6 +24,7 @@ footer {
   background: #faf9f4; border-top: 1px solid #e1e5e5; text-align: center;
 }
 footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6; }
+footer { flex-direction: column; align-items: center; gap: 4px; }
 .page { max-width: 1180px; padding: 38px 32px 72px; }
 .page .back { color: #526d82; margin-bottom: 24px; }
 .page .page-intro {
@@ -213,3 +214,11 @@ footer .copyright { margin: 0; color: #5d7181; font-size: 14px; line-height: 1.6
 .ai-feedback-panel summary { cursor: pointer; padding: 8px 0; }
 .ai-feedback-panel :focus-visible { outline: 3px solid #167b8a; outline-offset: 3px; }
 @media (max-width: 640px) { .ai-feedback-panel { padding: 20px; } .ai-access-row { flex-direction: column; } .ai-access-row input { width: 100%; box-sizing: border-box; } }
+.footer-privacy { border: 0; background: transparent; color: #24516e; font: inherit; font-size: 15px; padding: 10px 12px; min-height: 44px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.footer-privacy:hover { color: #19334e; }
+.footer-privacy:focus-visible { outline: 3px solid #167b8a; outline-offset: 2px; border-radius: 4px; }
+.privacy-notice { font-size: 16px; line-height: 1.85; color: #334c60; overflow-wrap: anywhere; }
+.privacy-notice section + section { margin-top: 24px; padding-top: 20px; border-top: 1px solid #dce3e6; }
+.privacy-notice h3 { font-size: 18px; color: #19334e; margin: 0 0 8px; }
+.privacy-notice p { margin: 8px 0; }
+.privacy-notice a { color: #24516e; text-decoration: underline; text-underline-offset: 3px; }
